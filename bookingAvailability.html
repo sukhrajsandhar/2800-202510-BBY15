@@ -22,8 +22,8 @@
         />
 
         <!-- Your styles -->
-        <link rel="stylesheet" href="./styles/style.css" />
-        <link rel="stylesheet" href="./bookingAvailability.css" />
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="bookingAvailability.css" />
     </head>
 
     <body>
@@ -57,29 +57,49 @@
         </header>
 
         <!-- Main content area -->
-        <main
-            class="main"
-            style="
-                position: absolute;
-                top: 60px;
-                bottom: 80px;
-                left: 0;
-                right: 0;
-                background-color: rgb(85, 111, 68);
-                overflow: auto; /* allows scrolling if content overflows */
-            "
-        >
+        <main class="main">
             <!-- Content goes here -->
+
+            <div class="container" style="margin-top: 40px; color: white">
+                <h1 class="text-center">Campsite XYZ Tent Availability</h1>
+                <p class="text-center">
+                    No current campsite tent availability.
+                </p>
+            </div>
+
             <button
-                style="margin: 100px; max-width:fit-content; background-color: rgb(40, 63, 59); border:#95bf74"
+                style="
+                    position: center;
+                    margin: 50px;
+                    max-width: fit-content;
+                    background-color: rgb(40, 63, 59);
+                    border: #95bf74;
+                "
                 type="button"
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
-                data-bs-whatever="Placeholder"
+                data-bs-whatever="Campsite XYZ"
             >
                 Create New Campsite Tent Availability
             </button>
+
+            <div class="card">
+                <h5 class="card-header">DATES: June 1st, 2025 - June 4th, 2025</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Come camp with us!!</h5>
+                    <p class="card-text">
+                        Number of Available Tent spots: 1 Tent 
+                        <br>
+                        Summary: We are a group of friends camping at Campsite
+                                XYZ and have an extra tent spot! Please reach
+                                out if you are interested.
+                    </p>
+                    <a href="#" style="background-color: rgb(40, 63, 59); outline-color: #95bf74;" class="btn btn-primary">Contact</a>
+                </div>
+            </div>
+
+            
 
             <div
                 class="modal fade"
@@ -104,8 +124,6 @@
                         <div class="modal-body">
                             <form>
                                 <div class="container">
-                                    
-
                                     <label>Campsite:</label>
                                     <p class="readonly">Campsite XYZ</p>
 
@@ -134,14 +152,11 @@
 
                                     <label>Summary:</label>
                                     <textarea rows="4"></textarea>
-
-                                    
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
                             <button type="submit">Submit</button>
-                            <button type="close">Close</button>
                         </div>
                     </div>
                 </div>
