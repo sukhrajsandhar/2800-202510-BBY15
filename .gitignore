@@ -1,0 +1,9 @@
+# Configuration
+config.js
+
+# Dependencies
+node_modules/
+
+# IDE files
+.vscode/
+.idea/

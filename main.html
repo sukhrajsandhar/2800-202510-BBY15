@@ -15,49 +15,106 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Mapbox GL JS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
     <!-- Your styles -->
-    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/main.css">
 </head>
 
 <body>
-    <!-- Top bar header -->
-    <header style="background-color: #95BF74; height: 60px; width: 100%; position: fixed; top: 0; left: 0;">
-        <div class="container d-flex align-items-center" style="height: 100%;">
-            <!-- Profile picture placeholder -->
-            <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;"></div>
-            <!-- App name -->
-            <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
-        </div>
-    </header>
+    <!-- Map container -->
+    <div id="map"></div>
 
-    <!-- Bottom navbar -->
-    <footer class="footer"
-        style="background-color: #95BF74; height: 80px; position: fixed; bottom: 0; width: 100%; left: 0;">
-        <div class="container d-flex justify-content-around align-items-center"
-            style="height: 100%; padding-top: 10px;">
-            <a href="main.html" class="text-dark text-center" style="text-decoration: none;">
-                <i class="fas fa-compass fa-2x"></i>
-                <div style="font-size: 12px;">Map</div>
+    <!-- Floating search bar -->
+        <div class="search-container">
+            <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="location-lookup" placeholder="Search for a location..." autocomplete="address-line1">
+            </div>
+        </div>
+
+    <!-- Floating navigation -->
+    <nav class="nav-container">
+        <div class="nav-links">
+            <a href="main.html" class="nav-link active">
+                <i class="fas fa-compass"></i>
+                <span>Map</span>
             </a>
-            <a href="favorites.html" class="text-dark text-center" style="text-decoration: none;">
-                <i class="fas fa-star fa-2x"></i>
-                <div style="font-size: 12px;">Favorites</div>
+            <a href="favorites.html" class="nav-link">
+                <i class="fas fa-star"></i>
+                <span>Favorites</span>
             </a>
-            <a href="bookings.html" class="text-dark text-center" style="text-decoration: none;">
-                <i class="fas fa-campground fa-2x"></i>
-                <div style="font-size: 12px;">Bookings</div>
+            <a href="bookings.html" class="nav-link">
+                <i class="fas fa-campground"></i>
+                <span>Bookings</span>
             </a>
-            <a href="profile.html" class="text-dark text-center" style="text-decoration: none;">
-                <i class="fas fa-user fa-2x"></i>
-                <div style="font-size: 12px;">Profile</div>
+            <a href="profile.html" class="nav-link">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
             </a>
         </div>
-    </footer>
+    </nav>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+
+        <script type="module">
+        import config from './config.js';
+
+        // Initialize map
+        mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN;
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
+            center: [-123.1207, 49.1527],
+            zoom: 9
+        });
+
+        // Add geolocation control
+        map.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true,
+                showUserHeading: true
+            })
+        );
+
+        // Add navigation control
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), 'top-right');
+
+        // Add geocoder
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search for a location...',
+            marker: false,
+            flyTo: {
+                bearing: 0,
+                essential: true,
+                padding: {top: 0, bottom: 0, left: 0, right: 0},
+                zoom: 14
+            }
+        });
+
+        // Add geocoder to the search input
+        document.getElementById('location-lookup').appendChild(geocoder.onAdd(map));
+
+        // Add active state to current page in navigation
+        const currentPage = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+        </script>
 </body>
 
 </html>
