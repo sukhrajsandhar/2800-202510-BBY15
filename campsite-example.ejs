@@ -1,0 +1,61 @@
+<!-- Route for index.js page to render the campsite-example.ejs page -->
+<!--
+app.get('/campsite-example', (req, res) => {
+    res.render('campsite-example');
+});
+-->
+
+
+<%- include('templates/header') %>
+
+
+<main
+            class="main"
+            style="
+                position: absolute;
+                top: 60px;
+                bottom: 80px;
+                left: 0;
+                right: 0;
+                background-color: rgb(85, 111, 68);
+                overflow: auto; /* allows scrolling if content overflows */
+            "
+        >
+            <div class="container mt-5">
+                <h1 class="mb-3">Porteau Cove</h1>
+                <img
+                    src="public/PorteauCove.svg"
+                    style="max-height: fit-content"
+                    class="img-fluid rounded-start"
+                    alt="..."
+                />
+
+                <div class="mb-4">
+                    <h4>Description</h4>
+                    <p>
+                        Porteau Cove is a scenic provincial park located along
+                        the Sea-to-Sky Highway in British Columbia. It is known
+                        for its waterfront campsites, rocky beaches, and
+                        stunning views of Howe Sound. Popular activities include
+                        scuba diving, stargazing, and quick nature escapes from
+                        Vancouver due to its convenient location and natural
+                        charm.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h4>Activities</h4>
+                    <ul>
+                        <li>Camping</li>
+                        <li>Scuba Diving</li>
+                        <li>Stargazing</li>
+                        <li>Picnicking</li>
+                        <li>Wildlife Viewing</li>
+                    </ul>
+                </div>
+
+                <a href="/" class="btn btn-primary">Back to Home</a>
+            </div>
+        </main>
+
+<%- include('templates/footer') %>
