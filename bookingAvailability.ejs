@@ -1,0 +1,118 @@
+<!-- Index route
+ app.get('/bookingAvailability', (req, res) => {
+    res.render('bookingAvailability');
+});
+-->
+
+<%- include('header') %>
+<%- include('navbar') %>
+
+<!-- Main content area -->
+        <main class="main">
+            <!-- Content goes here -->
+
+            <div class="container" style="margin-top: 40px; color: white">
+                <h1 class="text-center">Campsite XYZ Tent Availability</h1>
+                <p class="text-center">
+                    No current campsite tent availability.
+                </p>
+            </div>
+
+            <button
+                style="
+                    position: center;
+                    margin: 50px;
+                    max-width: fit-content;
+                    background-color: rgb(40, 63, 59);
+                    border: #95bf74;
+                "
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                data-bs-whatever="Campsite XYZ"
+            >
+                Create New Campsite Tent Availability
+            </button>
+
+            <div class="card">
+                <h5 class="card-header">DATES: June 1st, 2025 - June 4th, 2025</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Come camp with us!!</h5>
+                    <p class="card-text">
+                        Number of Available Tent spots: 1 Tent 
+                        <br>
+                        Summary: We are a group of friends camping at Campsite
+                                XYZ and have an extra tent spot! Please reach
+                                out if you are interested.
+                    </p>
+                    <a href="#" style="background-color: rgb(40, 63, 59); outline-color: #95bf74;" class="btn btn-primary">Contact</a>
+                </div>
+            </div>
+
+            
+
+            <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                Create New Tent
+                            </h1>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="container">
+                                    <label>Campsite:</label>
+                                    <p class="readonly">Campsite XYZ</p>
+
+                                    <input
+                                        type="text"
+                                        placeholder="Search Campsites"
+                                    />
+
+                                    <label>Start Date:</label>
+                                    <div class="input-icon">
+                                        <input type="date" />
+                                    </div>
+
+                                    <label>End Date:</label>
+                                    <div class="input-icon">
+                                        <input type="date" />
+                                    </div>
+
+                                    <label
+                                        >Number of Available Tent spots:</label
+                                    >
+                                    <input type="number" />
+
+                                    <label>Preferred means of Contact:</label>
+                                    <input type="text" />
+
+                                    <label>Summary:</label>
+                                    <textarea rows="4"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+<%- include('footer') %>
