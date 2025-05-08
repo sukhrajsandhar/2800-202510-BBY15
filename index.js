@@ -205,6 +205,10 @@ app.get('/createReview', (req, res) => {
     res.render('createReview');
 });
 
+app.get('/createAlert', (req, res) => {
+    res.render('createAlert');
+});
+
 app.get("*dummy", (req, res) => {
     res.status(404);
     res.render('404');
