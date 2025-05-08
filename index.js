@@ -205,6 +205,31 @@ app.get('/createReview', (req, res) => {
     res.render('createReview');
 });
 
+app.get('/booked', (req, res) => {
+    const campsite = {
+      id: 1,
+      name: 'Sunset Woods',
+      imageUrl: '/camp.png',
+      date: '2025-06-15',
+      tents: 2,
+      people: 4
+    };
+  
+    res.render('booked', { campsite });
+  });
+  
+app.get('/profile', (req, res) => {
+    const user = {
+        firstName: 'Margot',
+        lastName: 'Robbie',
+        email: 'margot@example.com',
+        bio: '',
+        profileImage: '',
+        userLevel: ''
+    };
+    res.render('profile', { user });
+});
+
 app.get('/createAlert', (req, res) => {
     res.render('createAlert');
 });
@@ -213,6 +238,7 @@ app.get("*dummy", (req, res) => {
     res.status(404);
     res.render('404');
 });
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
