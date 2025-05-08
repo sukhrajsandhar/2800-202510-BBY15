@@ -1,9 +1,6 @@
-<!-- Route for index.js page to render the campsite-example.ejs page -->
-<!--
-app.get('/campsite-example', (req, res) => {
-    res.render('campsite-example');
-});
--->
+<!-- This Page will eventually not need to exist!-->
+
+
 
 
 <%- include('templates/header') %>
@@ -24,7 +21,7 @@ app.get('/campsite-example', (req, res) => {
             <div class="container mt-5">
                 <h1 class="mb-3">Porteau Cove</h1>
                 <img
-                    src="public/PorteauCove.svg"
+                    src="<%= favCampExample.imageUrl %>"
                     style="max-height: fit-content"
                     class="img-fluid rounded-start"
                     alt="..."
@@ -33,13 +30,7 @@ app.get('/campsite-example', (req, res) => {
                 <div class="mb-4">
                     <h4>Description</h4>
                     <p>
-                        Porteau Cove is a scenic provincial park located along
-                        the Sea-to-Sky Highway in British Columbia. It is known
-                        for its waterfront campsites, rocky beaches, and
-                        stunning views of Howe Sound. Popular activities include
-                        scuba diving, stargazing, and quick nature escapes from
-                        Vancouver due to its convenient location and natural
-                        charm.
+                        <%= favCampExample.bio %>
                     </p>
                 </div>
 
