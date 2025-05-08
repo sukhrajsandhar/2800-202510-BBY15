@@ -207,17 +207,17 @@ app.get('/createReview', (req, res) => {
 
 app.get('/booked', (req, res) => {
     const campsite = {
-      id: 1,
-      name: 'Sunset Woods',
-      imageUrl: '/camp.png',
-      date: '2025-06-15',
-      tents: 2,
-      people: 4
+        id: 1,
+        name: 'Sunset Woods',
+        imageUrl: '/camp.png',
+        date: '2025-06-15',
+        tents: 2,
+        people: 4
     };
-  
+
     res.render('booked', { campsite });
-  });
-  
+    });
+
 app.get('/profile', (req, res) => {
     const user = {
         firstName: 'Margot',
@@ -232,6 +232,32 @@ app.get('/profile', (req, res) => {
 
 app.get('/createAlert', (req, res) => {
     res.render('createAlert');
+});
+
+app.get('/bookingAvailability', (req, res) => {
+    res.render('bookingAvailability');
+});
+
+app.get('/favourites', (req, res) => {
+    const favCampsites = {
+        id: 1, 
+        name: 'Porteau Cove', 
+        imageUrl: '/PorteauCove.svg',
+        rating: 4.5,
+        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty."
+    };
+    res.render('favourites', { favCampsites });
+});
+
+app.get('/campsite-example', (req, res) => {
+    const favCampExample = {
+        id: 1, 
+        name: 'Porteau Cove', 
+        imageUrl: '/PorteauCove.svg',
+        rating: 4.5,
+        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty."
+    };
+    res.render('campsite-example', { favCampExample });
 });
 
 app.get("*dummy", (req, res) => {
