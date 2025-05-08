@@ -19,6 +19,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="./booked.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 
 <body>
@@ -56,9 +57,16 @@
           <div class="card-img-overlay">
             <h4 class="card-title text-white mt-3 mb-4">Burnaby Lake Campsite</h4>
             <ul class="list-group list-group-flush rounded rounded-2">
-              <li class="list-group-item">Date: 10/20/3</li>
-              <li class="list-group-item">Tent: 1</li>
-              <li class="list-group-item">People: 2</li>
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">date_range</span>
+                Date: 10/20/3
+              </li>
+              <li class="list-group-item">           
+                <span class="material-icons material-symbols-outlined">camping</span>
+                Tent: 1</li>
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">person</span>
+                People: 2</li>
             </ul>
             <div class="d-flex justify-content-center p-3">
               <button type="button" id="cancel1" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBooked">
@@ -66,10 +74,33 @@
               </button>
             </div>
           </div>
-        </div>        
+        </div>       
+        <div class="card card-hover rounded-4 img-fluid mt-4" id="card1" style="width:300px">
+          <img class="card-img-top" src="./images/camp.webp" alt="Card image" style="width:100%">
+          <div class="card-img-overlay">
+            <h4 class="card-title text-white mt-3 mb-4">Burnaby Lake Campsite</h4>
+            <ul class="list-group list-group-flush rounded rounded-2">
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">date_range</span>
+                Date: 10/20/3
+              </li>
+              <li class="list-group-item">           
+                <span class="material-icons material-symbols-outlined">camping</span>
+                Tent: 1</li>
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">person</span>
+                People: 2</li>
+            </ul>
+            <div class="d-flex justify-content-center p-3">
+              <button type="button" id="cancel1" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBooked">
+                Cancel Booking
+              </button>
+            </div>
+          </div>
+        </div>         
       </div>
     </div>
-
+    
     <!-- Modal for Booked -->
     <div class="modal fade" id="modalBooked" tabindex="-1" aria-labelledby="modalBookedLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -99,9 +130,16 @@
           <div class="card-img-overlay">
             <h4 class="card-title text-white mt-3 mb-4">Burnaby Lake Campsite</h4>
             <ul class="list-group list-group-flush bg-white rounded rounded-3">
-              <li class="list-group-item">Date: 10/20/3</li>
-              <li class="list-group-item">Tent: 1</li>
-              <li class="list-group-item">People: 2</li>
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">date_range</span>
+                Date: 10/20/25
+              </li>
+              <li class="list-group-item">           
+                <span class="material-icons material-symbols-outlined">camping</span>
+                Tent: 1</li>
+              <li class="list-group-item">
+                <span class="material-icons material-symbols-outlined">person</span>
+                People: 2</li>
             </ul>
             <div class="d-flex justify-content-center p-3">
               <button type="button" id="cancel2" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPending">

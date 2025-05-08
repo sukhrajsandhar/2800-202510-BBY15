@@ -55,7 +55,7 @@ border-radius: 10px;
     background: #eee;
     color: #24a24a;
     font-size: 30px;
-    box-shadow: 1px 1px 2px #909090;
+    box-shadow: 1px 1px 2px #283F3B;
     transform: skewx(-1deg);
   }
   .tent label:after {
@@ -67,7 +67,7 @@ border-radius: 10px;
     height: 0;
     border-style: solid;
     border-width: 45px 0 0 13px;
-    border-color: transparent transparent transparent #9f9f9f;
+    border-color: transparent transparent transparent #283F3B;
   }
 
 h1 {
@@ -98,62 +98,17 @@ h1.background {
     }
 }
 
-h1.double:before { 
-    /* this is just to undo the :before styling from above */
-    border-top: none; 
-}
 
-h1.double:after {
-    border-bottom: 1px solid blue;
-    -webkit-box-shadow: 0 1px 0 0 #95BF74;
-    -moz-box-shadow: 0 1px 0 0 #95BF74;
-    box-shadow: 0 1px 0 0 #95BF74;
-    content: "";
-    margin: 0 auto; /* this centers the line to the full width specified */
-    position: absolute;
-    top: 45%; left: 0; right: 0;
-    width: 95%;
-    z-index: -1;
-}
+.material-icons {
+    vertical-align: middle;
+    color:#659B5E;
+  }
 
-h1.no-background {
-    position: relative;
-    overflow: hidden;
-    
-    .title1 {
-        display: inline-block;
-        vertical-align: baseline;
-        zoom: 1;
-        display: inline;
-        vertical-align: auto;
-        position: relative;
-        padding: 0 20px;
-
-        &:before, &:after {
-            content: '';
-            display: block;
-            width: 1000px;
-            position: absolute;
-            top: 0.73em;
-            border-top: 1px solid #95BF74;
-        }
-
-        &:before { right: 100%; }
-        &:after { left: 100%; }
-    }
-}
-
-h1.no-span {
-    display: table;
-    white-space: nowrap;
-    &:before, &:after {
-      border-top: 1px solid green;
-      content: '';
-      display: table-cell;
-      position: relative;
-      top: 0.5em;
-      width: 45%;
-    }
-    &:before { right: 1.5%; }
-    &:after { left: 1.5%; }
-}
+  h1 {
+    border-top: 3px solid #24a24a;
+    margin-left: 10%;
+    margin-right: 10%;
+    border-radius: 10px;
+    border-bottom: 3px solid #24a24a;
+    text-shadow: 3px 3px 0px #95BF74;
+  }
