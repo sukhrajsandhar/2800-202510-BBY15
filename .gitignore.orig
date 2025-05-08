@@ -1,7 +1,6 @@
 <<<<<<< HEAD
-/node_modules
-=======
 /node_modules 
->>>>>>> origin/cali_profilePage
+=======
+>>>>>>> origin/cali_bookedAndPendingPage
 package-lock.json
 .env
