@@ -1,0 +1,23 @@
+<%- include("templates/header") %>
+
+<!-- Main Content -->
+<main style="padding: 5rem; text-align: center;">
+  <div style="position: relative; display: inline-block;">
+    <!-- Pseudo Map Image -->
+    <img src="/pseudoMap.jpg" alt="Map" style="max-width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px;">
+
+    <!-- Clickable Campsite Marker -->
+    <a href="/pseudoCampsite" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);">
+      <img src="https://cdn-icons-png.flaticon.com/512/252/252025.png" alt="Campsite" style="width: 32px; height: 32px;">
+    </a>
+  </div>
+</main>
+
+<!-- Bottom Sticky Footer Nav Bar -->
+<footer style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #333; color: white; display: flex; justify-content: space-around; padding: 0.5rem 0;">
+  <a href="/" style="color: white; text-decoration: none;">Home</a>
+  <a href="/search" style="color: white; text-decoration: none;">Search</a>
+  <a href="/profile" style="color: white; text-decoration: none;">Profile</a>
+</footer>
+
+<%- include("templates/footer") %>

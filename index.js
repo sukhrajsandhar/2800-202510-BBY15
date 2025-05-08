@@ -50,9 +50,9 @@ app.get('/', (req, res) => {
     const email = req.session.email;
     const firstName = req.session.firstName;
     if (!email) {
-        res.render('404', { email: null });
+        res.render('pseudoMain', { email: null });
     } else {
-        res.render('404', { email: email, firstName: firstName });
+        res.render('pseudoMain', { email: email, firstName: firstName });
     }
 });
 
@@ -195,6 +195,14 @@ app.get('/logout', (req, res) => {
             res.render('logout');
         }
     });
+});
+
+app.get('/pseudoCampsite', (req, res) => {
+    res.render('pseudoCampsite');
+});
+
+app.get('/createReview', (req, res) => {
+    res.render('createReview');
 });
 
 app.get("*dummy", (req, res) => {
