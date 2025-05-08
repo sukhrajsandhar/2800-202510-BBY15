@@ -57,7 +57,7 @@
         <% if (bookedCampsites && bookedCampsites.length > 0) { %>
           <% bookedCampsites.forEach(function(campsite) { %>
             <div class="card card-hover rounded-4 img-fluid mt-4" style="width:300px">
-              <img class="card-img-top" src="<%= campsite.imageUrl || './images/camp.webp' %>" alt="Card image" style="width:100%">
+              <img class="card-img-top" src="<%= campsite.imageUrl || './public/camp.png' %>" alt="Card image" style="width:100%">
               <div class="card-img-overlay">
                 <h4 class="card-title text-white mt-3 mb-4"><%= campsite.name %></h4>
                 <ul class="list-group list-group-flush rounded rounded-2">
@@ -115,7 +115,7 @@
         <% if (pendingCampsites && pendingCampsites.length > 0) { %>
           <% pendingCampsites.forEach(function(campsite) { %>
             <div class="card img-fluid card-hover rounded-4 mt-4" style="width:300px">
-              <img class="card-img-top rounded-4" src="<%= campsite.imageUrl || './images/camp2.webp' %>" alt="Card image" style="width:100%">
+              <img class="card-img-top rounded-4" src="<%= campsite.imageUrl || './public/camp2.png' %>" alt="Card image" style="width:100%">
               <div class="card-img-overlay">
                 <h4 class="card-title text-white mt-3 mb-4"><%= campsite.name %></h4>
                 <ul class="list-group list-group-flush bg-white rounded rounded-3">
