@@ -1,0 +1,84 @@
+body {
+    background-color: rgb(85, 111, 68);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    position:absolute;
+    top:60px;
+    bottom: 80px;
+    left:auto;
+    right:auto;
+    width: 100%;
+    align-items: center;
+    padding: 20px;
+    overflow: auto;
+}
+
+
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.readonly {
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    background-color: #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon input {
+    width: 100%;
+    padding-right: 30px;
+}
+
+.input-icon span {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+textarea {
+    resize: none;
+}
+
+button {
+    display: block;
+    width: 100%;
+    background-color: #999;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
