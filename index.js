@@ -51,10 +51,12 @@ app.use(
 app.get("/", (req, res) => {
     const email = req.session.email;
     const firstName = req.session.firstName;
+    const mapboxKey = config.MAPBOX_ACCESS_TOKEN;
+
     if (!email) {
-        res.render("pseudoMain", { email: null });
+        res.render("main", { email: null, mapboxKey });
     } else {
-        res.render("pseudoMain", { email: email, firstName: firstName });
+        res.render("main", { email: email, firstName: firstName, mapboxKey });
     }
 });
 
