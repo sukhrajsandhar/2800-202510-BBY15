@@ -1,0 +1,83 @@
+.heart-icon {
+    font-size: 2rem;
+    color: #283f3b;
+    cursor: pointer;
+    transition: transform 0.4s;
+}
+
+.heart-icon:hover {
+    color: #99ddc8;
+    transform: scale(1.2);
+}
+
+.back-icon {
+    font-size: 2rem;
+    color: #283f3b;
+    cursor: pointer;
+    transition: transform 0.4s;
+}
+
+.back-icon:hover {
+    color: #99ddc8;
+    transform: scale(1.2);
+}
+
+.stars {
+    font-size: 1rem;
+    color: #659b5e;
+}
+
+.img-fluid {
+    float: right;
+    margin: 1rem; /* spacing around the image */
+    max-width: 40%;
+    border-radius: 10px;
+}
+
+/*Beginning of experiment*/
+.card-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.card {
+    background-color: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    z-index:10;
+}
+
+.card h4 {
+    margin: 0 0 5px;
+    font-size: 1.1rem;
+}
+
+.card small {
+    color: gray;
+}
+
+.card p {
+    margin: 5px 0 0;
+}
+/* End of experiment */
+
+@media (min-width: 100px) and (max-width: 700px) {
+    .mb-4 {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .img-fluid {
+        align-self: start !important;
+        margin: 0 auto;
+        border-radius: 10px;
+        min-width: 100% !important;
+        height: auto;
+    }
+}
