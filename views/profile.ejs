@@ -1,0 +1,67 @@
+<%- include('templates/header.ejs', { cssFiles: ['profile.css'] }) %>
+
+<body>
+    <!-- the body of your page goes here -->
+    <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-7">
+                <div class="card p-3 py-4">
+                    <div class="text-center">
+                        <img src="<%= user.profileImage || 'margot.png' %>" width="100" class="rounded-circle">
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <span class="bg-secondary p-1 px-4 rounded text-white"><%= user.userLevel || 'Noob Camper' %></span>
+                        <h5 class="mt-2 mb-0"><%= user.firstName %> <%= user.lastName %></h5>
+                        <span>About Yourself</span>
+                        
+                        <div class="px-4 mt-1">
+                            <p class="fonts">
+                                <%= user.bio || 'Just an actor who loves to camp!' %>
+                            </p>  
+                        </div>
+                        
+                        <div class="buttons" id="buttons1">
+                            <button class="btn px-4" id="message">Message</button>
+                            <button class="btn btn-primary px-4 ms-3" id="contact">Contact</button>
+                        </div>   
+
+                        <form class="p-3 px-2" action="/update-profile" method="POST">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="firstName" name="firstName" 
+                                    value="<%= user.firstName %>" placeholder="Enter First Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="lastName" name="lastName"
+                                    value="<%= user.lastName %>" placeholder="Enter Last Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    value="<%= user.email %>" placeholder="Enter Email">
+                            </div> 
+                            
+                            <div class="form-group mt-3">
+                                <textarea class="form-control" id="bio" name="bio" 
+                                    placeholder="Tell us about yourself"><%= user.bio %></textarea>
+                            </div>
+                        </form>
+
+                        <div class="d-flex justify-content-center mt-5">
+                            <button type="button" class="btn btn-secondary" onclick="editUserInfo()">Edit</button>
+                            <span style="width: 10px;"></span>
+                            <button type="submit" class="btn btn-info text-white" id="submit1" name="submit1" 
+                                form="profileForm">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer partial -->
+    <%- include('templates/footer') %>
+
+    <script>
+    </script>
+</body>
+</html>

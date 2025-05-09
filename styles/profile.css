@@ -1,0 +1,92 @@
+
+
+body{
+    background:#eee;
+}
+
+.card{
+    border:none;
+    position:relative;
+    overflow:hidden;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.card:before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:4px;
+    height:100%;
+    background-color:#95BF74;
+    transform:scaleY(1);
+    transition:all 0.5s;
+    transform-origin: bottom
+}
+
+.card:after{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:4px;
+    height:100%;
+    background-color:#556F44;
+    transform:scaleY(0);
+    transition:all 0.5s;
+    transform-origin: bottom
+}
+
+.card:hover::after{
+    transform:scaleY(1);
+}
+
+
+.fonts{
+    font-size:11px;
+}
+
+.buttons button:hover{
+       border:1px solid #659B5E !important;
+       color:#fff;
+       height:40px;
+       background-color:#659B5E;
+}
+
+#message {
+    color: green;
+    border: solid green 2px;
+}
+
+#contact {
+    background-color: green;
+    border: solid green 2px;
+}
+
+#submit1 {
+    background-color: green;
+    border: solid green 2px;
+}
+
+.form-group {
+    padding: 10px;
+}
+
+.form-control {
+    padding: 10px;
+}
+
+#lastName {
+    padding-top: 10px;
+}
+#first {
+    padding:10px;
+}
+
+#submit1 button:hover{
+    border:1px solid #659B5E !important;
+    color:#fff;
+    height:40px;
+    background-color:#659B5E;
+}

@@ -1,0 +1,57 @@
+<%- include("templates/header") %>
+
+<div class="container" style="margin-top: 80px; margin-bottom: 100px;">
+    <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7; height: 675px;">
+        <div class="card-header text-center" style="background-color: #95BF74;">
+            <h5 class="mb-0">Create Alert</h5>
+        </div>
+
+        <form style="height: 100%; display: flex; flex-direction: column;">
+            <!-- Scrollable body -->
+            <div class="card-body" style="flex: 1; overflow-y: auto;">
+                <!-- Date -->
+                <div class="mb-3">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" id="alertDate" value="2025-01-01">
+                </div>
+
+                <!-- Alert category -->
+                <div class="mb-3">
+                    <label class="form-label">Alert Category</label>
+                    <select class="form-select" id="alertCategory" onchange="handleCategoryChange()">
+                        <option selected disabled>Select a category</option>
+                        <option value="Trail Obstruction">Trail Obstruction</option>
+                        <option value="Weather Warning">Weather Warning</option>
+                        <option value="Wildlife Sighting">Wildlife Sighting</option>
+                        <option value="Commute Difficulties">Commute Difficulties</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Custom category (shown if 'Other' selected) -->
+                <div class="mb-3 d-none" id="customCategoryDiv">
+                    <label class="form-label">Other Category</label>
+                    <input type="text" class="form-control" id="customCategory"
+                        placeholder="Enter other category details...">
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="alertDescription" rows="8"
+                        placeholder="Describe the alert details here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Cancel and Submit Buttons -->
+            <div class="p-3 d-grid gap-2 d-md-flex justify-content-md-between">
+                <a href="/" class="btn" style="background-color: #95BF74; color: black;">Cancel</a>
+                <button type="submit" class="btn" style="background-color: #95BF74; color: black;">Submit Alert</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="./createalert.js"></script>
+
+<%- include("templates/footer") %>

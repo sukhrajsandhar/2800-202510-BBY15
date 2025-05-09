@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Wildpath</title>
+    <meta name="comp2800 template" content="My 2800 App">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Mapbox GL JS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
+    <!-- Your styles -->
+    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/map.css">
+</head>
+
+<body>
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Floating search bar -->
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="location-lookup" placeholder="Search for a location..." autocomplete="address-line1">
+            </div>
+            <div class="location-display">
+                <i class="fas fa-location-dot"></i>
+                <span id="current-location">Getting location...</span>
+            </div>
+            <div class="weather-display">
+                <span id="weather-info">Loading weather...</span>
+            </div>
+        </div>
+
+    <!-- Floating navigation -->
+    <!-- <nav class="nav-container">
+        <div class="nav-links">
+            <a href="main.html" class="nav-link active">
+                <i class="fas fa-compass"></i>
+                <span>Map</span>
+            </a>
+            <a href="favorites.html" class="nav-link">
+                <i class="fas fa-star"></i>
+                <span>Favorites</span>
+            </a>
+            <a href="bookings.html" class="nav-link">
+                <i class="fas fa-campground"></i>
+                <span>Bookings</span>
+            </a>
+            <a href="profile.html" class="nav-link">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav> -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+        <script type="module">
+        // Get the Mapbox token from the server
+        const mapboxKey = '<%= mapboxKey %>';
+
+        // Initialize map
+        mapboxgl.accessToken = mapboxKey;
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
+            center: [-123.1207, 49.1527],
+            zoom: 9
+        });
+
+        // Add geolocation control
+        const geolocateControl = new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true,
+            showUserHeading: true
+        });
+
+        map.addControl(geolocateControl);
+
+        // Update location display when position changes
+        geolocateControl.on('geolocate', async (e) => {
+            const locationDisplay = document.getElementById('current-location');
+            const weatherInfo = document.getElementById('weather-info');
+            const lat = e.coords.latitude;
+            const lng = e.coords.longitude;
+            
+            try {
+                // Reverse geocode the coordinates to get the address
+                const response = await fetch(
+                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
+                );
+                const data = await response.json();
+                
+                if (data.features && data.features.length > 0) {
+                    // Get the most relevant address
+                    const address = data.features[0].place_name;
+                    locationDisplay.textContent = address;
+                } else {
+                    locationDisplay.textContent = 'Address not found';
+                }
+            } catch (error) {
+                console.error('Error getting address:', error);
+                locationDisplay.textContent = 'Error getting address';
+            }
+
+            // Fetch weather from OpenWeatherMap
+            try {
+                const OPENWEATHER_API_KEY = 'f7cb5e5c969b57971a8aa3ff7dac3f59';
+                const weatherRes = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${OPENWEATHER_API_KEY}`
+                );
+                const weatherData = await weatherRes.json();
+                if (weatherData && weatherData.weather && weatherData.weather.length > 0) {
+                    const temp = Math.round(weatherData.main.temp);
+                    const desc = weatherData.weather[0].description;
+                    const icon = weatherData.weather[0].icon;
+                    weatherInfo.innerHTML = `<img src='https://openweathermap.org/img/wn/${icon}.png' alt='${desc}' style='vertical-align:middle;width:20px;height:20px;'> ${temp}°C, ${desc}`;
+                } else {
+                    weatherInfo.textContent = 'Weather not found';
+                }
+            } catch (error) {
+                console.error('Error getting weather:', error);
+                weatherInfo.textContent = 'Error getting weather';
+            }
+        });
+
+        // Add navigation control
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), 'top-right');
+
+        // Add geocoder
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search for a location...',
+            marker: false,
+            flyTo: {
+                bearing: 0,
+                essential: true,
+                padding: {top: 0, bottom: 0, left: 0, right: 0},
+                zoom: 14
+            }
+        });
+
+        // Add geocoder to the search input
+        const searchInput = document.getElementById('location-lookup');
+        searchInput.parentNode.replaceChild(geocoder.onAdd(map), searchInput);
+
+        // Handle geocoder results
+        geocoder.on('result', (event) => {
+            const result = event.result;
+            // Fly to the selected location
+            map.flyTo({
+                center: result.center,
+                zoom: 14,
+                essential: true
+            });
+        });
+
+        // Handle geocoder clear
+        geocoder.on('clear', () => {
+            // Reset the map view when search is cleared
+            map.flyTo({
+                center: [-123.1207, 49.1527],
+                zoom: 9,
+                essential: true
+            });
+        });
+
+        // Add active state to current page in navigation
+        const currentPage = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+
+        // Add BC Parks camping locations
+        map.on('load', () => {
+            // Sample camping locations in BC with detailed information
+            const campingLocations = [
+                {
+                    name: "Porteau Cove",
+                    coordinates: [-123.2337, 49.5557],
+                    rating: 4.5,
+                    reviews: 128,
+                    description: "A scenic waterfront campground with stunning views of Howe Sound.",
+                    type: "Provincial Park",
+                    season: "Year-round",
+                    difficulty: "Easy",
+                    fees: {
+                        camping: "$35/night"
+                    },
+                    amenities: [
+                        "Flush Toilets",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Picnic Tables",
+                        "Boat Launch"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/porteau-cove/"
+                },
+                {
+                    name: "Alice Lake",
+                    coordinates: [-123.1207, 49.1527],
+                    rating: 4.3,
+                    reviews: 95,
+                    description: "Family-friendly campground surrounded by four lakes and mountain views.",
+                    type: "Provincial Park",
+                    season: "May-September",
+                    difficulty: "Easy",
+                    fees: {
+                        camping: "$35/night"
+                    },
+                    amenities: [
+                        "Flush Toilets",
+                        "Hot Showers",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Swimming Area"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/alice-lake/"
+                },
+                {
+                    name: "Garibaldi Lake",
+                    coordinates: [-123.0017, 49.9500],
+                    rating: 4.8,
+                    reviews: 156,
+                    description: "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
+                    type: "Backcountry",
+                    season: "July-September",
+                    difficulty: "Moderate",
+                    fees: {
+                        camping: "$10/night"
+                    },
+                    amenities: [
+                        "Pit Toilets",
+                        "Food Storage",
+                        "Tent Pads",
+                        "Water Source"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/garibaldi/"
+                }
+            ];
+
+            // Add markers for each camping location
+            campingLocations.forEach(location => {
+                // Create a custom marker element with enhanced styling
+                const el = document.createElement('div');
+                el.className = 'camping-marker';
+                el.innerHTML = `
+                    <div class="marker-container">
+                        <div class="marker-icon">
+                            <i class="fas fa-campground"></i>
+                        </div>
+                        <div class="marker-pulse"></div>
+                    </div>
+                `;
+                el.style.cursor = 'pointer';
+
+                // Add click listener to redirect to /campsite-info
+                el.addEventListener('click', () => {
+                    window.location.href = '/campsite-info';
+                });
+
+                // Create popup content with more details
+                const popupContent = `
+                    <div class="camping-popup">
+                        <h4>${location.name}</h4>
+                        <div class="popup-rating">
+                            <span class="stars">${'★'.repeat(Math.floor(location.rating))}${'☆'.repeat(5-Math.floor(location.rating))}</span>
+                            <span class="rating">${location.rating} (${location.reviews} reviews)</span>
+                        </div>
+                        <p class="description">${location.description}</p>
+                        <div class="popup-details">
+                            <p><strong>Type:</strong> ${location.type}</p>
+                            <p><strong>Season:</strong> ${location.season}</p>
+                            <p><strong>Difficulty:</strong> ${location.difficulty}</p>
+                            <p><strong>Fees:</strong> ${location.fees.camping}</p>
+                        </div>
+                        <div class="popup-amenities">
+                            <h5>Amenities:</h5>
+                            <ul>
+                                ${location.amenities.map(amenity => `<li>${amenity}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="popup-actions">
+                            <a href="${location.reservation}" target="_blank" class="reserve-btn">Make Reservation</a>
+                        </div>
+                    </div>
+                `;
+
+                // Create and add the marker
+                new mapboxgl.Marker(el)
+                    .setLngLat(location.coordinates)
+                    .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
+                    .addTo(map);
+            });
+        });
+        </script> 
+
+<%- include("templates/footer") %>
+

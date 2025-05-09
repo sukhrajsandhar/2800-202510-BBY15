@@ -6,5 +6,16 @@ Team Members:
 - Ken Lee
 - Cali Heung
 - Sydney Jennings
+
 ## More details to come
-TBA
+In order to make this app work, please install the following modules:
+- use npm i xxx
+--> express
+--> express-session
+--> connect-mongo
+--> dotenv
+--> ejs
+--> joi
+--> bcrypt
+
+Add .env file
