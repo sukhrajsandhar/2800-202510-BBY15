@@ -31,7 +31,7 @@ border-radius: 10px;
     margin-top: 30%;
 }
 
-#cancel3, #cancel4 {
+#cancel3, #cancel4, #homeBtn, #details1, #details2 {
     background-color: #659B5E;
     border: 2px solid #659B5E;
 }
@@ -41,7 +41,7 @@ border-radius: 10px;
     border: 2px solid #283F3B;
 }
 
-#cancel1:hover, #cancel2:hover, #cancel3:hover, #cancel4:hover {
+#cancel1:hover, #cancel2:hover, #cancel3:hover, #cancel4:hover, #homeBtn:hover, #details1:hover, #deatils2:hover {
     background-color: #95BF74;
     border: 2px solid #95BF74;
 }
