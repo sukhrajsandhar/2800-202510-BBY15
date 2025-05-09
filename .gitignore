@@ -1,13 +1,3 @@
 /node_modules
-<<<<<<< HEAD
-<<<<<<< HEAD
 package-lock.json
 .env
-=======
-.env
-package-lock.json
->>>>>>> Sydney_favourites_page
-=======
-.env
-package-lock.json
->>>>>>> Sydney_bookings_page
