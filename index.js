@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const saltRounds = 12;
+const config = require('./config.js');
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -49,15 +50,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-    const email = req.session.email;
-    const firstName = req.session.firstName;
-    const mapboxKey = config.MAPBOX_ACCESS_TOKEN;
-
-    if (!email) {
-        res.render("main", { email: null, mapboxKey });
-    } else {
-        res.render("main", { email: email, firstName: firstName, mapboxKey });
-    }
+    res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
 });
 
 app.get("/nosql-injection", async (req, res) => {
@@ -296,16 +289,29 @@ app.get("/campsite-example", (req, res) => {
 });
 
 app.get("/campsite-info", (req, res) => {
-    const campsite = 
-        {
-            id: 1,
-            name: "Porteau Cove",
-            imageUrl: "/PorteauCove.svg",
-            address: "Unnamed Road, Squamish-Lillooet D, BC V0N 3Z0",
-            saved: "false",
-            rating: 4.5,
-            bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-        };
+    const campsite = {
+        id: 1,
+        name: "Porteau Cove",
+        imageUrl: "/PorteauCove.svg",
+        address: "Unnamed Road, Squamish-Lillooet D, BC V0N 3Z0",
+        saved: "false",
+        rating: 4.5,
+        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
+        facilities: ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
+        season: "Year-round",
+        difficulty: "Easy",
+        fees: {
+            camping: "$35/night",
+            dayUse: "$3/person"
+        },
+        amenities: [
+            "Flush Toilets",
+            "Drinking Water",
+            "Fire Pits",
+            "Picnic Tables",
+            "Boat Launch"
+        ]
+    };
 
     const bookings = [
         {
@@ -334,6 +340,129 @@ app.get("/campsite-info", (req, res) => {
         },
     ];
     res.render("campsite-info", { campsite, bookings });
+});
+
+app.get("/api/campsites", (req, res) => {
+    const campsites = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Porteau Cove Provincial Park",
+                    "type": "campsite",
+                    "rating": 4.5,
+                    "reviews": 128,
+                    "description": "A scenic waterfront campground with stunning views of Howe Sound.",
+                    "facilities": ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
+                    "season": "Year-round",
+                    "difficulty": "Easy",
+                    "fees": {
+                        "camping": "$35/night",
+                        "dayUse": "$3/person"
+                    },
+                    "amenities": [
+                        "Flush Toilets",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Picnic Tables",
+                        "Boat Launch"
+                    ],
+                    "reservation": "https://bcparks.ca/reserve/porteau-cove/"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-123.2375, 49.5575]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Alice Lake Provincial Park",
+                    "type": "campsite",
+                    "rating": 4.3,
+                    "reviews": 95,
+                    "description": "Family-friendly campground surrounded by four lakes and mountain views.",
+                    "facilities": ["Camping", "Hiking", "Swimming", "Fishing", "Mountain Biking"],
+                    "season": "May-September",
+                    "difficulty": "Easy",
+                    "fees": {
+                        "camping": "$35/night",
+                        "dayUse": "$3/person"
+                    },
+                    "amenities": [
+                        "Flush Toilets",
+                        "Hot Showers",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Swimming Area"
+                    ],
+                    "reservation": "https://bcparks.ca/reserve/alice-lake/"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-123.0775, 49.7775]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Garibaldi Lake",
+                    "type": "campsite",
+                    "rating": 4.8,
+                    "reviews": 156,
+                    "description": "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
+                    "facilities": ["Camping", "Hiking", "Photography", "Wildlife Viewing"],
+                    "season": "July-September",
+                    "difficulty": "Moderate",
+                    "fees": {
+                        "camping": "$10/night"
+                    },
+                    "amenities": [
+                        "Pit Toilets",
+                        "Food Storage",
+                        "Camping Pads"
+                    ],
+                    "reservation": "https://bcparks.ca/reserve/garibaldi/"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-123.0017, 49.9500]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Golden Ears Provincial Park",
+                    "type": "campsite",
+                    "rating": 4.7,
+                    "reviews": 312,
+                    "description": "One of BC's largest parks with diverse recreational opportunities.",
+                    "facilities": ["Camping", "Hiking", "Swimming", "Horseback Riding", "Mountain Biking"],
+                    "season": "Year-round",
+                    "difficulty": "Easy to Difficult",
+                    "fees": {
+                        "camping": "$35/night",
+                        "dayUse": "$3/person"
+                    },
+                    "amenities": [
+                        "Flush Toilets",
+                        "Showers",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Picnic Tables",
+                        "Horse Trails"
+                    ],
+                    "reservation": "https://bcparks.ca/reserve/golden-ears/"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-122.4775, 49.2775]
+                }
+            }
+        ]
+    };
+    res.json(campsites);
 });
 
 app.get("*dummy", (req, res) => {

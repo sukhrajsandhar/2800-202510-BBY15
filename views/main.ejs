@@ -46,7 +46,7 @@
         </div>
 
     <!-- Floating navigation -->
-    <nav class="nav-container">
+    <!-- <nav class="nav-container">
         <div class="nav-links">
             <a href="main.html" class="nav-link active">
                 <i class="fas fa-compass"></i>
@@ -65,7 +65,7 @@
                 <span>Profile</span>
             </a>
         </div>
-    </nav>
+    </nav> -->
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -73,10 +73,11 @@
         crossorigin="anonymous"></script>
 
         <script type="module">
-        import config from './config.js';
+        // Get the Mapbox token from the server
+        const mapboxKey = '<%= mapboxKey %>';
 
         // Initialize map
-        mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN;
+        mapboxgl.accessToken = mapboxKey;
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
@@ -196,7 +197,68 @@
         map.on('load', () => {
             // Sample camping locations in BC with detailed information
             const campingLocations = [
-                // ... camping locations array ...
+                {
+                    name: "Porteau Cove",
+                    coordinates: [-123.2337, 49.5557],
+                    rating: 4.5,
+                    reviews: 128,
+                    description: "A scenic waterfront campground with stunning views of Howe Sound.",
+                    type: "Provincial Park",
+                    season: "Year-round",
+                    difficulty: "Easy",
+                    fees: {
+                        camping: "$35/night"
+                    },
+                    amenities: [
+                        "Flush Toilets",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Picnic Tables",
+                        "Boat Launch"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/porteau-cove/"
+                },
+                {
+                    name: "Alice Lake",
+                    coordinates: [-123.1207, 49.1527],
+                    rating: 4.3,
+                    reviews: 95,
+                    description: "Family-friendly campground surrounded by four lakes and mountain views.",
+                    type: "Provincial Park",
+                    season: "May-September",
+                    difficulty: "Easy",
+                    fees: {
+                        camping: "$35/night"
+                    },
+                    amenities: [
+                        "Flush Toilets",
+                        "Hot Showers",
+                        "Drinking Water",
+                        "Fire Pits",
+                        "Swimming Area"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/alice-lake/"
+                },
+                {
+                    name: "Garibaldi Lake",
+                    coordinates: [-123.0017, 49.9500],
+                    rating: 4.8,
+                    reviews: 156,
+                    description: "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
+                    type: "Backcountry",
+                    season: "July-September",
+                    difficulty: "Moderate",
+                    fees: {
+                        camping: "$10/night"
+                    },
+                    amenities: [
+                        "Pit Toilets",
+                        "Food Storage",
+                        "Tent Pads",
+                        "Water Source"
+                    ],
+                    reservation: "https://bcparks.ca/reserve/garibaldi/"
+                }
             ];
 
             // Add markers for each camping location
@@ -213,6 +275,11 @@
                     </div>
                 `;
                 el.style.cursor = 'pointer';
+
+                // Add click listener to redirect to /campsite-info
+                el.addEventListener('click', () => {
+                    window.location.href = '/campsite-info';
+                });
 
                 // Create popup content with more details
                 const popupContent = `
@@ -248,7 +315,7 @@
                     .addTo(map);
             });
         });
-        </script>
-</body>
+        </script> 
 
-</html> 
+<%- include("templates/footer") %>
+
