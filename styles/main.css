@@ -133,10 +133,44 @@ body {
 .mapboxgl-ctrl-geocoder--input {
     padding: 8px !important;
     font-size: 16px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.mapboxgl-ctrl-geocoder--input:focus, .mapboxgl-ctrl-geocoder--input:active {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #95BF74 !important;
+    border: none !important;
 }
 
 .mapboxgl-ctrl-geocoder--icon-search {
     display: none !important;
+}
+
+/* Remove the black overlay */
+.mapboxgl-ctrl-geocoder--icon {
+    display: none !important;
+}
+
+.mapboxgl-ctrl-geocoder--icon-close {
+    display: none !important;
+}
+
+.mapboxgl-ctrl-geocoder--icon-loading {
+    display: none !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion {
+    padding: 8px 12px !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion-title {
+    font-weight: 500 !important;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion-address {
+    color: #666 !important;
 }
 
 /* Map Controls */
@@ -153,4 +187,60 @@ body {
 
 .mapboxgl-ctrl button {
     border-radius: 8px !important;
+}
+
+/* Location display styles */
+.location-display {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 6px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+    backdrop-filter: blur(10px);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure search suggestions appear above location display */
+.mapboxgl-ctrl-geocoder--suggestions {
+    z-index: 2 !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    margin-top: 4px !important;
+}
+
+.location-display i {
+    color: #95BF74;
+    font-size: 12px;
+}
+
+.weather-display {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 6px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+    backdrop-filter: blur(10px);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.weather-display i {
+    color: #95BF74;
+    font-size: 12px;
 } 
