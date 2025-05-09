@@ -17,3 +17,5 @@ In order to make this app work, please install the following modules:
 --> ejs
 --> joi
 --> bcrypt
+
+Add .env file

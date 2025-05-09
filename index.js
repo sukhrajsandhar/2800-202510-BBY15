@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const saltRounds = 12;
-const config = require('./config.js');
 
 const app = express();
 const port = process.env.PORT || 8888;
