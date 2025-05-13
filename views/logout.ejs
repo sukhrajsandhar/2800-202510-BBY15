@@ -24,7 +24,7 @@
     <nav id="navbarPlaceholder"></nav>
 
     <div class="container text-center mt-5">
-        <h2 class="mb-4" style="color: #3c6e47;">You’ve been logged out.</h2>
+        <h2 class="mb-4" style="color: #3c6e47;">You've been logged out.</h2>
         <p class="lead mb-4" style="color: #495057;">
             Thanks for exploring Wildpath! We hope to see you back on the campsites soon.
         </p>
@@ -37,6 +37,17 @@
 
     <!-- Simple Footer placeholder -->
     <nav id="footerPlaceholder"></nav>
+
+    <script>
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
+            center: [-123.1207, 49.1527],
+            zoom: 9
+        });
+        window.map = map;
+        window.mapboxgl = mapboxgl;
+    </script>
 
 </body>
 

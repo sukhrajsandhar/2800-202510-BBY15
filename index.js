@@ -3,6 +3,8 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
+const mongoose = require("mongoose");
+const Campsite = require("./models/Campsite");
 const saltRounds = 12;
 
 const app = express();
@@ -25,12 +27,27 @@ const { database } = require("./databaseConnection");
 
 const userCollection = database.db(mongodb_database).collection("users");
 
+// MongoDB connection
+mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('Connected to MongoDB');
+    console.log('Database:', mongoose.connection.db.databaseName);
+})
+.catch(err => {
+    console.error('Could not connect to MongoDB:', err);
+    process.exit(1); // Exit if we can't connect to the database
+});
+
 app.set("view engine", "ejs");
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/styles"));
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`,
@@ -287,184 +304,184 @@ app.get("/campsite-example", (req, res) => {
     res.render("campsite-example", { favCampExample });
 });
 
-app.get("/campsite-info", (req, res) => {
-    const campsite = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        address: "Unnamed Road, Squamish-Lillooet D, BC V0N 3Z0",
-        saved: "false",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-        facilities: ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
-        season: "Year-round",
-        difficulty: "Easy",
-        fees: {
-            camping: "$35/night",
-            dayUse: "$3/person"
-        },
-        amenities: [
-            "Flush Toilets",
-            "Drinking Water",
-            "Fire Pits",
-            "Picnic Tables",
-            "Boat Launch"
-        ]
-    };
-
-    const bookings = [
-        {
-            title: "Come camp with us!!",
-            dateStart: "2025-06-15",
-            dateEnd: "2025-06-18",
-            tents: 2,
-            people: 4,
-            summary: "Join us for a fun camping trip at Porteau Cove!",
-        },
-        {
-            title: "Weekend Getaway",
-            dateStart: "2025-07-01",
-            dateEnd: "2025-07-03",
-            tents: 1,
-            people: 2,
-            summary: "Escape the city for a relaxing weekend in nature.",
-        },
-        {
-            title: "Fishing Trip",
-            dateStart: "2025-09-05",
-            dateEnd: "2025-09-10",
-            tents: 2,
-            people: 4,
-            summary: "Join us for a fishing adventure at Porteau Cove!",
-        },
-    ];
-    res.render("campsite-info", { campsite, bookings });
+app.get("/campsite-info/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render('campsite-Info', { campsite, bookings: [] });
+    } catch (err) {
+        res.status(500).send('Error loading campsite info');
+    }
 });
 
-app.get("/api/campsites", (req, res) => {
-    const campsites = {
-        "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Porteau Cove Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.5,
-                    "reviews": 128,
-                    "description": "A scenic waterfront campground with stunning views of Howe Sound.",
-                    "facilities": ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
-                    "season": "Year-round",
-                    "difficulty": "Easy",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Picnic Tables",
-                        "Boat Launch"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/porteau-cove/"
+// Update the GET /api/campsites endpoint to use MongoDB
+app.get("/api/campsites", async (req, res) => {
+    try {
+        console.log('Fetching campsites from MongoDB...');
+        const campsites = await Campsite.find();
+        console.log(`Found ${campsites.length} campsites:`, campsites);
+        
+        // Transform the data to match the expected GeoJSON format
+        const geojsonCampsites = {
+            type: "FeatureCollection",
+            features: campsites.map(campsite => ({
+                type: "Feature",
+                properties: {
+                    _id: campsite._id,
+                    name: campsite.name,
+                    type: "campsite",
+                    rating: campsite.rating,
+                    reviews: campsite.reviews,
+                    description: campsite.description,
+                    facilities: campsite.amenities,
+                    season: campsite.season,
+                    difficulty: campsite.difficulty,
+                    fees: campsite.fees,
+                    amenities: campsite.amenities,
+                    reservation: campsite.reservation
                 },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.2375, 49.5575]
+                geometry: {
+                    type: "Point",
+                    coordinates: campsite.coordinates
                 }
+            }))
+        };
+        
+        console.log('Sending GeoJSON response:', geojsonCampsites);
+        res.json(geojsonCampsites);
+    } catch (error) {
+        console.error('Error fetching campsites:', error);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ error: 'Failed to fetch campsites' });
+    }
+});
+
+// Add trails endpoint with error handling
+app.get("/api/trails", (req, res) => {
+    try {
+        const trails = [
+            {
+                name: "Garibaldi Lake Trail",
+                coordinates: [-123.0017, 49.9500],
+                rating: 4.8,
+                reviews: 156,
+                description: "A challenging but rewarding hike to the stunning Garibaldi Lake.",
+                type: "Hiking",
+                difficulty: "Moderate",
+                length: "18 km",
+                elevation: "820 m",
+                time: "5-6 hours",
+                features: [
+                    "Lake Views",
+                    "Mountain Scenery",
+                    "Wildlife",
+                    "Camping Available"
+                ]
             },
             {
-                "type": "Feature",
-                "properties": {
-                    "name": "Alice Lake Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.3,
-                    "reviews": 95,
-                    "description": "Family-friendly campground surrounded by four lakes and mountain views.",
-                    "facilities": ["Camping", "Hiking", "Swimming", "Fishing", "Mountain Biking"],
-                    "season": "May-September",
-                    "difficulty": "Easy",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Hot Showers",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Swimming Area"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/alice-lake/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.0775, 49.7775]
-                }
+                name: "Stawamus Chief Trail",
+                coordinates: [-123.1500, 49.6800],
+                rating: 4.6,
+                reviews: 245,
+                description: "Popular hike to the iconic Stawamus Chief with three peaks to choose from.",
+                type: "Hiking",
+                difficulty: "Moderate",
+                length: "11 km",
+                elevation: "600 m",
+                time: "4-5 hours",
+                features: [
+                    "Summit Views",
+                    "Rock Scrambling",
+                    "Photo Opportunities"
+                ]
             },
             {
-                "type": "Feature",
-                "properties": {
-                    "name": "Garibaldi Lake",
-                    "type": "campsite",
-                    "rating": 4.8,
-                    "reviews": 156,
-                    "description": "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
-                    "facilities": ["Camping", "Hiking", "Photography", "Wildlife Viewing"],
-                    "season": "July-September",
-                    "difficulty": "Moderate",
-                    "fees": {
-                        "camping": "$10/night"
-                    },
-                    "amenities": [
-                        "Pit Toilets",
-                        "Food Storage",
-                        "Camping Pads"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/garibaldi/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.0017, 49.9500]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Golden Ears Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.7,
-                    "reviews": 312,
-                    "description": "One of BC's largest parks with diverse recreational opportunities.",
-                    "facilities": ["Camping", "Hiking", "Swimming", "Horseback Riding", "Mountain Biking"],
-                    "season": "Year-round",
-                    "difficulty": "Easy to Difficult",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Showers",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Picnic Tables",
-                        "Horse Trails"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/golden-ears/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-122.4775, 49.2775]
-                }
+                name: "Lynn Canyon Loop",
+                coordinates: [-123.0200, 49.3400],
+                rating: 4.4,
+                reviews: 189,
+                description: "Beautiful forest trail with suspension bridge and waterfalls.",
+                type: "Hiking",
+                difficulty: "Easy",
+                length: "3 km",
+                elevation: "100 m",
+                time: "1-2 hours",
+                features: [
+                    "Suspension Bridge",
+                    "Waterfalls",
+                    "Forest Trail",
+                    "Family Friendly"
+                ]
             }
-        ]
-    };
-    res.json(campsites);
+        ];
+        res.json(trails);
+    } catch (error) {
+        console.error('Error in /api/trails:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-app.get("*dummy", (req, res) => {
+// Add POST endpoint for /api/campsites
+app.post("/api/campsites", async (req, res) => {
+    try {
+        console.log('Received request body:', req.body);
+        const campsiteData = req.body;
+        
+        // Validate the campsite data
+        if (!campsiteData.name || !campsiteData.coordinates || !campsiteData.description || !campsiteData.type || !campsiteData.season || !campsiteData.difficulty || !campsiteData.fees) {
+            console.log('Missing required fields:', {
+                name: !campsiteData.name,
+                coordinates: !campsiteData.coordinates,
+                description: !campsiteData.description,
+                type: !campsiteData.type,
+                season: !campsiteData.season,
+                difficulty: !campsiteData.difficulty,
+                fees: !campsiteData.fees
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new campsite document
+        const campsite = new Campsite({
+            name: campsiteData.name,
+            coordinates: campsiteData.coordinates,
+            description: campsiteData.description,
+            type: campsiteData.type,
+            season: campsiteData.season,
+            difficulty: campsiteData.difficulty,
+            fees: campsiteData.fees,
+            amenities: campsiteData.amenities || [],
+            reservation: campsiteData.reservation || '',
+            place_name: campsiteData.place_name || '',
+            rating: campsiteData.rating || 0,
+            reviews: campsiteData.reviews || 0
+        });
+
+        console.log('Created campsite document:', campsite);
+
+        // Save the campsite to MongoDB
+        const savedCampsite = await campsite.save();
+        console.log('Successfully saved campsite:', savedCampsite);
+        res.status(201).json(savedCampsite);
+    } catch (error) {
+        console.error('Error saving campsite:', error);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ error: 'Failed to save campsite: ' + error.message });
+    }
+});
+
+// Add the correct catch-all middleware
+app.use((req, res) => {
     res.status(404);
     res.render("404");
 });

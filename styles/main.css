@@ -256,4 +256,30 @@ body {
 .weather-display i {
     color: #95BF74;
     font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .location-display,
+  .weather-display {
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    margin: 4px auto 0 auto !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 95vw !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
+    word-break: break-word !important;
+  }
+  .location-weather-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 98vw !important;
+    margin: 0 auto !important;
+    gap: 2px !important;
+  }
 } 
