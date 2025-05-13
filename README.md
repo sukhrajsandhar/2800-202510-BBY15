@@ -18,4 +18,8 @@ In order to make this app work, please install the following modules:
 --> joi
 --> bcrypt
 
+For your convenience: 
+
+npm i express express-session connect-mongo dotenv ejs joi bcrypt
+
 Add .env file
