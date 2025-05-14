@@ -9,6 +9,25 @@
             </a>
             <i id="heart" class="far fa-heart heart-icon" style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
         </div>
+        <!--Weather status-->
+        <% if (weather) { %>
+            <div
+                style="position: fixed; top: 1rem; right: 1rem; background-color: rgba(255,255,255,0.9); padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1000;">
+                <div class="d-flex align-items-center">
+                    <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon"
+                        style="width: 50px; height: 50px;">
+                    <div style="margin-left: 0.5rem;">
+                        <div><strong>
+                                <%= weather.temp %>°C
+                            </strong></div>
+                        <div style="text-transform: capitalize;">
+                            <%= weather.desc %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
         <!-- Banner Image -->
         <div style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
             <img
