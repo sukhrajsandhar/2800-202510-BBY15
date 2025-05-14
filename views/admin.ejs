@@ -1,0 +1,41 @@
+<%- include("templates/header") %>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Admin Panel - Manage Trusted Badges</h2>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Username</th>
+                <th>Trusted Badge</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.username %></td>
+                    <td>
+                        <% if (user.trusted) { %>
+                            <span class="badge bg-success">Trusted</span>
+                        <% } else { %>
+                            <span class="badge bg-secondary">Not Trusted</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <form action="/admin/badge" method="POST" class="d-inline">
+                            <input type="hidden" name="userId" value="<%= user._id %>">
+                            <input type="hidden" name="action" value="<%= user.trusted ? 'remove' : 'add' %>">
+                            <button type="submit" class="btn btn-<%= user.trusted ? 'danger' : 'primary' %>">
+                                <%= user.trusted ? 'Remove Badge' : 'Give Badge' %>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<%- include("templates/footer") %>
+
