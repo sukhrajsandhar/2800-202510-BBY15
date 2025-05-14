@@ -1,0 +1,36 @@
+body {
+    background-color: #659B5E;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 800;
+    color: #3E5C3A;
+}
+
+.quote {
+    font-style: italic;
+    color: #4D774E;
+}
+
+.btn-back {
+    background-color: #3E5C3A;
+    color: white;
+}
+
+.btn-back:hover {
+    background-color: #2E4730;
+    color: white;
+}
+
+.tent-gif {
+    max-width: 300px;
+    margin: 20px auto;
+}
