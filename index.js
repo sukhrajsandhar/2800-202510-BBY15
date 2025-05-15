@@ -244,10 +244,6 @@ app.get("/logout", (req, res) => {
     });
 });
 
-app.get("/pseudoCampsite", (req, res) => {
-    res.render("pseudoCampsite");
-});
-
 app.get("/createReview/:campsiteId", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
@@ -255,7 +251,7 @@ app.get("/createReview/:campsiteId", async (req, res) => {
             return res.status(404).send('Campsite not found');
         }
         res.render("createReview", {
-             campsiteId: req.params.campsiteId, campsiteName: campsite.name});
+            campsiteId: req.params.campsiteId, campsiteName: campsite.name});
     } catch (err) {
         res.status(500).send("Error loading review form");
     }
@@ -274,6 +270,13 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
     } catch (err) {
         res.status(500).send("Error loading alert form");
     }
+});
+
+// Might not be needed
+app.get("/createBooking/:campsiteId", async (req, res) => {
+    res.render("createBooking", {
+        campsiteId: req.params.campsiteId,
+    });
 });
 
 app.get("/booked", (req, res) => {
@@ -301,9 +304,32 @@ app.get("/profile", (req, res) => {
     res.render("profile", { user });
 });
 
+// Might not be needed
 app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");
 });
+
+
+
+app.get("/viewBookings", (req, res) => {
+    res.render("viewBookings", { campsite: null, bookings: [] });
+});
+
+////// Uncomment this section to enable viewing bookings for a specific campsite with mongoDB
+// app.get("/viewBookings/:campsiteId", async (req, res) => {
+//     try {
+//         const campsite = await Campsite.findById(req.params.campsiteId).lean();
+//         if (!campsite) {
+//             return res.status(404).send('Campsite not found');
+//         }
+//         const bookings = await Booking.find({ campsiteId: campsite._id }).lean();
+//         res.render("viewBookings", { campsite, bookings });
+//     } catch (err) {
+//         res.status(500).send("Error loading bookings");
+//     }
+// });
+
+
 
 app.get("/viewAlerts", (req, res) => {
     res.render("viewAlerts");
@@ -335,17 +361,50 @@ app.get("/campsite-example", (req, res) => {
     res.render("campsite-example", { favCampExample });
 });
 
+/**
+ * Sydney's Working Area!!!
+ */
 app.get("/campsite-info/:id", async (req, res) => {
     try {
-        const campsite = await Campsite.findById(req.params.id).lean();
+        const campsite = await Campsite.findById(req.params.id).lean(); 
+        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean(); // NOTE: must limit to 2 reviews
+        // const bookings = await Booking.find({ campsiteId: req.params.id }).lean();
+        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
-        res.render('campsite-Info', { campsite, bookings: [] });
+        res.render('campsite-Info', { campsite, review, bookings: [], alert });
+        console.log('Campsite:', campsite);
+        console.log('Reviews:', review);
+        console.log('Alerts:', alert);
     } catch (err) {
         res.status(500).send('Error loading campsite info');
     }
 });
+
+
+
+// //Original campsite-info route
+// app.get("/campsite-info/:id", async (req, res) => {
+//     try {
+//         const campsite = await Campsite.findById(req.params.id).lean();
+//         if (!campsite) {
+//             return res.status(404).send('Campsite not found');
+//         }
+//         res.render('campsite-Info', { campsite, bookings: [] });
+//     } catch (err) {
+//         res.status(500).send('Error loading campsite info');
+//     }
+// });
+
+
+/**
+ * End of Sydney's Working Area!!!
+ */
+
+
+
+
 
 // Update the GET /api/campsites endpoint to use MongoDB
 app.get("/api/campsites", async (req, res) => {
@@ -457,6 +516,37 @@ app.get("/api/trails", (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+/**
+ * Sydney's Working Area
+ */
+// app.get("/api/reviews", async (req, res) => {
+//     try {
+//         console.log('Fetching reviews from MongoDB...');
+//         const reviews = await Review.find();
+//         console.log(`Found ${reviews.length} reviews:`, reviews);
+
+        
+//         res.json(reviews);
+//     } catch (error) {
+//         console.error('Error fetching reviews:', error);
+//         res.status(500).json({ error: 'Failed to fetch reviews' });
+//     }
+// });
+
+// app.get("/api/alerts", async (req, res) => {
+//     try {
+//         const alerts = await Alert.find().lean();
+//         res.json(alerts);
+//     } catch (error) {
+//         console.error('Error fetching alerts:', error);
+//         res.status(500).json({ error: 'Failed to fetch alerts' });
+//     }
+// });
+
+
+/**
+ * End of Sydney's Working Area
+ */
 
 // Add POST endpoint for /api/campsites
 app.post("/api/campsites", async (req, res) => {
