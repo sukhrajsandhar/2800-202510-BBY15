@@ -17,9 +17,11 @@ In order to make this app work, please install the following modules:
 --> ejs
 --> joi
 --> bcrypt
+--> cohere-ai
+--> mongoose
 
 For your convenience: 
 
-npm i express express-session connect-mongo dotenv ejs joi bcrypt
+npm i express express-session connect-mongo dotenv ejs joi bcrypt cohere-ai mongoose
 
 Add .env file

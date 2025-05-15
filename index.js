@@ -328,7 +328,7 @@ app.get("/profile", async (req, res) => {
     } catch (err) {
         console.error("Error fetching user data:", err);
         res.status(500).send("Internal Server Error");
-  });
+  };
   
   app.post("/profile/picture", async (req, res) => {
     if (!req.session.authenticated || !req.session.email) {
@@ -392,7 +392,7 @@ app.post("/update-profile", async (req, res) => {
 
 app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");
-    }
+    })
 });
 
 // Admin panel route
