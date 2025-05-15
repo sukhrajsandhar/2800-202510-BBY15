@@ -274,6 +274,41 @@ app.get("/profile", (req, res) => {
     res.render("profile", { user });
 });
 
+// Admin panel route
+app.get("/admin", async (req, res) => {
+    try {
+        //fetch all user from the database
+        const users = await userCollection.find().toArray(); 
+        // render the admin.ejs page with the users
+        res.render("admin", { users }); 
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).send("Internal Server Error /admin");
+    }
+});
+
+//Admin Trusted badge
+app.post("/toggle-trusted", async (req, res) => {
+    const userId = req.body.userId;
+
+    try {
+        const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+
+        if (user) {
+            const newTrustedStatus = !user.isTrusted;
+            await userCollection.updateOne(
+                { _id: new mongoose.Types.ObjectId(userId) },
+                { $set: { isTrusted: newTrustedStatus } }
+            );
+        }
+
+        res.redirect("/admin"); // Redirect back to the admin panel
+    } catch (err) {
+        console.error("Error toggling trusted badge:", err);
+        res.status(500).send("Internal Server Error /toggle-trusted");
+    }
+});
+
 app.get("/createAlert", (req, res) => {
     res.render("createAlert");
 });
