@@ -34,7 +34,7 @@
     border-radius: 10px;
 }
 
-/*Beginning of experiment*/
+
 .card-container {
     max-height: 200px;
     overflow-y: auto;
@@ -64,7 +64,7 @@
 .card p {
     margin: 5px 0 0;
 }
-/* End of experiment */
+
 
 @media (min-width: 100px) and (max-width: 700px) {
     .mb-4 {
@@ -78,5 +78,27 @@
         border-radius: 10px;
         min-width: 100% !important;
         height: auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .container, .card {
+        max-width: 100% !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    .card {
+        padding: 1rem !important;
+    }
+    .back-link, .heart-icon {
+        font-size: 1.5rem !important;
+    }
+    #campsiteImage {
+        border-radius: 12px !important;
+        min-height: 120px !important;
+        max-height: 200px !important;
+    }
+    .card-container .card {
+        padding: 0.75rem !important;
     }
 }
