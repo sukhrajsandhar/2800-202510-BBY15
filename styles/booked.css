@@ -124,3 +124,7 @@ h3 {
     background-color: rgb(189, 211, 175);
     overflow: auto;
   }
+
+  body, html {
+    background-color: rgb(189, 211, 175);
+  }

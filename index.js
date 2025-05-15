@@ -309,91 +309,63 @@ app.get("/booked", (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
+  if (!req.session.authenticated) {
+    return res.redirect("/login");
+  }
 
-    if (!req.session.authenticated) {
-        return res.redirect("/login"); // Redirect to login if the user is not authenticated
-    }
-  
-    var user = await userCollection.findOne({ email: req.session.email });
-    if (!user) return res.status(404).send("User not found");
-  
+  const user = await userCollection.findOne({ email: req.session.email });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
 
-    try {
-        const user = await userCollection.findOne({ email: req.session.email });
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+  res.render("profile", { user });
+});
 
-        res.render("profile", { user });
-    } catch (err) {
-        console.error("Error fetching user data:", err);
-        res.status(500).send("Internal Server Error");
-  };
-  
-  app.post("/profile/picture", async (req, res) => {
-    if (!req.session.authenticated || !req.session.email) {
-      return res.redirect("/login");
-    }
-  
-    const avatar = req.body.avatar;
-    if (!avatar) {
-      return res.status(400).send("No avatar selected.");
-    }
-  
-    try {
-      await userCollection.updateOne(
-        { email: req.session.email },
-        { $set: { profileImage: `/images/avatars/${avatar}` } }
-      );
-  
-      res.redirect("/profile");
-    } catch (err) {
-      console.error("Avatar update error:", err);
-      res.status(500).send("Failed to update avatar.");
-    }
-  });
-  
+app.post("/profile/picture", async (req, res) => {
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+
+  const avatar = req.body.avatar;
+  if (!avatar) {
+    return res.status(400).send("No avatar selected.");
+  }
+
+  await userCollection.updateOne(
+    { email: req.session.email },
+    { $set: { profileImage: `/images/avatars/${avatar}` } }
+  );
+
+  res.redirect("/profile");
+});
+
 app.post("/update-profile", async (req, res) => {
-    // make sure they’re logged in
-    if (!req.session.authenticated || !req.session.email) {
-      return res.redirect("/login");
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+
+  const { firstName, lastName, email, bio, userLevel } = req.body;
+
+  await userCollection.updateOne(
+    { email: req.session.email },
+    {
+      $set: {
+        firstName,
+        lastName,
+        email,
+        bio: bio || "",
+        ...(userLevel ? { userLevel } : {}),
+      },
     }
-  
-    // take all the information from the user input
-    var { firstName, lastName, email, bio, userLevel } = req.body;
-  
-    try {
-      // update the DB document
-      await userCollection.updateOne(
-        { email: req.session.email },  
-        {
-          $set: {
-            firstName,
-            lastName,
-            email,
-            bio: bio || "",
-            // only set userLevel if it's been updated
-            ...(userLevel ? { userLevel } : {})
-          }
-        }
-      );
-  
-      // if the user changed their email, session will update
-      req.session.email = email;
-  
-      // send them back to the profile page
-      res.redirect("/profile");
-    } catch (err) {
-      console.error("Profile update error:", err);
-      res.status(500).render("error", { message: "Could not update profile." });
-    }
-  });
-  
+  );
+
+  req.session.email = email;
+  res.redirect("/profile");
+});
 
 app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");
-    })
-});
+    });
 
 // Admin panel route
 app.get("/admin", async (req, res) => {
