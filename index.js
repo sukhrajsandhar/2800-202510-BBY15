@@ -305,6 +305,14 @@ app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");
 });
 
+app.get("/viewAlerts", (req, res) => {
+    res.render("viewAlerts");
+});
+
+app.get("/viewReviews", (req, res) => {
+    res.render("viewReviews");
+});
+
 app.get("/favourites", (req, res) => {
     const favCampsites = {
         id: 1,
