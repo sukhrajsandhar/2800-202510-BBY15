@@ -309,25 +309,16 @@ app.get("/booked", (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
-
-    if (!req.session.authenticated) {
-        return res.redirect("/login"); // Redirect to login if the user is not authenticated
+<<<<<<< HEAD
+    // user authentication
+    if (!req.session.authenticated || !req.session.email) {
+      return res.redirect("/login");
     }
   
     var user = await userCollection.findOne({ email: req.session.email });
     if (!user) return res.status(404).send("User not found");
   
-
-    try {
-        const user = await userCollection.findOne({ email: req.session.email });
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-
-        res.render("profile", { user });
-    } catch (err) {
-        console.error("Error fetching user data:", err);
-        res.status(500).send("Internal Server Error");
+    res.render("profile", { user });
   });
   
   app.post("/profile/picture", async (req, res) => {
@@ -389,9 +380,21 @@ app.post("/update-profile", async (req, res) => {
     }
   });
   
+=======
+    if (!req.session.authenticated) {
+        return res.redirect("/login"); // Redirect to login if the user is not authenticated
+    }
 
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
+    try {
+        const user = await userCollection.findOne({ email: req.session.email });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.render("profile", { user });
+    } catch (err) {
+        console.error("Error fetching user data:", err);
+        res.status(500).send("Internal Server Error");
     }
 });
 
@@ -428,6 +431,15 @@ app.post("/toggle-trusted", async (req, res) => {
         console.error("Error toggling trusted badge:", err);
         res.status(500).send("Internal Server Error /toggle-trusted");
     }
+});
+
+app.get("/createAlert", (req, res) => {
+    res.render("createAlert");
+});
+>>>>>>> kevin_admin_page
+
+app.get("/bookingAvailability", (req, res) => {
+    res.render("bookingAvailability");
 });
 
 app.get("/viewAlerts", (req, res) => {

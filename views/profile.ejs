@@ -46,8 +46,16 @@
                     
                     <div class="text-center mt-3">
                         <span class="bg-secondary p-1 px-4 rounded text-white"><%= user.userLevel || 'Noob Camper' %></span>
+<<<<<<< HEAD
                         
                         <h5 class="mt-2 mb-0"><%= user.firstName %> <%= user.lastName %></h5>
+=======
+                        <h5 class="mt-2 mb-0"><%= user.firstName %> <%= user.lastName %>
+                        <% if (user.isTrusted) { %>
+                            <span class="badge bg-success">Trusted</span>
+                        <% } %>
+                        </h5>
+>>>>>>> kevin_admin_page
                         <span>About Yourself</span>
                         
                         <div class="px-4 mt-1">
