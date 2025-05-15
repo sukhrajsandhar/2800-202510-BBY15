@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const axios = require('axios'); // Ensure axios is installed: npm install axios
 const Campsite = require("./models/Campsite");
 const saltRounds = 12;
 
@@ -304,15 +305,42 @@ app.get("/campsite-example", (req, res) => {
     res.render("campsite-example", { favCampExample });
 });
 
+// Added weather info to the campsite-info page - Kevin
 app.get("/campsite-info/:id", async (req, res) => {
     try {
+        // Fetch campsite details from the database
         const campsite = await Campsite.findById(req.params.id).lean();
         if (!campsite) {
-            return res.status(404).send('Campsite not found');
+            return res.status(404).send("Campsite not found");
         }
-        res.render('campsite-Info', { campsite, bookings: [] });
+
+        // Initialize weather data
+        let weather = null;
+
+        // Fetch weather data using campsite coordinates
+        const { latitude, longitude } = campsite.coordinates || {};
+        if (latitude && longitude) {
+            try {
+                const apiKey = process.env.OPENWEATHER_API_KEY; // Ensure this is set in your .env file
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+                const weatherResponse = await axios.get(weatherUrl);
+                const weatherData = weatherResponse.data;
+
+                weather = {
+                    icon: weatherData.weather[0].icon,
+                    temp: weatherData.main.temp,
+                    desc: weatherData.weather[0].description,
+                };
+            } catch (weatherError) {
+                console.error("Error fetching weather data:", weatherError.message);
+            }
+        }
+
+        // Render the campsite-Info page with campsite, weather, and bookings data
+        res.render("campsite-Info", { campsite, weather, bookings: [] });
     } catch (err) {
-        res.status(500).send('Error loading campsite info');
+        console.error("Error loading campsite info:", err.message);
+        res.status(500).send("Error loading campsite info");
     }
 });
 
