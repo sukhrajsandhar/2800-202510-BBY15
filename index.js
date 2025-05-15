@@ -262,16 +262,22 @@ app.get("/booked", (req, res) => {
     res.render("booked", { campsite });
 });
 
-app.get("/profile", (req, res) => {
-    const user = {
-        firstName: "Margot",
-        lastName: "Robbie",
-        email: "margot@example.com",
-        bio: "",
-        profileImage: "",
-        userLevel: "",
-    };
-    res.render("profile", { user });
+app.get("/profile", async (req, res) => {
+    if (!req.session.authenticated) {
+        return res.redirect("/login"); // Redirect to login if the user is not authenticated
+    }
+
+    try {
+        const user = await userCollection.findOne({ email: req.session.email });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.render("profile", { user });
+    } catch (err) {
+        console.error("Error fetching user data:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 // Admin panel route
