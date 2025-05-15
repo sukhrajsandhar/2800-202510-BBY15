@@ -68,6 +68,23 @@ app.use(
     })
 );
 
+// after you set up express, sessions, this will fetch document of the user 
+// ex: their profile picture 
+// global injection middleware 
+// Store that user object on res.locals.user, anything becomes automatically 
+// available to all EJS templates under the username
+
+app.use(async (req, res, next) => {
+    if (req.session.authenticated && req.session.email) {
+      const user = await userCollection.findOne({ email: req.session.email });
+      res.locals.user = user;
+    } else {
+      res.locals.user = null;
+    }
+    next();
+  });
+  
+
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
 });
@@ -289,17 +306,41 @@ app.get("/booked", (req, res) => {
     res.render("booked", { campsite });
 });
 
-app.get("/profile", (req, res) => {
-    const user = {
-        firstName: "Margot",
-        lastName: "Robbie",
-        email: "margot@example.com",
-        bio: "",
-        profileImage: "",
-        userLevel: "",
-    };
+app.get("/profile", async (req, res) => {
+    // user authentication
+    if (!req.session.authenticated || !req.session.email) {
+      return res.redirect("/login");
+    }
+  
+    var user = await userCollection.findOne({ email: req.session.email });
+    if (!user) return res.status(404).send("User not found");
+  
     res.render("profile", { user });
-});
+  });
+  
+  app.post("/profile/picture", async (req, res) => {
+    if (!req.session.authenticated || !req.session.email) {
+      return res.redirect("/login");
+    }
+  
+    const avatar = req.body.avatar;
+    if (!avatar) {
+      return res.status(400).send("No avatar selected.");
+    }
+  
+    try {
+      await userCollection.updateOne(
+        { email: req.session.email },
+        { $set: { profileImage: `/images/avatars/${avatar}` } }
+      );
+  
+      res.redirect("/profile");
+    } catch (err) {
+      console.error("Avatar update error:", err);
+      res.status(500).send("Failed to update avatar.");
+    }
+  });
+  
 
 app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");

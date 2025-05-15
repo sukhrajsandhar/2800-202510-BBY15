@@ -61,20 +61,20 @@
                         </div>   
 
                         <form class="p-3 px-2" action="/update-profile" method="POST" id="profileForm">
-                            <div class="form-group">
+                            <div class="form-group"> First Name
                                 <input type="text" class="form-control" id="firstName" name="firstName" 
                                     value="<%= user.firstName %>" placeholder="Enter First Name">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"> Last Name
                                 <input type="text" class="form-control" id="lastName" name="lastName"
                                     value="<%= user.lastName %>" placeholder="Enter Last Name">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"> Email
                                 <input type="email" class="form-control" id="email" name="email"
                                     value="<%= user.email %>" placeholder="Enter Email">
                             </div> 
                             
-                            <div class="form-group mt-3">
+                            <div class="form-group mt-3"> About Yourself
                                 <textarea class="form-control" id="bio" name="bio" 
                                     placeholder="Tell us about yourself"><%= user.bio %></textarea>
                             </div>

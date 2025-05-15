@@ -55,8 +55,11 @@
         <div class="profile-header position-fixed top-0 end-0 m-3 d-flex align-items-center" style="z-index: 9999;">
             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
                 <a href="/profile">
-                    <img src="/avatar.png" alt="Profile Icon" style="width: 40px; height: 40px; object-fit: cover;">
-                </a>
+                    <img 
+                      src="<%= user && user.profileImage ? user.profileImage : '/images/avatars/avatar1.png' %>" 
+                      alt="Profile Icon" 
+                      style="width: 40px; height: 40px; object-fit: cover;">
+                  </a>                  
             </div>
             <h4 class="ms-2 mb-0 text-black">Profile</h4>
         </div>
