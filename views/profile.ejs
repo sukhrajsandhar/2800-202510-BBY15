@@ -7,8 +7,8 @@
             <div class="col-md-7">
                 <div class="card p-3 py-4">
                     <div class="text-center">
-                        <img src="<%= user.profileImage || 'margot.png' %>" width="100" class="rounded-circle">
-                        </div>
+                        <img src="<%= user.profileImage || '/images/avatars/avatar1.png' %>" width="100" class="rounded-circle">
+                    </div>
                         <div class="d-flex justify-content-center">
                         <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             Edit
@@ -23,8 +23,9 @@
                                 </div>
                                 <div class="modal-body">
                                     <form action="/profile/picture" method="POST" id="avatarForm">
-                                        <div class="d-flex flex-wrap justify-content-center gap-3">
-                                          <% const avatars = ['avatar1.png', 'avatar2.png', 'avatar3.png']; %>
+                                        <div class="d-flex flex-wrap justify-content-center gap-5">
+                                          <% const avatars = ['avatar1.png', 'avatar2.png', 'avatar3.png', 
+                                          'avatar4.png', 'avatar5.png', 'avatar6.png']; %>
                                           <% avatars.forEach(avatar => { %>
                                             <label class="avatar-option">
                                               <input type="radio" name="avatar" value="<%= avatar %>" style="display:none;" required>
@@ -36,7 +37,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="submit" class="btn btn-primary" form="avatarForm">Save changes</button>
                                 </div>
                                 </div>
                             </div>
@@ -59,7 +60,7 @@
                             <button class="btn btn-primary px-4 ms-3" id="contact">Contact</button>
                         </div>   
 
-                        <form class="p-3 px-2" action="/update-profile" method="POST">
+                        <form class="p-3 px-2" action="/update-profile" method="POST" id="profileForm">
                             <div class="form-group">
                                 <input type="text" class="form-control" id="firstName" name="firstName" 
                                     value="<%= user.firstName %>" placeholder="Enter First Name">
