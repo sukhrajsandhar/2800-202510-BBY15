@@ -1,4 +1,4 @@
-<%- include('templates/header', { cssFiles: ['/styles.css'] }) %>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css'] }) %>
 
     <!-- Template cards for database -->
     <!-- <div class="card mb-3">
@@ -19,13 +19,13 @@
     </div> -->
 
     <!-- Scrollable alerts container -->
-    <div class="container" style="max-height: calc(100vh - 150px); overflow-y: auto;">
+    <div class="container mt-5" style="max-height: calc(100vh - 150px); overflow-y: auto;">
         <!-- Placeholder card #1 -->
-        <div class="card mb-3">
+        <div class="card mt-5 mb-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex align-items-center">
-                        <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;"></div>
+                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar1.png"></div>
                         <div class="ms-2">
                             <h6 class="mb-0">Hiker123</h6>
                             <small class="text-muted">Trail Obstruction</small>
@@ -42,7 +42,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex align-items-center">
-                        <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;"></div>
+                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar2.png"></div>
                         <div class="ms-2">
                             <h6 class="mb-0">NatureWatcher</h6>
                             <small class="text-muted">Wildlife Sighting</small>
@@ -59,7 +59,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex align-items-center">
-                        <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;"></div>
+                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar4.png"></div>
                         <div class="ms-2">
                             <h6 class="mb-0">CamperGal</h6>
                             <small class="text-muted">Weather Warning</small>

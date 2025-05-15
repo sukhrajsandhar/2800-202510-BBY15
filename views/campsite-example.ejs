@@ -1,19 +1,8 @@
 <%- include('templates/header.ejs', { cssFiles: ['booked.css'] }) %>
 
 
-<main
-            class="main"
-            style="
-                position: absolute;
-                top: 60px;
-                left: 0;
-                right: 0;
-                padding-bottom: 10%;
-                background-color: rgb(85, 111, 68);
-                overflow: auto; /* allows scrolling if content overflows */
-            "
-        >
-            <div class="container mt-5">
+<main class="main">
+            <div class="container three">
                 <h1 class="mb-3">Porteau Cove</h1>
                 <img
                     src="<%= favCampExample.imageUrl %>"

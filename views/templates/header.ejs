@@ -15,6 +15,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link rel="stylesheet" href="footer.css"/>
 
     <!-- Mapbox GL JS -->
@@ -23,7 +25,6 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
 
-    <!-- Your styles -->
     <% if (locals.cssFiles) { %>
         <% for (let css of cssFiles) { %>
             <link rel="stylesheet" href="<%= css %>" />
@@ -33,33 +34,27 @@
 </head>
 
 <body>
-    <!-- Top bar header -->
+    
     <header class="wildpath-header">
-        <div class="container d-flex align-items-center" style="height: 100%">
-            <div style="
-                 width: 40px;
-                  height: 40px;
-                   border-radius: 50%;
-                   overflow: hidden;">
-                <a href="/">
-                    <img src="/wildpath.png" alt="Logo"
-                        style="width: 40px; height: 40px; object-fit: cover;">
-                </a>
-            </div>
-
-            <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
-        </div>
-        
-    </header>
-
-        <div class="profile-header position-fixed top-0 end-0 m-3 d-flex align-items-center" style="z-index: 9999;">
+        <div class="container position-absolute align-items-center" style="height: 100%">
+          <a href="/" class="d-flex align-items-center text-decoration-none" style="color: inherit;">
             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
-                <a href="/profile">
-                    <img 
-                      src="<%= user && user.profileImage ? user.profileImage : '/images/avatars/avatar1.png' %>" 
-                      alt="Profile Icon" 
-                      style="width: 40px; height: 40px; object-fit: cover;">
-                  </a>                  
+              <img class="logo"src="/wildpath.png" alt="Logo" style="width: 40px; height: 40px; object-fit: cover;">
             </div>
-            <h4 class="ms-2 mb-0 text-black">Profile</h4>
+            <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
+          </a>
         </div>
+      </header>
+
+    <a href="/profile" class="text-decoration-none">
+        <div class="profile-header position-absolute top-0 end-0 d-flex align-items-center" style="z-index: 9999;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+            <img 
+              src="<%= user && user.profileImage ? user.profileImage : '/images/avatars/avatar1.png' %>" 
+              alt="Profile Icon" 
+              style="width: 40px; height: 40px; object-fit: cover;">
+          </div>
+          <h4 class="ms-2 mb-0 text-white">Profile</h4>
+        </div>
+      </a>
+      

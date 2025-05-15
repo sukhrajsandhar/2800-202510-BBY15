@@ -3,6 +3,7 @@
     color: #283f3b;
     cursor: pointer;
     transition: transform 0.4s;
+    margin: 1%;
 }
 
 .heart-icon:hover {
@@ -15,6 +16,7 @@
     color: #283f3b;
     cursor: pointer;
     transition: transform 0.4s;
+    margin-left: 25%;
 }
 
 .back-icon:hover {
@@ -29,12 +31,17 @@
 
 .img-fluid {
     float: right;
-    margin: 1rem; /* spacing around the image */
+    margin: 1rem;
     max-width: 40%;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
 }
 
-/*Beginning of experiment*/
+.img-fluid:hover {
+    transform: scale(1.05);
+}
+
 .card-container {
     max-height: 200px;
     overflow-y: auto;
@@ -80,3 +87,56 @@
         height: auto;
     }
 }
+
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out both;
+  }
+
+  .campsite-info {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .section-title {
+    font-weight: 600;
+    font-size: 20px;
+    padding-bottom: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .info-grid {
+    margin-top: 12px;
+  }
+  
+  .info-item {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+  }
+  
+  .campsite-info .material-icons {
+    color: #607d8b;
+  }
+  
+  ul.columns {
+    column-count: 2;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+  }
+ 

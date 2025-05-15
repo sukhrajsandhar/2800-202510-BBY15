@@ -1,0 +1,55 @@
+.card {
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(45, 63, 49, 0.15);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+
+.form-label {
+    font-weight: 600;
+    color: #2e4739;
+    margin-bottom: 0.5rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #7ea64b;
+    outline: none;
+    box-shadow: 0 0 8px rgba(126, 166, 75, 0.4);
+}
+
+.card-header {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.card-body {
+    max-height: 400px; 
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #556F44 transparent;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}

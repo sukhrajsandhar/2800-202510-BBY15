@@ -341,6 +341,42 @@ app.get("/profile", async (req, res) => {
     }
   });
   
+app.post("/update-profile", async (req, res) => {
+    // make sure they’re logged in
+    if (!req.session.authenticated || !req.session.email) {
+      return res.redirect("/login");
+    }
+  
+    // take all the information from the user input
+    var { firstName, lastName, email, bio, userLevel } = req.body;
+  
+    try {
+      // update the DB document
+      await userCollection.updateOne(
+        { email: req.session.email },  
+        {
+          $set: {
+            firstName,
+            lastName,
+            email,
+            bio: bio || "",
+            // only set userLevel if it's been updated
+            ...(userLevel ? { userLevel } : {})
+          }
+        }
+      );
+  
+      // if the user changed their email, session will update
+      req.session.email = email;
+  
+      // send them back to the profile page
+      res.redirect("/profile");
+    } catch (err) {
+      console.error("Profile update error:", err);
+      res.status(500).render("error", { message: "Could not update profile." });
+    }
+  });
+  
 
 app.get("/bookingAvailability", (req, res) => {
     res.render("bookingAvailability");
