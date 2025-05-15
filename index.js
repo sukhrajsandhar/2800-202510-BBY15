@@ -6,6 +6,8 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const Campsite = require("./models/Campsite");
 const saltRounds = 12;
+const { CohereClient } = require('cohere-ai');
+const cohere = new CohereClient({ apiKey: process.env.COHERE_API_KEY });
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -313,6 +315,22 @@ app.get("/campsite-info/:id", async (req, res) => {
         res.render('campsite-Info', { campsite, bookings: [] });
     } catch (err) {
         res.status(500).send('Error loading campsite info');
+    }
+});
+
+app.get('/api/funfact/:campsiteName', async (req, res) => {
+    try {
+        const campsiteName = req.params.campsiteName;
+        const prompt = `Tell me a unique, short camping fact related to nature or this place: ${campsiteName}. Only 1 sentence! Maximum 30 words.`;
+        const response = await cohere.generate({
+            model: 'command-r-plus',
+            prompt: prompt,
+            max_tokens: 40,
+            temperature: 0.7,
+        });
+        res.json({ funFact: response.generations[0].text.trim() });
+    } catch (err) {
+        res.status(500).json({ funFact: "Could not generate fun fact." });
     }
 });
 

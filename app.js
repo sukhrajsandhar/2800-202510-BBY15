@@ -1,10 +1,12 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
 const app = express();
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/camping_app', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/campsite-app', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

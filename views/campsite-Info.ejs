@@ -51,6 +51,23 @@
                         <strong>Amenities:</strong>
                         <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
                     </div>
+                    <!-- Fun Fact Section -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h5><i class="fas fa-lightbulb text-warning"></i> Fun Fact</h5>
+                        <p id="funFact">Loading fun fact...</p>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    document.getElementById("funFact").textContent = data.funFact;
+                                })
+                                .catch(() => {
+                                    document.getElementById("funFact").textContent = "Could not load fun fact.";
+                                });
+                        });
+                    </script>
                 </div>
             </div>
         </div>
