@@ -34,22 +34,13 @@
 
 <body>
     <!-- Top bar header -->
-    <header style="
-                background-color: #95bf74;
-                height: 60px;
-                width: 100%;
-                position: fixed;
-                top: 0;
-                left: 0;
-                z-index: 9999;
-            ">
+    <header class="wildpath-header">
         <div class="container d-flex align-items-center" style="height: 100%">
             <div style="
                  width: 40px;
                   height: 40px;
                    border-radius: 50%;
-                   overflow: hidden;
-              ">
+                   overflow: hidden;">
                 <a href="/">
                     <img src="/wildpath.png" alt="Logo"
                         style="width: 40px; height: 40px; object-fit: cover;">
@@ -58,4 +49,14 @@
 
             <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
         </div>
+        
     </header>
+
+        <div class="profile-header position-fixed top-0 end-0 m-3 d-flex align-items-center" style="z-index: 9999;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                <a href="/profile">
+                    <img src="/avatar.png" alt="Profile Icon" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+            </div>
+            <h4 class="ms-2 mb-0 text-black">Profile</h4>
+        </div>

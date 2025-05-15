@@ -90,3 +90,7 @@ body{
     height:40px;
     background-color:#659B5E;
 }
+
+.btn {
+    width: 20%;
+}
