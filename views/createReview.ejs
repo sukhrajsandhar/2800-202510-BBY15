@@ -1,127 +1,162 @@
 <%- include("templates/header") %>
 
-<body>
-    <!-- Top bar header -->
-    <header style="background-color: #95BF74; height: 60px; width: 100%; position: fixed; top: 0; left: 0;">
-        <div class="container d-flex align-items-center" style="height: 100%;">
-            <!-- Profile picture placeholder -->
-            <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;"></div>
-            <!-- App name -->
-            <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
-        </div>
-    </header>
+        <div class="container" style="margin-top: 80px; margin-bottom: 100px;">
+            <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7;">
+                <div class="card-header text-center" style="background-color: #95BF74;">
+                    <h5 class="mb-0">Review for <%= campsiteName %>
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 675px; overflow-y: auto;">
+                    <form id="reviewForm">
+                        <!-- Campsite name (placeholder) -->
+                        <div class="mb-3">
+                            <label class="form-label">Campsite Name</label>
+                            <input type="text" class="form-control" placeholder="<%= campsiteName %>" disabled>
+                        </div>
 
-    <div class="container" style="margin-top: 80px; margin-bottom: 100px;">
-        <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7;">
-            <div class="card-header text-center" style="background-color: #95BF74;">
-                <h5 class="mb-0">Campsite Review</h5>
-            </div>
-            <div class="card-body" style="max-height: 675px; overflow-y: auto;">
-                <form>
-                    <!-- Campsite name (placeholder) -->
-                    <div class="mb-3">
-                        <label class="form-label">Campsite Name</label>
-                        <input type="text" class="form-control" placeholder="Example Campsite">
-                    </div>
+                        <!-- Overall rating -->
+                        <div class="mb-3">
+                            <label class="form-label">Overall Rating</label>
+                            <select class="form-select" id="overallRating">
+                                <option value="1">⭐☆☆☆☆</option>
+                                <option value="2">⭐⭐☆☆☆</option>
+                                <option value="3">⭐⭐⭐☆☆</option>
+                                <option value="4">⭐⭐⭐⭐☆</option>
+                                <option value="5">⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
 
-                    <!-- Overall rating -->
-                    <div class="mb-3">
-                        <label class="form-label">Overall Rating</label>
-                        <select class="form-select">
-                            <option>⭐☆☆☆☆</option>
-                            <option>⭐⭐☆☆☆</option>
-                            <option>⭐⭐⭐☆☆</option>
-                            <option>⭐⭐⭐⭐☆</option>
-                            <option>⭐⭐⭐⭐⭐</option>
-                        </select>
-                    </div>
+                        <!-- Date visited -->
+                        <div class="mb-3">
+                            <label class="form-label">Date Visited</label>
+                            <input type="date" class="form-control" id="dateVisited" value="2025-01-01">
+                        </div>
 
-                    <!-- Date visited -->
-                    <div class="mb-3">
-                        <label class="form-label">Date Visited</label>
-                        <input type="date" class="form-control" value="2025-01-01">
-                    </div>
+                        <!-- Electricity/Water hookups -->
+                        <div class="mb-3">
+                            <label class="form-label">Electricity/Water Hookups</label>
+                            <select class="form-select" id="electricityWaterHookups">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Electricity/Water hookups -->
-                    <div class="mb-3">
-                        <label class="form-label">Electricity/Water Hookups</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Dog Friendly -->
+                        <div class="mb-3">
+                            <label class="form-label">Dog Friendly</label>
+                            <select class="form-select" id="dogFriendly">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Dog Friendly -->
-                    <div class="mb-3">
-                        <label class="form-label">Dog Friendly</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Picnic tables -->
+                        <div class="mb-3">
+                            <label class="form-label">Picnic Tables</label>
+                            <select class="form-select" id="picnicTables">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Picnic tables -->
-                    <div class="mb-3">
-                        <label class="form-label">Picnic Tables</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Fire pits/grills -->
+                        <div class="mb-3">
+                            <label class="form-label">Fire Pits/Grills</label>
+                            <select class="form-select" id="firePitsGrills">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Fire pits/grills -->
-                    <div class="mb-3">
-                        <label class="form-label">Fire Pits/Grills</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Cell service -->
+                        <div class="mb-3">
+                            <label class="form-label">Cell Service</label>
+                            <select class="form-select" id="cellService">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Cell service -->
-                    <div class="mb-3">
-                        <label class="form-label">Cell Service</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Trash/Recycle bins -->
+                        <div class="mb-3">
+                            <label class="form-label">Trash/Recycle Bins</label>
+                            <select class="form-select" id="trashRecycleBins">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </div>
 
-                    <!-- Trash/Recycle bins -->
-                    <div class="mb-3">
-                        <label class="form-label">Trash/Recycle Bins</label>
-                        <select class="form-select">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
+                        <!-- Washrooms -->
+                        <div class="mb-3">
+                            <label class="form-label">Washrooms</label>
+                            <select class="form-select" id="washrooms">
+                                <option>Public</option>
+                                <option>Portable</option>
+                                <option>None</option>
+                            </select>
+                        </div>
 
-                    <!-- Washrooms -->
-                    <div class="mb-3">
-                        <label class="form-label">Washrooms</label>
-                        <select class="form-select">
-                            <option>Public</option>
-                            <option>Portable</option>
-                            <option>None</option>
-                        </select>
-                    </div>
+                        <!-- Additional Comments -->
+                        <div class="mb-3">
+                            <label class="form-label">Additional Comments</label>
+                            <textarea class="form-control" rows="3" id="additionalComments"
+                                placeholder="Type your review details here..."></textarea>
+                        </div>
 
-                    <!-- Text box -->
-                    <div class="mb-3">
-                        <label class="form-label">Additional Comments</label>
-                        <textarea class="form-control" rows="3"
-                            placeholder="Type your review details here..."></textarea>
-                    </div>
+                        <!-- Hidden campsiteId (ensure this is in your form) -->
+                        <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
 
-                    <!-- Submit and Cancel buttons -->
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                        <a href="/" class="btn" style="background-color: #95BF74; color: black;">Cancel</a>
-                        <button type="submit" class="btn" style="background-color: #95BF74; color: black;">Submit
-                            Review</button>
-                    </div>
-                </form>
+                        <!-- Submit and Cancel buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <a href="/campsite-info/<%= campsiteId %>" class="btn"
+                                style="background-color: #95BF74; color: black;">Cancel</a>
+                            <button type="submit" class="btn" style="background-color: #95BF74; color: black;">Submit
+                                Review</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-<%- include("templates/footer") %>
+        <script>
+            document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = {
+                    campsiteId: document.getElementById('campsiteId').value,
+                    overallRating: document.getElementById('overallRating').value,
+                    dateVisited: document.getElementById('dateVisited').value,
+                    electricityWaterHookups: document.getElementById('electricityWaterHookups').value,
+                    dogFriendly: document.getElementById('dogFriendly').value,
+                    picnicTables: document.getElementById('picnicTables').value,
+                    firePitsGrills: document.getElementById('firePitsGrills').value,
+                    cellService: document.getElementById('cellService').value,
+                    trashRecycleBins: document.getElementById('trashRecycleBins').value,
+                    washrooms: document.getElementById('washrooms').value,
+                    additionalComments: document.getElementById('additionalComments').value
+                };
+
+                try {
+                    const response = await fetch('/api/reviews', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert('Review submitted successfully!');
+                        window.location.href = `/campsite-info/${data.campsiteId}`;
+                    } else {
+                        alert('Error submitting review. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again later.');
+                }
+            });
+        </script>
+
+        <%- include("templates/footer") %>

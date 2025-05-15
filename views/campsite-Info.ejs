@@ -81,7 +81,7 @@
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Reviews</h2>
-                <a href="/createReview" class="btn btn-success">New Review</a>
+                <a href="/createReview/<%= campsite._id %>" class="btn btn-success">New Review</a>
             </div>
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #f9f9f9; border-radius: 4px;">
                 <strong>User123:</strong> Beautiful spot! Lots of trees and quiet at night.
@@ -94,7 +94,7 @@
         <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Alerts</h2>
-                <a href="/createAlert" class="btn btn-danger">New Alert</a>
+                <a href="/createAlert/<%= campsite._id %>" class="btn btn-danger">New Alert</a>
             </div>
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #fff3cd; border-radius: 4px;">
                 <strong>Ranger Notice:</strong> Fire ban in effect until next week.

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Campsite = require('../models/Campsite');
 const Trail = require('../models/Trail');
+const Review = require('../models/Review');
+const Alert = require('../models/Alert');
 require('dotenv').config();
 
 // Get MongoDB connection details from environment variables
@@ -196,6 +198,55 @@ const initialTrails = [
     }
 ];
 
+const initialReviews = [
+    {
+        campsiteId: "60d5f484f1a2c8b8b8b8b8b8",
+        overallRating: 4,
+        dateVisited: "2023-06-15",
+        electricityWaterHookups: true,
+        dogFriendly: true,
+        picnicTables: true,
+        firePitsGrills: true,
+        cellService: false,
+        trashRecycleBins: true,
+        washrooms: true,
+        additionalComments: "Great spot for families!",
+        dateCreated: new Date()
+    },
+    {
+        campsiteId: "60d5f484f1a2c8b8b8b8b8b9",
+        overallRating: 5,
+        dateVisited: "2023-07-20",
+        electricityWaterHookups: false,
+        dogFriendly: true,
+        picnicTables: false,
+        firePitsGrills: true,
+        cellService: false,
+        trashRecycleBins: false,
+        washrooms: false,
+        additionalComments: "Amazing views and peaceful atmosphere.",
+        dateCreated: new Date()
+    }
+];
+
+const initialAlerts = [
+    {
+        campsiteId: "60d5f484f1a2c8b8b8b8b8b8",
+        alertType: "Trail Obstruction",
+        message: "The Grouse Grind is closed for maintenance until further notice.",
+        alertDate: new Date(), 
+        dateCreated: new Date()
+    },
+    {
+        campsiteId: "60d5f484f1a2c8b8b8b8b8b8",
+        alertType: "Campsite Notice",
+        message: "Reservations are now open for the summer season at Porteau Cove Provincial Park.",
+        alertDate: new Date(),
+        dateCreated: new Date()
+    }
+];
+
+
 // Connect to MongoDB Atlas
 mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`, {
     useNewUrlParser: true,
@@ -214,7 +265,9 @@ mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_ho
         // Insert new data
         const campsites = await Campsite.insertMany(initialCampsites);
         const trails = await Trail.insertMany(initialTrails);
-        console.log(`Successfully seeded ${campsites.length} campsites and ${trails.length} trails`);
+        const reviews = await Review.insertMany(initialReviews);
+        const alerts = await Alert.insertMany(initialAlerts);
+        console.log(`Successfully seeded ${campsites.length} campsites, ${trails.length} trails, ${reviews.length} reviews, and ${alerts.length} alerts`);
         // Close the connection
         mongoose.connection.close();
     } catch (error) {

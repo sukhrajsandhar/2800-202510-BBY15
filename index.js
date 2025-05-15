@@ -5,6 +5,9 @@ const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const Campsite = require("./models/Campsite");
+const Trail = require("./models/Trail");
+const Review = require('./models/Review');
+const Alert = require('./models/Alert');
 const saltRounds = 12;
 
 const app = express();
@@ -245,8 +248,32 @@ app.get("/pseudoCampsite", (req, res) => {
     res.render("pseudoCampsite");
 });
 
-app.get("/createReview", (req, res) => {
-    res.render("createReview");
+app.get("/createReview/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createReview", {
+             campsiteId: req.params.campsiteId, campsiteName: campsite.name});
+    } catch (err) {
+        res.status(500).send("Error loading review form");
+    }
+});
+
+app.get("/createAlert/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createAlert", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name
+        });
+    } catch (err) {
+        res.status(500).send("Error loading alert form");
+    }
 });
 
 app.get("/booked", (req, res) => {
@@ -272,10 +299,6 @@ app.get("/profile", (req, res) => {
         userLevel: "",
     };
     res.render("profile", { user });
-});
-
-app.get("/createAlert", (req, res) => {
-    res.render("createAlert");
 });
 
 app.get("/bookingAvailability", (req, res) => {
@@ -477,6 +500,85 @@ app.post("/api/campsites", async (req, res) => {
             stack: error.stack
         });
         res.status(500).json({ error: 'Failed to save campsite: ' + error.message });
+    }
+});
+
+app.post("/api/reviews", async (req, res) => {
+    try {
+        console.log('Received review data:', req.body);
+        const reviewData = req.body;
+
+        // Validate the review data
+        if (!reviewData.campsiteId || !reviewData.overallRating || !reviewData.dateVisited) {
+            console.log('Missing required fields:', {
+                campsiteId: !reviewData.campsiteId,
+                overallRating: !reviewData.overallRating,
+                dateVisited: !reviewData.dateVisited
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new review document
+        const review = new Review({
+            campsiteId: reviewData.campsiteId,
+            overallRating: reviewData.overallRating,
+            dateVisited: reviewData.dateVisited,
+            electricityWaterHookups: reviewData.electricityWaterHookups || false,
+            dogFriendly: reviewData.dogFriendly || false,
+            picnicTables: reviewData.picnicTables || false,
+            firePitsGrills: reviewData.firePitsGrills || false,
+            cellService: reviewData.cellService || false,
+            trashRecycleBins: reviewData.trashRecycleBins || false,
+            washrooms: reviewData.washrooms || false,
+            additionalComments: reviewData.additionalComments || '',
+            date: new Date()
+        });
+
+        console.log('Created review document:', review);
+
+        // Save the review to MongoDB
+        const savedReview = await review.save();
+        console.log('Successfully saved review:', savedReview);
+        res.status(201).json(savedReview);
+    } catch (error) {
+        console.error('Error saving review:', error);
+        res.status(500).json({ error: 'Failed to save review: ' + error.message });
+    }
+});
+
+app.post("/api/alerts", async (req, res) => {
+    try {
+        console.log('Received alert data:', req.body);
+        const alertData = req.body;
+
+        // Validate the alert data
+        if (!alertData.campsiteId || !alertData.alertType || !alertData.alertDate) {
+            console.log('Missing required fields:', {
+                campsiteId: !alertData.campsiteId,
+                alertType: !alertData.alertType,
+                alertDate: !alertData.alertDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new alert document
+        const alert = new Alert({
+            campsiteId: alertData.campsiteId,
+            alertType: alertData.alertType,
+            alertDate: alertData.alertDate,
+            message: alertData.message || '',
+            dateCreated: new Date()
+        });
+
+        console.log('Created alert document:', alert);
+
+        // Save the alert to MongoDB
+        const savedAlert = await alert.save();
+        console.log('Successfully saved alert:', savedAlert);
+        res.status(201).json(savedAlert);
+    } catch (error) {
+        console.error('Error saving alert:', error);
+        res.status(500).json({ error: 'Failed to save alert: ' + error.message });
     }
 });
 
