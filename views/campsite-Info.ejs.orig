@@ -18,12 +18,70 @@
                     class="img-fluid w-100 h-100" alt="Campsite image"
                     style="object-fit: cover; width: 100%; height: 100%; min-height: 180px;" />
             </div>
+<<<<<<< HEAD
             <!-- Details Card -->
             <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
                     <h1 class="mb-2 mb-md-0" style="color: #283f3b">
                         <%= campsite.name %>
                     </h1>
+=======
+            <div class="mb-2">
+                <span class="stars" id="starContainer"></span>
+                <span class="ms-2" id="ratingValue"><%= campsite.rating %></span>
+            </div>
+            <hr />
+            <div class="row g-3">
+                <div class="col-12">
+                    <h5>Description</h5>
+                    <p><%= campsite.description %></p>
+                    <div class="row g-2">
+                        <div class="col-6 col-md-4"><strong>Type:</strong> <%= campsite.type %></div>
+                        <div class="col-6 col-md-4"><strong>Season:</strong> <%= campsite.season %></div>
+                        <div class="col-6 col-md-4"><strong>Difficulty:</strong> <%= campsite.difficulty %></div>
+                        <div class="col-6 col-md-4"><strong>Fees:</strong> <%= campsite.fees && campsite.fees.camping %></div>
+                    </div>
+                    <div class="mt-3">
+                        <strong>Amenities:</strong>
+                        <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
+                    </div>
+                    <!-- Fun Fact Section -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h5>
+                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
+                            Fun Fact
+                        </h5>
+                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Fetch the fun fact but keep it hidden initially
+                            let funFactText = "";
+                            fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    funFactText = data.funFact;
+                                })
+                                .catch(() => {
+                                    funFactText = "Could not load fun fact.";
+                                });
+
+                            const funFactElem = document.getElementById("funFact");
+                            const lightbulb = document.getElementById("revealFunFact");
+                            let revealed = false;
+
+                            lightbulb.addEventListener("click", function() {
+                                if (!revealed) {
+                                    funFactElem.style.filter = "none";
+                                    funFactElem.style.userSelect = "auto";
+                                    funFactElem.textContent = funFactText || "Could not load fun fact.";
+                                    lightbulb.style.filter = "none";
+                                    revealed = true;
+                                }
+                            });
+                        });
+                    </script>
+>>>>>>> Team_Surprise_challenge#2_AI_API
                 </div>
                 <div class="mb-2">
                     <i class="fas fa-map-marker-alt"></i>
@@ -81,46 +139,6 @@
                       </div>
                       
                   
-                        <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
-                    </div>
-                    <!-- Fun Fact Section -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <h5>
-                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
-                            Fun Fact
-                        </h5>
-                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
-                    </div>
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            // Fetch the fun fact but keep it hidden initially
-                            let funFactText = "";
-                            fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    funFactText = data.funFact;
-                                })
-                                .catch(() => {
-                                    funFactText = "Could not load fun fact.";
-                                });
-
-                            const funFactElem = document.getElementById("funFact");
-                            const lightbulb = document.getElementById("revealFunFact");
-                            let revealed = false;
-
-                            lightbulb.addEventListener("click", function() {
-                                if (!revealed) {
-                                    funFactElem.style.filter = "none";
-                                    funFactElem.style.userSelect = "auto";
-                                    funFactElem.textContent = funFactText || "Could not load fun fact.";
-                                    lightbulb.style.filter = "none";
-                                    revealed = true;
-                                }
-                            });
-                        });
-                    </script>
-                </div>
-            </div>
         </div>
         <!-- Bookings Section -->
         <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">

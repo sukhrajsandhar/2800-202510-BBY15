@@ -72,6 +72,14 @@ const campsiteSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    funFact: {
+        type: String,
+        default: null
+    },
+    funFactUpdatedAt: {
+        type: Date,
+        default: null
     }
 });
 
