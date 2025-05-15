@@ -53,19 +53,38 @@
                     </div>
                     <!-- Fun Fact Section -->
                     <div class="mt-4 p-3 bg-light rounded">
-                        <h5><i class="fas fa-lightbulb text-warning"></i> Fun Fact</h5>
-                        <p id="funFact">Loading fun fact...</p>
+                        <h5>
+                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
+                            Fun Fact
+                        </h5>
+                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
                     </div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
+                            // Fetch the fun fact but keep it hidden initially
+                            let funFactText = "";
                             fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
                                 .then(res => res.json())
                                 .then(data => {
-                                    document.getElementById("funFact").textContent = data.funFact;
+                                    funFactText = data.funFact;
                                 })
                                 .catch(() => {
-                                    document.getElementById("funFact").textContent = "Could not load fun fact.";
+                                    funFactText = "Could not load fun fact.";
                                 });
+
+                            const funFactElem = document.getElementById("funFact");
+                            const lightbulb = document.getElementById("revealFunFact");
+                            let revealed = false;
+
+                            lightbulb.addEventListener("click", function() {
+                                if (!revealed) {
+                                    funFactElem.style.filter = "none";
+                                    funFactElem.style.userSelect = "auto";
+                                    funFactElem.textContent = funFactText || "Could not load fun fact.";
+                                    lightbulb.style.filter = "none";
+                                    revealed = true;
+                                }
+                            });
                         });
                     </script>
                 </div>
