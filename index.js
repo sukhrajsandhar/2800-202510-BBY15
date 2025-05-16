@@ -215,6 +215,7 @@ app.post("/signUpSubmit", async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
+            user_type: "user" 
         });
         console.log("Inserted user");
 
@@ -249,9 +250,11 @@ app.post("/loginSubmit", async (req, res) => {
         return;
     }
 
+    //*on the admin side I added a user_type field to the user collection
+    // so that we can check if the user is an admin or not
     const result = await userCollection
         .find({ email: email })
-        .project({ firstName: 1, lastName: 1, email: 1, password: 1, _id: 1 })
+        .project({ firstName: 1, lastName: 1, email: 1, password: 1, user_type: 1, _id: 1 }) 
         .toArray();
 
     console.log(result);
@@ -267,12 +270,15 @@ app.post("/loginSubmit", async (req, res) => {
 
     const user = result[0];
 
+    // Check if the password is correct
+    // bcrypt.compare will return true or false
     if (await bcrypt.compare(password, user.password)) {
         console.log("correct password");
         req.session.authenticated = true;
         req.session.email = user.email;
         req.session.firstName = user.firstName;
         req.session.lastName = user.lastName;
+        req.session.user_type = user.user_type; // Store user type in session
         req.session.cookie.maxAge = expireTime;
 
         res.redirect("/");
@@ -460,6 +466,26 @@ app.post("/toggle-trusted", async (req, res) => {
     } catch (err) {
         console.error("Error toggling trusted badge:", err);
         res.status(500).send("Internal Server Error /toggle-trusted");
+    }
+});
+
+//Admin toggle admin role
+app.post("/toggle-role", async (req, res) => {
+    const userId = req.body.userId;
+    try {
+        const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+        if (!user) {
+            return res.status(404).render("errorMessage", { error: "User not found." });
+        }
+        const newRole = user.user_type === "admin" ? "user" : "admin";
+        await userCollection.updateOne(
+            { _id: new mongoose.Types.ObjectId(userId) },
+            { $set: { user_type: newRole } }
+        );
+        res.redirect("/admin");
+    } catch (err) {
+        console.error("Role toggle error:", err);
+        res.status(500).render("errorMessage", { error: "Could not update user role." });
     }
 });
 
