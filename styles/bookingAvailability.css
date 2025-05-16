@@ -83,3 +83,6 @@ button {
     cursor: pointer;
 }
 
+body, html {
+  background-color: rgb(189, 211, 175);
+}

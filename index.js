@@ -282,6 +282,8 @@ app.post("/loginSubmit", async (req, res) => {
         req.session.lastName = user.lastName;
         req.session.user_type = user.user_type; // Store user type in session
         req.session.cookie.maxAge = expireTime;
+        req.session.userId = user._id;
+
 
         res.redirect("/");
     } else {
@@ -438,6 +440,7 @@ app.post("/toggle-trusted", async (req, res) => {
     const userId = req.body.userId;
 
     try {
+
         const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
 
         if (user) {
@@ -493,22 +496,56 @@ try {
         const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
-        }
-        res.render("viewBookings", { campsite, booking });
-    } catch (err) {
-        res.status(500).send("Error loading bookings");
-    }
+app.post('/favourites/:campsiteId', async (req, res) => {
+  const email = req.session.email;
+  if (!email) return res.status(401).send("Unauthorized");
+
+  try {
+    const user = await userCollection.findOne({ email });
+    if (!user) return res.status(404).send("User not found");
+
+    const campsiteId = req.params.campsiteId;
+    const action = req.body.action;
+
+    const update = action === "add"
+      ? { $addToSet: { favourites: campsiteId } }  // add without duplicates
+      : { $pull: { favourites: campsiteId } };     // remove
+
+    await userCollection.updateOne({ _id: user._id }, update);
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(404).send("Error updating favourites");
+  }
 });
 
-app.get("/favourites", (req, res) => {
-    const favCampsites = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-    };
-    res.render("favourites", { favCampsites });
+
+
+app.get("/favourites", async (req, res) => {
+    try {
+        if (!req.session.authenticated || !req.session.email) {
+            return res.redirect("/login");
+        }
+
+        const user = await userCollection.findOne({ email: req.session.email });
+
+        if (!user || !user.favourites) {
+            return res.render("favourites", { campsites: [] });
+        }
+        res.render("viewBookings", { campsite, booking });
+
+        // Fetch campsite documents by their IDs
+        const favouriteCampsites = await Campsite.find({
+            _id: { $in: user.favourites }
+        });
+
+        res.render("favourites", { campsites: favouriteCampsites });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
+        console.error("Error loading favourites:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 /**
@@ -516,6 +553,17 @@ app.get("/favourites", (req, res) => {
  * --> bookings, reviews, alerts
  */
 // Added weather info to the campsite-info page 
+
+app.get("/campsite-example", (req, res) => {
+    const favCampExample = {
+        id: 1,
+        name: "Porteau Cove",
+        imageUrl: "/PorteauCove.svg",
+        rating: 4.5,
+        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
+    };
+    res.render("campsite-example", { favCampExample });
+});
 
 app.get("/campsite-info/:id", async (req, res) => {
     try {

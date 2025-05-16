@@ -1,0 +1,63 @@
+.box {
+  position: relative;
+  width: 100%;
+  background: rgb(189, 211, 175);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  min-height: 160px;
+}
+
+/* Quotation mark icons */
+.quote-icon {
+  position: absolute;
+  font-size: 2rem;
+  color: #556F44;
+  opacity: 0.6;
+  z-index: 1;
+}
+
+.quote-left {
+  top: 10px;
+  left: 15px;
+}
+
+.quote-right {
+  bottom: 10px;
+  right: 15px;
+}
+
+/* Content inside the quote box */
+.quote-content {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  padding: 1rem;
+}
+
+.quote-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.fun-fact-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  filter: blur(5px);
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+/* Optional: add hover effect for lightbulb */
+#revealFunFact:hover {
+  filter: none !important;
+  transform: scale(1.1);
+  transition: 0.3s ease;
+}
+
+html, body {
+background-color:rgb(200, 212, 192);
+}
