@@ -122,6 +122,9 @@ function adminAuthorization(req, res, next) {
 	next();
 }
 
+app.get("/index", (req, res) => {
+    res.render("index");
+});
 
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
