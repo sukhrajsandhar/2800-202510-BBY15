@@ -10,42 +10,10 @@
             <i id="heart" class="far fa-heart heart-icon" style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
         </div>
 
-        <!-- Banner Image -->
-        <div style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
-            <img
-                src="<%= campsite.imageUrl || '/default-campsite.jpg' %>"
-                id="campsiteImage"
-                class="img-fluid w-100 h-100"
-                alt="Campsite image"
-                style="object-fit: cover; width: 100%; height: 100%; min-height: 180px;"
-            />
-        </div>
+        
         <!-- Details Card -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-                <h1 class="mb-2 mb-md-0" style="color: #283f3b"><%= campsite.name %></h1>
-                <!-- Weather Status (moved here, right of the name) -->
-                <div>
-                <% if (weather) { %>
-                    <div
-                        style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
-                        <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon"
-                            style="width: 40px; height: 40px;">
-                        <div style="margin-left: 0.5rem;">
-                            <div><strong><%= weather.temp %>°C</strong></div>
-                            <div style="text-transform: capitalize; font-size: 0.95em;"><%= weather.desc %></div>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <div
-                        style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
-                        <div style="margin-left: 0.5rem;">
-                            <div><strong>Weather data unavailable</strong></div>
-                        </div>
-                    </div>
-                <% } %>
-                </div>
-            </div>
+            
             <!-- Banner Image -->
             <div class="fade-in-up"
                 style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
@@ -59,6 +27,27 @@
                     <h1 class="mb-2 mb-md-0" style="color: #283f3b">
                         <%= campsite.name %>
                     </h1>
+                    <!-- Weather Status (moved here, right of the name) -->
+                    <div>
+                    <% if (weather) { %>
+                        <div
+                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
+                            <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon"
+                                style="width: 40px; height: 40px;">
+                            <div style="margin-left: 0.5rem;">
+                                <div><strong><%= weather.temp %>°C</strong></div>
+                                <div style="text-transform: capitalize; font-size: 0.95em;"><%= weather.desc %></div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div
+                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
+                            <div style="margin-left: 0.5rem;">
+                                <div><strong>Weather data unavailable</strong></div>
+                            </div>
+                        </div>
+                    <% } %>
+                    </div>
                 </div>
                 <div class="mb-2">
                     <i class="fas fa-map-marker-alt"></i>
