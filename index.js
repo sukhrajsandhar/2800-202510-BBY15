@@ -8,6 +8,7 @@ const Campsite = require("./models/Campsite");
 const Trail = require("./models/Trail");
 const Review = require('./models/Review');
 const Alert = require('./models/Alert');
+const Booking = require('./models/Booking');
 const saltRounds = 12;
 
 const app = express();
@@ -272,7 +273,10 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
     }
 });
 
-// Might not be needed
+/**
+ * Create Booking!!!
+ * --> finish me here
+ */
 app.get("/createBooking/:campsiteId", async (req, res) => {
     res.render("createBooking", {
         campsiteId: req.params.campsiteId,
@@ -304,30 +308,17 @@ app.get("/profile", (req, res) => {
     res.render("profile", { user });
 });
 
-// Might not be needed
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
-});
 
-
-
+/**
+ * viewBookings Finish!!
+ */
 app.get("/viewBookings", (req, res) => {
     res.render("viewBookings", { campsite: null, bookings: [] });
 });
 
-////// Uncomment this section to enable viewing bookings for a specific campsite with mongoDB
-// app.get("/viewBookings/:campsiteId", async (req, res) => {
-//     try {
-//         const campsite = await Campsite.findById(req.params.campsiteId).lean();
-//         if (!campsite) {
-//             return res.status(404).send('Campsite not found');
-//         }
-//         const bookings = await Booking.find({ campsiteId: campsite._id }).lean();
-//         res.render("viewBookings", { campsite, bookings });
-//     } catch (err) {
-//         res.status(500).send("Error loading bookings");
-//     }
-// });
+
+
+
 
 
 
@@ -350,30 +341,20 @@ app.get("/favourites", (req, res) => {
     res.render("favourites", { favCampsites });
 });
 
-app.get("/campsite-example", (req, res) => {
-    const favCampExample = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-    };
-    res.render("campsite-example", { favCampExample });
-});
-
 /**
- * Sydney's Working Area!!!
+ * Campsite-Info! connect and read from mongoDB
+ * --> bookings, reviews, alerts
  */
 app.get("/campsite-info/:id", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.id).lean(); 
         const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean(); // NOTE: must limit to 2 reviews
-        // const bookings = await Booking.find({ campsiteId: req.params.id }).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
         const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
-        res.render('campsite-Info', { campsite, review, bookings: [], alert });
+        res.render('campsite-Info', { campsite, review, booking, alert });
         console.log('Campsite:', campsite);
         console.log('Reviews:', review);
         console.log('Alerts:', alert);
@@ -382,9 +363,7 @@ app.get("/campsite-info/:id", async (req, res) => {
     }
 });
 
-
-
-// //Original campsite-info route
+// //Original /campsite-info/:id route
 // app.get("/campsite-info/:id", async (req, res) => {
 //     try {
 //         const campsite = await Campsite.findById(req.params.id).lean();
@@ -398,9 +377,6 @@ app.get("/campsite-info/:id", async (req, res) => {
 // });
 
 
-/**
- * End of Sydney's Working Area!!!
- */
 
 
 
@@ -516,37 +492,11 @@ app.get("/api/trails", (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-/**
- * Sydney's Working Area
- */
-// app.get("/api/reviews", async (req, res) => {
-//     try {
-//         console.log('Fetching reviews from MongoDB...');
-//         const reviews = await Review.find();
-//         console.log(`Found ${reviews.length} reviews:`, reviews);
-
-        
-//         res.json(reviews);
-//     } catch (error) {
-//         console.error('Error fetching reviews:', error);
-//         res.status(500).json({ error: 'Failed to fetch reviews' });
-//     }
-// });
-
-// app.get("/api/alerts", async (req, res) => {
-//     try {
-//         const alerts = await Alert.find().lean();
-//         res.json(alerts);
-//     } catch (error) {
-//         console.error('Error fetching alerts:', error);
-//         res.status(500).json({ error: 'Failed to fetch alerts' });
-//     }
-// });
-
 
 /**
- * End of Sydney's Working Area
+ * Sydney: include an app.get for bookings, alerts, reviews?
  */
+
 
 // Add POST endpoint for /api/campsites
 app.post("/api/campsites", async (req, res) => {
