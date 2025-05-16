@@ -1,27 +1,33 @@
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css', '/header.css', '/funFact.css', '/bg.css'] }) %>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
-
-<main style="display: flex; flex-direction: column; align-items: center; margin-top: 0; padding-top: 0;">
-    <div style="width: 100%; max-width: 700px; margin: 0 auto;">
-        <!-- Header Bar with Back and Favourite Buttons -->
-        <div class="d-flex justify-content-between align-items-center" style="gap: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
-            <a href="/" class="back-link" title="Back to Map">
-                <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
-            </a>
-            <i id="heart" class="far fa-heart heart-icon" style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
-        </div>
+    <main style="display: flex; flex-direction: column; align-items: center; margin-top: 80; padding-top: 0; padding-bottom: 4%;">
+        <div style="width: 100%; max-width: 700px;">
+            <!-- Header Bar with Back and Favourite Buttons -->
+            <div class="d-flex justify-content-between align-items-center"
+                style="gap: 1rem; margin-top: 5rem; margin-bottom: 1rem;">
+                <a href="/" class="back-link" title="Back to Map">
+                    <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
+                </a>
+                <i id="heart" class="far fa-heart heart-icon"
+                    style="font-size: 2rem; color: #8212b6; cursor: pointer;" data-campsite-id="<%= campsite._id %>"></i>
+            </div>
 
         
         <!-- Details Card -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
             
             <!-- Banner Image -->
-            <div class="fade-in-up"
-                style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
+                <div class="image-hover-container fade-in-up" style="position: relative; width: 100%; height: 360px; border-radius: 20px; overflow: hidden;">
                 <img src="<%= campsite.imageUrl || '/default-campsite.jpg' %>" id="campsiteImage"
-                    class="img-fluid w-100 h-100" alt="Campsite image"
-                    style="object-fit: cover; width: 100%; height: 100%; min-height: 180px;" />
-            </div>
+                    alt="Campsite image"
+                    style="object-fit: cover; width: 100%; height: 100%;" />
+
+                <div class="overlay-title">
+                    <%= campsite.name %>
+                </div>
+                </div>
+
             <!-- Details Card -->
             <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
@@ -109,14 +115,27 @@
                         <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
                     </div>
 
-                    <!-- Fun Fact Section -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <h5>
-                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
-                            Fun Fact
-                        </h5>
-                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
-                    </div>
+                         <!-- Fun Fact Section -->
+           <div class="box data-container">
+                <!-- Left quote icon -->
+                <i class="fas fa-quote-left quote-icon quote-left"></i>
+
+                <div class="quote-content">
+                    <h3>
+                    <i class="fas fa-lightbulb text-warning" id="revealFunFact" 
+                        style="cursor:pointer; filter: grayscale(80%) blur(1px);"
+                        title="Click to reveal fun fact"></i> 
+                    Fun Fact
+                    </h3>
+                    <p id="funFact" class="fun-fact-text">
+                    Click the lightbulb to reveal the fun fact!
+                    </p>
+                </div>
+
+                <!-- Right quote icon -->
+                <i class="fas fa-quote-right quote-icon quote-right"></i>
+                </div>
+
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
                             // Fetch the fun fact but keep it hidden initially
@@ -172,14 +191,12 @@
                                     class="d-flex justify-content-between align-items-center mb-2"
                                 >
                                     <div class="d-flex align-items-center">
-                                        <div
-                                            style="
-                                                width: 40px;
-                                                height: 40px;
-                                                background-color: #d0ddd7;
-                                                border-radius: 50%;
-                                            "
-                                        ></div>
+                                <div>
+                                <img 
+                                    style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
+                                    src="/images/avatars/avatar<%= Math.floor(Math.random() * 6) + 1 %>.png"
+                                    alt="avatar">
+                            </div>
                                         <div class="ms-2">
                                     <h6 class="mb-0"><%= booking.firstName %></h6>
                                     <small class="text-muted"><%= booking.tentSpace %></small>
@@ -199,29 +216,23 @@
                         </div>
                     <% } %>
             </div>
-            <div class="d-flex justify-content-end mt-3">
-                <a
-                    href="/viewBookings/<%= campsite._id %>"
-                    class="btn btn-outline-primary"
-                    style="
-                        color: white;
-                        background-color: rgb(40, 63, 59);
-                        border: #95bf74;
-                    "
-                    >See All</a
-                >
-            </div>
+                <div class="p-button d-flex justify-content-end mt-3">
+                            <div class="c-button c-button--grow">
+                                <a class="button-grow " href="/viewBookings/<%= campsite._id %>" style="text-decoration: none;">
+                                <span class="circle">
+                                    <span class="icon arrow"></span>
+                                </span>
+                                <span class="button-text">See All</span>
+                                </a>
+                            </div>
+                        </div>
         </div>
 
         <!-- Reviews Section -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Reviews</h2>
-                <a
-                    href="/createReview/<%= campsite._id %>"
-                    class="btn btn-success"
-                    >New Review</a
-                >
+                 <a href="/createReview/<%= campsite._id %>" class="btn btn-outline-primary">New Review</a>
             </div>
 
             <!-- Database Review: List of Reviews for specific campsite -->
@@ -237,14 +248,12 @@
                                     class="d-flex justify-content-between align-items-center mb-2"
                                 >
                                     <div class="d-flex align-items-center">
-                                        <div
-                                            style="
-                                                width: 40px;
-                                                height: 40px;
-                                                background-color: #d0ddd7;
-                                                border-radius: 50%;
-                                            "
-                                        ></div>
+                                           <div>
+                                <img 
+                                    style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
+                                    src="/images/avatars/avatar<%= Math.floor(Math.random() * 6) + 1 %>.png"
+                                    alt="avatar">
+                            </div>
                                         <div class="ms-2">
                                     <h6 class="mb-0"><%= review.firstName || user.firstName %></h6>
                                     <small class="text-muted">
@@ -271,13 +280,17 @@
                 </div>
                 <% } %>
             </div>
-            
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/viewReviews/<%= campsite._id %>" class="btn btn-success btn-sm"
-                    >See All</a
-                >
-            </div>
-        </div>
+      <div class="p-button d-flex justify-content-end mt-3">
+                            <div class="c-button c-button--grow">
+                                <a class="button-grow " href="/viewReviews/<%= campsite._id %>" style="text-decoration: none;">
+                                <span class="circle">
+                                    <span class="icon arrow"></span>
+                                </span>
+                                <span class="button-text">See All</span>
+                                </a>
+                            </div>
+                        </div>
+                                    </div>
 
         <!-- Alerts Section -->
         <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px">
@@ -313,34 +326,52 @@
                 </div>
                 <% } %>
             </div>
-
-
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/viewAlerts/<%= campsite._id %>" class="btn btn-danger btn-sm">See All</a>
+                <div class="p-button d-flex justify-content-end mt-3">
+                            <div class="c-button c-button--grow">
+                                <a class="button-grow " href="/viewAlerts/<%= campsite._id %>" style="text-decoration: none;">
+                                <span class="circle">
+                                    <span class="icon arrow"></span>
+                                </span>
+                                <span class="button-text">See All</span>
+                                </a>
+                            </div>
+                        </div>
             </div>
-        </div>
-    </div>
+            </div>
+<%- include('templates/bg') %>
 
-    <script src="/public/js/campsite-info.js"></script>
+        </main>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    // Heart icon toggle functionality
-        const heart = document.getElementById("heart");
-        if (heart) {
-            heart.addEventListener("click", () => {
-                if (heart.classList.contains("far")) {
-                    heart.classList.remove("far");
-                    heart.classList.add("fas");
-                } else {
-                    heart.classList.remove("fas");
-                    heart.classList.add("far");
-                }
-            });
-        }
-    });
+const heart = document.getElementById("heart");
+
+if (heart) {
+  heart.addEventListener("click", async () => {
+    // Get the campsite ID from a data attribute on the heart element
+    const campsiteId = heart.dataset.campsiteId;
+
+    const isAdding = heart.classList.contains("far");
+
+    heart.classList.toggle("far");
+    heart.classList.toggle("fas");
+
+    try {
+      const response = await fetch(`/favourites/${campsiteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: isAdding ? "add" : "remove" })
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update favourites.");
+        // If you want, you could toggle back the heart here to show failure
+      }
+    } catch (error) {
+      console.error("Error updating favourites:", error);
+      // Optionally toggle back the heart here as well
+    }
+  });
+}
     </script>
 
-</div>
-</main>
 
 <%- include('templates/footer') %>

@@ -1,4 +1,4 @@
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/reviews.css'] }) %>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css', '/header.css', '/bg.css'] }) %>
 
 <div class="container" style="margin-top: 80px; margin-bottom: 100px; max-width: 700px; overflow-y: auto;">
   <h4 class="mb-4">Reviews for <%= campsite.name %></h4>
@@ -66,9 +66,8 @@
     <p>No reviews available for this campsite.</p>
   <% } %>
 
-  <%- include("templates/bg") %>
 </div>
-
+  <%- include("templates/bg") %>
 <%- include('templates/footer') %>
 
 <!-- Scripts -->
