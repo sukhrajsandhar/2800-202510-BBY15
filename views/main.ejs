@@ -233,7 +233,7 @@
 
                 // Fetch weather from OpenWeatherMap
                 try {
-                    const OPENWEATHER_API_KEY = 'f7cb5e5c969b57971a8aa3ff7dac3f59';
+                    const OPENWEATHER_API_KEY = '<%= process.env.OPENWEATHER_API_KEY %>';
                     const weatherRes = await fetch(
                         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${OPENWEATHER_API_KEY}`
                     );
@@ -414,47 +414,15 @@
                         place_name: e.result.place_name
                     });
                     // Also update selectedCoordinates for form validation
-                    selectedCoordinates = e.result.center;
+                    window.selectedCoordinates = e.result.center;
                 }
             });
         }
-        // Initialize the modal geocoder when the modal is shown
-        document.getElementById('addCampsiteModal').addEventListener('shown.bs.modal', initializeCampsiteGeocoder);
 
-        // Handle 'Use my current location' button in the Add Campsite form
-        document.getElementById('useCurrentLocation').addEventListener('click', async function() {
-            if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser.');
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                // Reverse geocode to get address
-                try {
-                    const response = await fetch(
-                        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${window.mapboxgl.accessToken}&country=ca`
-                    );
-                    const data = await response.json();
-                    let placeName = `${lat},${lng}`;
-                    if (data.features && data.features.length > 0) {
-                        placeName = data.features[0].place_name;
-                    }
-                    // Set hidden input
-                    document.getElementById('campsiteLocation').value = JSON.stringify({
-                        lng, lat, place_name: placeName
-                    });
-                    // Set geocoder input visually (if possible)
-                    const geocoderInput = document.querySelector('#campsite-geocoder input[type="text"]');
-                    if (geocoderInput) {
-                        geocoderInput.value = placeName;
-                    }
-                } catch (err) {
-                    alert('Could not get address for your location.');
-                }
-            }, () => {
-                alert('Unable to retrieve your location.');
-            });
-        });
+        // Initialize the modal geocoder when the modal is shown
+        const modal = document.getElementById('addCampsiteModal');
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', initializeCampsiteGeocoder);
+        }
     </script> 
 

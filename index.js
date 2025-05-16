@@ -540,52 +540,15 @@ try {
     }
 });
 
-app.post('/favourites/:campsiteId', async (req, res) => {
-  const email = req.session.email;
-  if (!email) return res.status(401).send("Unauthorized");
-
-  try {
-    const user = await userCollection.findOne({ email });
-    if (!user) return res.status(404).send("User not found");
-
-    const campsiteId = req.params.campsiteId;
-    const action = req.body.action;
-
-    const update = action === "add"
-      ? { $addToSet: { favourites: campsiteId } }  // add without duplicates
-      : { $pull: { favourites: campsiteId } };     // remove
-
-    await userCollection.updateOne({ _id: user._id }, update);
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(404).send("Error updating favourites");
-  }
-});
-
-app.get("/favourites", async (req, res) => {
-    try {
-        if (!req.session.authenticated || !req.session.email) {
-            return res.redirect("/login");
-        }
-
-        const user = await userCollection.findOne({ email: req.session.email });
-
-        if (!user || !user.favourites) {
-            return res.render("favourites", { campsites: [] });
-        }
-
-        // Fetch campsite documents by their IDs
-        const favouriteCampsites = await Campsite.find({
-            _id: { $in: user.favourites }
-        });
-
-        res.render("favourites", { campsites: favouriteCampsites });
-    } catch (err) {
-        console.error("Error loading favourites:", err);
-        res.status(500).send("Internal Server Error");
-    }
+app.get("/favourites", (req, res) => {
+    const favCampsites = {
+        id: 1,
+        name: "Porteau Cove",
+        imageUrl: "/PorteauCove.svg",
+        rating: 4.5,
+        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
+    };
+    res.render("favourites", { favCampsites });
 });
 
 /**

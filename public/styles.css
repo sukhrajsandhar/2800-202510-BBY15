@@ -1,0 +1,30 @@
+.geocoder-container {
+    width: 100%;
+    position: relative;
+}
+
+.geocoder-container .mapboxgl-ctrl-geocoder {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+}
+
+.geocoder-container .mapboxgl-ctrl-geocoder input {
+    height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.geocoder-container .mapboxgl-ctrl-geocoder--icon {
+    top: 8px;
+}
+
+.geocoder-container .mapboxgl-ctrl-geocoder--icon-search {
+    left: 8px;
+}
+
+.geocoder-container .mapboxgl-ctrl-geocoder--icon-close {
+    right: 8px;
+} 

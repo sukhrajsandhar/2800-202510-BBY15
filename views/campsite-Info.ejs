@@ -1,32 +1,27 @@
 
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css', '/funFact.css'] }) %>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
 
 <main style="display: flex; flex-direction: column; align-items: center; margin-top: 0; padding-top: 0;">
-        <div style="width: 100%; max-width: 700px;">
-            <!-- Header Bar with Back and Favourite Buttons -->
-            <div class="d-flex justify-content-between align-items-center"
-                style="gap: 1rem; margin-top: 5rem; margin-bottom: 1rem;">
-                <a href="/" class="back-link" title="Back to Map">
-                    <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
-                </a>
-                <i id="heart" class="far fa-heart heart-icon"
-                    style="font-size: 2rem; color: #8212b6; cursor: pointer;" data-campsite-id="<%= campsite._id %>"></i>
-            </div>
+    <div style="width: 100%; max-width: 700px; margin: 0 auto;">
+        <!-- Header Bar with Back and Favourite Buttons -->
+        <div class="d-flex justify-content-between align-items-center" style="gap: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+            <a href="/" class="back-link" title="Back to Map">
+                <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
+            </a>
+            <i id="heart" class="far fa-heart heart-icon" style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
+        </div>
+
         
         <!-- Details Card -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
             
-    <!-- Banner Image -->
-                <div class="image-hover-container fade-in-up" style="position: relative; width: 100%; height: 360px; border-radius: 20px; overflow: hidden;">
+            <!-- Banner Image -->
+            <div class="fade-in-up"
+                style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
                 <img src="<%= campsite.imageUrl || '/default-campsite.jpg' %>" id="campsiteImage"
-                    alt="Campsite image"
-                    style="object-fit: cover; width: 100%; height: 100%;" />
-
-                <div class="overlay-title">
-                    <%= campsite.name %>
-                </div>
-                </div>
+                    class="img-fluid w-100 h-100" alt="Campsite image"
+                    style="object-fit: cover; width: 100%; height: 100%; min-height: 180px;" />
+            </div>
             <!-- Details Card -->
             <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
@@ -114,25 +109,14 @@
                         <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
                     </div>
 
-                    <div class="box data-container">
-                        <!-- Left quote icon -->
-                        <i class="fas fa-quote-left quote-icon quote-left"></i>
-
-                        <div class="quote-content">
-                            <h3>
-                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" 
-                                style="cursor:pointer; filter: grayscale(80%) blur(1px);"
-                                title="Click to reveal fun fact"></i> 
+                    <!-- Fun Fact Section -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h5>
+                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
                             Fun Fact
-                            </h3>
-                            <p id="funFact" class="fun-fact-text">
-                            Click the lightbulb to reveal the fun fact!
-                            </p>
-                        </div>
-
-                        <!-- Right quote icon -->
-                        <i class="fas fa-quote-right quote-icon quote-right"></i>
-                        </div>
+                        </h5>
+                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
+                    </div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
                             // Fetch the fun fact but keep it hidden initially
@@ -339,38 +323,21 @@
 
     <script src="/public/js/campsite-info.js"></script>
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
     // Heart icon toggle functionality
-// Get the heart icon element by its ID
-const heart = document.getElementById("heart");
-
-if (heart) {
-  heart.addEventListener("click", async () => {
-    // Get the campsite ID from a data attribute on the heart element
-    const campsiteId = heart.dataset.campsiteId;
-
-    const isAdding = heart.classList.contains("far");
-
-    heart.classList.toggle("far");
-    heart.classList.toggle("fas");
-
-    try {
-      const response = await fetch(`/favourites/${campsiteId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: isAdding ? "add" : "remove" })
-      });
-
-      if (!response.ok) {
-        console.error("Failed to update favourites.");
-        // If you want, you could toggle back the heart here to show failure
-      }
-    } catch (error) {
-      console.error("Error updating favourites:", error);
-      // Optionally toggle back the heart here as well
-    }
-  });
-}
-
+        const heart = document.getElementById("heart");
+        if (heart) {
+            heart.addEventListener("click", () => {
+                if (heart.classList.contains("far")) {
+                    heart.classList.remove("far");
+                    heart.classList.add("fas");
+                } else {
+                    heart.classList.remove("fas");
+                    heart.classList.add("far");
+                }
+            });
+        }
+    });
     </script>
 
 </div>
