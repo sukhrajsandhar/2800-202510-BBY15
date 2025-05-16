@@ -1,5 +1,17 @@
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
 
+<<<<<<< HEAD
+    <main style="display: flex; flex-direction: column; align-items: center; margin-top: 80; padding-top: 0;">
+        <div style="width: 100%; max-width: 700px;">
+            <!-- Header Bar with Back and Favourite Buttons -->
+            <div class="d-flex justify-content-between align-items-center"
+                style="gap: 1rem; margin-top: 5rem; margin-bottom: 1rem;">
+                <a href="/" class="back-link" title="Back to Map">
+                    <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
+                </a>
+                <i id="heart" class="far fa-heart heart-icon"
+                    style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
+=======
 <main style="display: flex; flex-direction: column; align-items: center; margin-top: 0; padding-top: 0;">
     <div style="width: 100%; max-width: 700px; margin: 0 auto;">
         <!-- Header Bar with Back and Favourite Buttons -->
@@ -45,6 +57,7 @@
                     </div>
                 <% } %>
                 </div>
+>>>>>>> kevin_weather_status_for_campsite
             </div>
             <!-- Banner Image -->
             <div class="fade-in-up"

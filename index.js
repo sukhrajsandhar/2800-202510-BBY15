@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const axios = require('axios'); 
 const Campsite = require("./models/Campsite");
 const Trail = require("./models/Trail");
 const Review = require('./models/Review');
@@ -491,15 +492,44 @@ app.get("/campsite-example", (req, res) => {
     res.render("campsite-example", { favCampExample });
 });
 
+// Added weather info to the campsite-info page 
 app.get("/campsite-info/:id", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.id).lean();
         if (!campsite) {
-            return res.status(404).send('Campsite not found');
+            return res.status(404).send("Campsite not found");
         }
-        res.render('campsite-Info', { campsite, bookings: [] });
+        // Fetch weather data using OpenWeatherMap API
+        // Ensure that the coordinates are available before making the API call
+        let weather = null;
+        // Check if coordinates are available
+        if (!campsite.coordinates || campsite.coordinates.length !== 2) {
+            console.error("Invalid coordinates for campsite:", campsite);
+            return res.status(400).send("Invalid coordinates");
+        }
+        const [longitude, latitude] = campsite.coordinates || [];
+        // Fetch weather data only if latitude and longitude are available
+        if (latitude && longitude) {
+            try {
+                const apiKey = process.env.OPENWEATHER_API_KEY;
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+                const weatherResponse = await axios.get(weatherUrl);
+                const weatherData = weatherResponse.data;
+                weather = {
+                    icon: weatherData.weather[0].icon,
+                    temp: weatherData.main.temp,
+                    desc: weatherData.weather[0].description,
+                };
+            } catch (error) {
+                console.error("Error fetching weather data:", error.message);
+            }
+        }
+        // Always pass weather, even if null
+        // Render the campsite-info page with the campsite and weather data
+        res.render("campsite-Info", { campsite, weather, bookings: [] });
     } catch (err) {
-        res.status(500).send('Error loading campsite info');
+        console.error("Error loading campsite info:", err.message);
+        res.status(500).send("Internal Server Error");
     }
 });
 
