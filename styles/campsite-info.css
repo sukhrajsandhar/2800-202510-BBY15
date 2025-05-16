@@ -213,3 +213,57 @@ main {
   z-index: 1; /* Make sure content stays above */
 }
 
+.image-hover-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  height: 260px;
+  width: 100%;
+  box-shadow: 0 8px 20px var(--shadow);
+}
+
+.image-hover-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.image-hover-container:hover img {
+  transform: scale(1.08);
+}
+
+.image-hover-title {
+  position: absolute;
+  bottom: 0;
+  background: rgba(40, 63, 59, 0.7); /* dark transparent overlay */
+  color: white;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-hover-container:hover .image-hover-title {
+  opacity: 1;
+}
+
+.overlay-title {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  font-size: 1.75rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.image-hover-container:hover .overlay-title {
+  opacity: 1;
+}
