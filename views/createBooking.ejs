@@ -23,32 +23,32 @@
                 >
                     <div class="container">
                         <label>Campsite:</label>
-                        <p class="readonly">Campsite XYZ</p>
+                        <strong class="readonly">Campsite XYZ</strong>
 
-                        <input type="text" placeholder="Search Campsites" />
 
                         <label>Start Date:</label>
                         <div class="input-icon">
-                            <input type="date" />
+                            <input type="date" id="startDate"/>
                         </div>
 
                         <label>End Date:</label>
                         <div class="input-icon">
-                            <input type="date" />
+                            <input type="date" id="endDate"/>
                         </div>
 
                         <label>Number of Available Tent spots:</label>
-                        <input type="number" />
+                        <input type="number" id="tentSpots"/>
 
-                        <label>Preferred means of Contact:</label>
-                        <input type="text" />
+                        <label>Contact Details:</label>
+                        <input type="text" id="contactInfo"/>
 
                         <label>Summary:</label>
-                        <textarea rows="4"></textarea>
+                        <textarea rows="4" id="summary"></textarea>
                     </div>
                     <button type="submit">Submit</button>
                     <!-- Hidden campsiteId -->
                     <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
+                    <input type="hidden" id="userId" value="<%= userId %>">
                 </form>
             </div>
         </div>
@@ -56,5 +56,42 @@
 </div>
 
 <script src="/public/js/createBooking.js"></script>
+<!-- <script>
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            campsiteId: document.getElementById('campsiteId').value,
+            userId: document.getElementById('userId').value,
+            startDate: document.getElementById('startDate').value,
+            endDate: document.getElementById('endDate').value,
+            dateCreated: new Date().toISOString(),
+            tentSpots: document.getElementById('tentSpots').value,
+            contactInfo: document.getElementById('contactInfo').value,
+            summary: document.getElementById('summary').value
+        };
+
+        try {
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert('Booking created successfully!');
+                window.location.href = `/campsite-info/${data.campsiteId}`;
+            } else {
+                alert('Error creating booking. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });
+</script> -->
 
 <%- include("templates/footer") %>
