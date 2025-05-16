@@ -157,9 +157,6 @@
                                 <label for="campsiteLocation" class="form-label">Location</label>
                                 <div class="input-group">
                                     <div id="campsite-geocoder" style="flex:1;"></div>
-                                    <button class="btn btn-outline-secondary" type="button" id="useCurrentLocation" title="Use my current location">
-                                        <i class="fas fa-location-dot"></i>
-                                    </button>
                                 </div>
                                 <input type="hidden" id="campsiteLocation" required>
                             </div>
@@ -380,9 +377,6 @@
                         <ul>
                             ${trail.features && Array.isArray(trail.features) ? trail.features.map(feature => `<li>${feature}</li>`).join('') : ''}
                         </ul>
-                    </div>
-                    <div class="popup-actions">
-                        <button onclick="window.location.href='/trail-info'" class="more-info-btn">Trail Details</button>
                     </div>
                 </div>
             `;
