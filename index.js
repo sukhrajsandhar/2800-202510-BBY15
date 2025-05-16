@@ -3,7 +3,17 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
+const mongoose = require("mongoose");
+const axios = require('axios');
+const Campsite = require("./models/Campsite");
+const Trail = require("./models/Trail");
+const Review = require('./models/Review');
+const Alert = require('./models/Alert');
+const Booking = require('./models/Booking');
+const User = require("./models/User");
 const saltRounds = 12;
+const { CohereClient } = require('cohere-ai');
+const cohere = new CohereClient({ apiKey: process.env.COHERE_API_KEY });
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -25,12 +35,27 @@ const { database } = require("./databaseConnection");
 
 const userCollection = database.db(mongodb_database).collection("users");
 
+// MongoDB connection
+mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('Connected to MongoDB');
+    console.log('Database:', mongoose.connection.db.databaseName);
+})
+.catch(err => {
+    console.error('Could not connect to MongoDB:', err);
+    process.exit(1); // Exit if we can't connect to the database
+});
+
 app.set("view engine", "ejs");
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/styles"));
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/${mongodb_database}`,
@@ -47,6 +72,56 @@ app.use(
         resave: true,
     })
 );
+
+// after you set up express, sessions, this will fetch document of the user 
+// ex: their profile picture 
+// global injection middleware 
+// Store that user object on res.locals.user, anything becomes automatically 
+// available to all EJS templates under the username
+
+app.use(async (req, res, next) => {
+    if (req.session.authenticated && req.session.email) {
+      const user = await userCollection.findOne({ email: req.session.email });
+      res.locals.user = user;
+    } else {
+      res.locals.user = null;
+    }
+    next();
+  });
+  
+// Middleware to check if the user is authenticated
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+// Middleware to check if the user is an admin
+function isAdmin(req) {
+	if (req.session.user_type === 'admin') {
+		return true;
+	}
+	return false;
+}
+
+function adminAuthorization(req, res, next) {
+	if (!isAdmin(req)) {
+		res.status(403);
+		res.render("errorMessage", { error: "Not Authorized" });
+		return;
+	}
+	next();
+}
+
 
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
@@ -143,6 +218,7 @@ app.post("/signUpSubmit", async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
+            user_type: "user" 
         });
         console.log("Inserted user");
 
@@ -177,9 +253,11 @@ app.post("/loginSubmit", async (req, res) => {
         return;
     }
 
+    //*on the admin side I added a user_type field to the user collection
+    // so that we can check if the user is an admin or not
     const result = await userCollection
         .find({ email: email })
-        .project({ firstName: 1, lastName: 1, email: 1, password: 1, _id: 1 })
+        .project({ firstName: 1, lastName: 1, email: 1, password: 1, user_type: 1, _id: 1 }) 
         .toArray();
 
     console.log(result);
@@ -195,13 +273,17 @@ app.post("/loginSubmit", async (req, res) => {
 
     const user = result[0];
 
+    // Check if the password is correct
+    // bcrypt.compare will return true or false
     if (await bcrypt.compare(password, user.password)) {
         console.log("correct password");
         req.session.authenticated = true;
         req.session.email = user.email;
         req.session.firstName = user.firstName;
         req.session.lastName = user.lastName;
+        req.session.user_type = user.user_type; // Store user type in session
         req.session.cookie.maxAge = expireTime;
+        req.session.userId = user._id; // Store user ID in session
 
         res.redirect("/");
     } else {
@@ -224,12 +306,57 @@ app.get("/logout", (req, res) => {
     });
 });
 
-app.get("/pseudoCampsite", (req, res) => {
-    res.render("pseudoCampsite");
+app.get("/createReview/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        const user = await User.findById(req.session.userId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createReview", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            userId: user._id
+        });
+    } catch (err) {
+        res.status(500).send("Error loading review form");
+    }
 });
 
-app.get("/createReview", (req, res) => {
-    res.render("createReview");
+app.get("/createAlert/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        const user = await User.findById(req.session.userId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createAlert", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            userId: user._id
+        });
+    } catch (err) {
+        res.status(500).send("Error loading alert form");
+    }
+});
+
+/**
+ * Sydney Create Booking!!!
+ */
+app.get("/createBooking/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createBooking", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            firstName: req.session.firstName || null,
+        });
+    } catch (err) {
+        res.status(500).send("Error loading booking form");
+    }
 });
 
 app.get("/booked", (req, res) => {
@@ -245,24 +372,172 @@ app.get("/booked", (req, res) => {
     res.render("booked", { campsite });
 });
 
-app.get("/profile", (req, res) => {
-    const user = {
-        firstName: "Margot",
-        lastName: "Robbie",
-        email: "margot@example.com",
-        bio: "",
-        profileImage: "",
-        userLevel: "",
-    };
-    res.render("profile", { user });
+app.get("/profile", async (req, res) => {
+  if (!req.session.authenticated) {
+    return res.redirect("/login");
+  }
+
+  const user = await userCollection.findOne({ email: req.session.email });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  res.render("profile", { user });
 });
 
-app.get("/createAlert", (req, res) => {
-    res.render("createAlert");
+app.post("/profile/picture", async (req, res) => {
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+  const avatar = req.body.avatar;
+  if (!avatar) {
+    return res.status(400).send("No avatar selected.");
+  }
+  await userCollection.updateOne(
+    { email: req.session.email },
+    { $set: { profileImage: `/images/avatars/${avatar}` } }
+  );
+  res.redirect("/profile");
 });
 
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
+app.post("/update-profile", async (req, res) => {
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+
+  const { firstName, lastName, email, bio, userLevel } = req.body;
+
+  await userCollection.updateOne(
+    { email: req.session.email },
+    {
+      $set: {
+        firstName,
+        lastName,
+        email,
+        bio: bio || "",
+        ...(userLevel ? { userLevel } : {}),
+      },
+    }
+  );
+
+  req.session.email = email;
+  res.redirect("/profile");
+});
+
+
+// Admin panel route
+app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
+        try {
+        //fetch all user from the database
+        const users = await userCollection.find().toArray(); 
+        // render the admin.ejs page with the users
+        res.render("admin", { users }); 
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).send("Internal Server Error /admin");
+    }
+});
+
+//Admin Trusted badge
+app.post("/toggle-trusted", async (req, res) => {
+    const userId = req.body.userId;
+
+    try {
+        const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+
+        if (user) {
+            const newTrustedStatus = !user.isTrusted;
+            await userCollection.updateOne(
+                { _id: new mongoose.Types.ObjectId(userId) },
+                { $set: { isTrusted: newTrustedStatus } }
+            );
+        }
+
+        res.redirect("/admin"); // Redirect back to the admin panel
+    } catch (err) {
+        console.error("Error toggling trusted badge:", err);
+        res.status(500).send("Internal Server Error /toggle-trusted");
+    }
+    
+});
+
+//Admin toggle admin role
+app.post("/toggle-role", async (req, res) => {
+    const userId = req.body.userId;
+    try {
+        const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+        if (!user) {
+            return res.status(404).render("errorMessage", { error: "User not found." });
+        }
+        const newRole = user.user_type === "admin" ? "user" : "admin";
+        await userCollection.updateOne(
+            { _id: new mongoose.Types.ObjectId(userId) },
+            { $set: { user_type: newRole } }
+        );
+        res.redirect("/admin");
+    } catch (err) {
+        console.error("Role toggle error:", err);
+        res.status(500).render("errorMessage", { error: "Could not update user role." });
+    }
+});
+
+app.get("/viewAlerts/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        if (!campsite) {
+            return res.status(404).send("Campsite not found");
+        }
+
+        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+
+        alerts.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
+
+        res.render("viewAlerts", {
+            campsite,
+            alerts
+        });
+    } catch (err) {
+        console.error("Error loading alerts:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+app.get("/viewReviews/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        if (!campsite) {
+            return res.status(404).send("Campsite not found");
+        }
+
+        let reviews = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+
+        // Sort reviews by dateCreated descending (most recent first)
+        reviews.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+
+        res.render("viewReviews", {
+            campsite,
+            reviews
+        });
+    } catch (err) {
+        console.error("Error loading reviews:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+
+//Sydney
+app.get("/viewBookings/:id", async (req, res) => {
+try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("viewBookings", { campsite, booking });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
+    }
 });
 
 app.get("/favourites", (req, res) => {
@@ -276,195 +551,378 @@ app.get("/favourites", (req, res) => {
     res.render("favourites", { favCampsites });
 });
 
-app.get("/campsite-example", (req, res) => {
-    const favCampExample = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-    };
-    res.render("campsite-example", { favCampExample });
-});
+/**
+ * Campsite-Info! connect and read from mongoDB
+ * --> bookings, reviews, alerts
+ */
+// Added weather info to the campsite-info page 
 
-app.get("/campsite-info", (req, res) => {
-    const campsite = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        address: "Unnamed Road, Squamish-Lillooet D, BC V0N 3Z0",
-        saved: "false",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-        facilities: ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
-        season: "Year-round",
-        difficulty: "Easy",
-        fees: {
-            camping: "$35/night",
-            dayUse: "$3/person"
-        },
-        amenities: [
-            "Flush Toilets",
-            "Drinking Water",
-            "Fire Pits",
-            "Picnic Tables",
-            "Boat Launch"
-        ]
-    };
-
-    const bookings = [
-        {
-            title: "Come camp with us!!",
-            dateStart: "2025-06-15",
-            dateEnd: "2025-06-18",
-            tents: 2,
-            people: 4,
-            summary: "Join us for a fun camping trip at Porteau Cove!",
-        },
-        {
-            title: "Weekend Getaway",
-            dateStart: "2025-07-01",
-            dateEnd: "2025-07-03",
-            tents: 1,
-            people: 2,
-            summary: "Escape the city for a relaxing weekend in nature.",
-        },
-        {
-            title: "Fishing Trip",
-            dateStart: "2025-09-05",
-            dateEnd: "2025-09-10",
-            tents: 2,
-            people: 4,
-            summary: "Join us for a fishing adventure at Porteau Cove!",
-        },
-    ];
-    res.render("campsite-info", { campsite, bookings });
-});
-
-app.get("/api/campsites", (req, res) => {
-    const campsites = {
-        "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Porteau Cove Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.5,
-                    "reviews": 128,
-                    "description": "A scenic waterfront campground with stunning views of Howe Sound.",
-                    "facilities": ["Camping", "Scuba Diving", "Swimming", "Fishing", "Boating"],
-                    "season": "Year-round",
-                    "difficulty": "Easy",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Picnic Tables",
-                        "Boat Launch"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/porteau-cove/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.2375, 49.5575]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Alice Lake Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.3,
-                    "reviews": 95,
-                    "description": "Family-friendly campground surrounded by four lakes and mountain views.",
-                    "facilities": ["Camping", "Hiking", "Swimming", "Fishing", "Mountain Biking"],
-                    "season": "May-September",
-                    "difficulty": "Easy",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Hot Showers",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Swimming Area"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/alice-lake/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.0775, 49.7775]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Garibaldi Lake",
-                    "type": "campsite",
-                    "rating": 4.8,
-                    "reviews": 156,
-                    "description": "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
-                    "facilities": ["Camping", "Hiking", "Photography", "Wildlife Viewing"],
-                    "season": "July-September",
-                    "difficulty": "Moderate",
-                    "fees": {
-                        "camping": "$10/night"
-                    },
-                    "amenities": [
-                        "Pit Toilets",
-                        "Food Storage",
-                        "Camping Pads"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/garibaldi/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-123.0017, 49.9500]
-                }
-            },
-            {
-                "type": "Feature",
-                "properties": {
-                    "name": "Golden Ears Provincial Park",
-                    "type": "campsite",
-                    "rating": 4.7,
-                    "reviews": 312,
-                    "description": "One of BC's largest parks with diverse recreational opportunities.",
-                    "facilities": ["Camping", "Hiking", "Swimming", "Horseback Riding", "Mountain Biking"],
-                    "season": "Year-round",
-                    "difficulty": "Easy to Difficult",
-                    "fees": {
-                        "camping": "$35/night",
-                        "dayUse": "$3/person"
-                    },
-                    "amenities": [
-                        "Flush Toilets",
-                        "Showers",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Picnic Tables",
-                        "Horse Trails"
-                    ],
-                    "reservation": "https://bcparks.ca/reserve/golden-ears/"
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-122.4775, 49.2775]
-                }
+app.get("/campsite-info/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean(); 
+        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+        if (!campsite) {
+            return res.status(404).send("Campsite not found");
+        }
+        // Fetch weather data using OpenWeatherMap API
+        // Ensure that the coordinates are available before making the API call
+        let weather = null;
+        // Check if coordinates are available
+        if (!campsite.coordinates || campsite.coordinates.length !== 2) {
+            console.error("Invalid coordinates for campsite:", campsite);
+            return res.status(400).send("Invalid coordinates");
+        }
+        const [longitude, latitude] = campsite.coordinates || [];
+        // Fetch weather data only if latitude and longitude are available
+        if (latitude && longitude) {
+            try {
+                const apiKey = process.env.OPENWEATHER_API_KEY;
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+                const weatherResponse = await axios.get(weatherUrl);
+                const weatherData = weatherResponse.data;
+                weather = {
+                    icon: weatherData.weather[0].icon,
+                    temp: weatherData.main.temp,
+                    desc: weatherData.weather[0].description,
+                };
+            } catch (error) {
+                console.error("Error fetching weather data:", error.message);
             }
-        ]
-    };
-    res.json(campsites);
+        }
+        // Always pass weather, even if null
+        // Render the campsite-info page with the campsite and weather data
+        res.render("campsite-Info", { campsite, weather, review, booking, alert });
+    } catch (err) {
+        console.error("Error loading campsite info:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
-app.get("*dummy", (req, res) => {
+app.get('/api/funfact/:campsiteName', async (req, res) => {
+    try {
+        const campsiteName = req.params.campsiteName;
+        const prompt = `Tell me a unique, short camping fact related to nature or this place: ${campsiteName}. Only 1 sentence! Maximum 30 words.`;
+        const response = await cohere.generate({
+            model: 'command-r-plus',
+            prompt: prompt,
+            max_tokens: 40,
+            temperature: 0.7,
+        });
+        res.json({ funFact: response.generations[0].text.trim() });
+    } catch (err) {
+        res.status(500).json({ funFact: "Could not generate fun fact." });
+    }
+});
+
+
+// Update the GET /api/campsites endpoint to use MongoDB
+app.get("/api/campsites", async (req, res) => {
+    try {
+        console.log('Fetching campsites from MongoDB...');
+        const campsites = await Campsite.find();
+        console.log(`Found ${campsites.length} campsites:`, campsites);
+        
+        // Transform the data to match the expected GeoJSON format
+        const geojsonCampsites = {
+            type: "FeatureCollection",
+            features: campsites.map(campsite => ({
+                type: "Feature",
+                properties: {
+                    _id: campsite._id,
+                    name: campsite.name,
+                    type: "campsite",
+                    rating: campsite.rating,
+                    reviews: campsite.reviews,
+                    description: campsite.description,
+                    facilities: campsite.amenities,
+                    season: campsite.season,
+                    difficulty: campsite.difficulty,
+                    fees: campsite.fees,
+                    amenities: campsite.amenities,
+                    reservation: campsite.reservation
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: campsite.coordinates
+                }
+            }))
+        };
+        
+        console.log('Sending GeoJSON response:', geojsonCampsites);
+        res.json(geojsonCampsites);
+    } catch (error) {
+        console.error('Error fetching campsites:', error);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ error: 'Failed to fetch campsites' });
+    }
+});
+
+// Add trails endpoint with error handling
+app.get("/api/trails", (req, res) => {
+    try {
+        const trails = [
+            {
+                name: "Garibaldi Lake Trail",
+                coordinates: [-123.0017, 49.9500],
+                rating: 4.8,
+                reviews: 156,
+                description: "A challenging but rewarding hike to the stunning Garibaldi Lake.",
+                type: "Hiking",
+                difficulty: "Moderate",
+                length: "18 km",
+                elevation: "820 m",
+                time: "5-6 hours",
+                features: [
+                    "Lake Views",
+                    "Mountain Scenery",
+                    "Wildlife",
+                    "Camping Available"
+                ]
+            },
+            {
+                name: "Stawamus Chief Trail",
+                coordinates: [-123.1500, 49.6800],
+                rating: 4.6,
+                reviews: 245,
+                description: "Popular hike to the iconic Stawamus Chief with three peaks to choose from.",
+                type: "Hiking",
+                difficulty: "Moderate",
+                length: "11 km",
+                elevation: "600 m",
+                time: "4-5 hours",
+                features: [
+                    "Summit Views",
+                    "Rock Scrambling",
+                    "Photo Opportunities"
+                ]
+            },
+            {
+                name: "Lynn Canyon Loop",
+                coordinates: [-123.0200, 49.3400],
+                rating: 4.4,
+                reviews: 189,
+                description: "Beautiful forest trail with suspension bridge and waterfalls.",
+                type: "Hiking",
+                difficulty: "Easy",
+                length: "3 km",
+                elevation: "100 m",
+                time: "1-2 hours",
+                features: [
+                    "Suspension Bridge",
+                    "Waterfalls",
+                    "Forest Trail",
+                    "Family Friendly"
+                ]
+            }
+        ];
+        res.json(trails);
+    } catch (error) {
+        console.error('Error in /api/trails:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
+ * Sydney: include an app.get for bookings, alerts, reviews?
+ */
+
+app.get("/api/bookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find().lean();
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+});
+
+
+
+// Add POST endpoint for /api/campsites
+app.post("/api/campsites", async (req, res) => {
+    try {
+        console.log('Received request body:', req.body);
+        const campsiteData = req.body;
+        
+        // Validate the campsite data
+        if (!campsiteData.name || !campsiteData.coordinates || !campsiteData.description || !campsiteData.type || !campsiteData.season || !campsiteData.difficulty || !campsiteData.fees) {
+            console.log('Missing required fields:', {
+                name: !campsiteData.name,
+                coordinates: !campsiteData.coordinates,
+                description: !campsiteData.description,
+                type: !campsiteData.type,
+                season: !campsiteData.season,
+                difficulty: !campsiteData.difficulty,
+                fees: !campsiteData.fees
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new campsite document
+        const campsite = new Campsite({
+            name: campsiteData.name,
+            coordinates: campsiteData.coordinates,
+            description: campsiteData.description,
+            type: campsiteData.type,
+            season: campsiteData.season,
+            difficulty: campsiteData.difficulty,
+            fees: campsiteData.fees,
+            amenities: campsiteData.amenities || [],
+            reservation: campsiteData.reservation || '',
+            place_name: campsiteData.place_name || '',
+            rating: campsiteData.rating || 0,
+            reviews: campsiteData.reviews || 0
+        });
+
+        console.log('Created campsite document:', campsite);
+
+        // Save the campsite to MongoDB
+        const savedCampsite = await campsite.save();
+        console.log('Successfully saved campsite:', savedCampsite);
+        res.status(201).json(savedCampsite);
+    } catch (error) {
+        console.error('Error saving campsite:', error);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ error: 'Failed to save campsite: ' + error.message });
+    }
+});
+
+app.post("/api/reviews", async (req, res) => {
+    try {
+        console.log('Received review data:', req.body);
+        const reviewData = req.body;
+
+        // Validate the review data
+        if (!reviewData.campsiteId || !reviewData.overallRating || !reviewData.dateVisited || !reviewData.userId) {
+            console.log('Missing required fields:', {
+                userId: !reviewData.userId,
+                campsiteId: !reviewData.campsiteId,
+                overallRating: !reviewData.overallRating,
+                dateVisited: !reviewData.dateVisited
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new review document
+        const review = new Review({
+            userId: reviewData.userId || null,
+            campsiteId: reviewData.campsiteId,
+            overallRating: reviewData.overallRating,
+            dateVisited: reviewData.dateVisited,
+            electricityWaterHookups: reviewData.electricityWaterHookups || false,
+            dogFriendly: reviewData.dogFriendly || false,
+            picnicTables: reviewData.picnicTables || false,
+            firePitsGrills: reviewData.firePitsGrills || false,
+            cellService: reviewData.cellService || false,
+            trashRecycleBins: reviewData.trashRecycleBins || false,
+            washrooms: reviewData.washrooms || false,
+            additionalComments: reviewData.additionalComments || '',
+            date: new Date()
+        });
+
+        console.log('Created review document:', review);
+
+        // Save the review to MongoDB
+        const savedReview = await review.save();
+        console.log('Successfully saved review:', savedReview);
+        res.status(201).json(savedReview);
+    } catch (error) {
+        console.error('Error saving review:', error);
+        res.status(500).json({ error: 'Failed to save review: ' + error.message });
+    }
+});
+
+app.post("/api/alerts", async (req, res) => {
+    try {
+        console.log('Received alert data:', req.body);
+        const alertData = req.body;
+
+        // Validate the alert data
+        if (!alertData.campsiteId || !alertData.alertType || !alertData.alertDate || !alertData.userId) {
+            console.log('Missing required fields:', {
+                userId: !alertData.userId,
+                campsiteId: !alertData.campsiteId,
+                alertType: !alertData.alertType,
+                alertDate: !alertData.alertDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new alert document
+        const alert = new Alert({
+            userId: alertData.userId || null,
+            campsiteId: alertData.campsiteId,
+            alertType: alertData.alertType,
+            alertDate: alertData.alertDate,
+            message: alertData.message || '',
+            dateCreated: new Date()
+        });
+
+        console.log('Created alert document:', alert);
+
+        // Save the alert to MongoDB
+        const savedAlert = await alert.save();
+        console.log('Successfully saved alert:', savedAlert);
+        res.status(201).json(savedAlert);
+    } catch (error) {
+        console.error('Error saving alert:', error);
+        res.status(500).json({ error: 'Failed to save alert: ' + error.message });
+    }
+});
+
+
+app.post("/api/bookings", async (req, res) => {
+    try {
+        console.log('Received booking data:', req.body);
+        const bookingData = req.body;
+
+        // Validate the booking data
+        if (!bookingData.campsiteId || !bookingData.startDate || !bookingData.endDate) {
+            console.log('Missing required fields:', {
+                campsiteId: !bookingData.campsiteId,
+                //firstName: !bookingData.firstName,
+                startDate: !bookingData.startDate,
+                endDate: !bookingData.endDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new booking document
+        const booking = new Booking({
+            campsiteId: bookingData.campsiteId,
+            firstName: bookingData.firstName || 'Anonymous',
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+            dateCreated: new Date(),
+            tentSpots: bookingData.tentSpots || 0,
+            contactInfo: bookingData.contactInfo || '',
+            summary: bookingData.summary || ''
+        });
+
+        console.log('Created booking document:', booking);
+
+        // Save the booking to MongoDB
+        const savedBooking = await booking.save();
+        console.log('Successfully saved booking:', savedBooking);
+        res.status(201).json(savedBooking);
+    } catch (error) {
+        console.error('Error saving booking:', error);
+        res.status(500).json({ error: 'Failed to save booking: ' + error.message });
+    }
+});
+
+// Add the correct catch-all middleware
+app.use((req, res) => {
     res.status(404);
     res.render("404");
 });

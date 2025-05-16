@@ -1,82 +1,347 @@
-.heart-icon {
-    font-size: 2rem;
-    color: #283f3b;
-    cursor: pointer;
-    transition: transform 0.4s;
+:root {
+  --primary: #283f3b;
+  --accent: #99ddc8;
+  --heart: #8212b6;
+  --bg: #edf3ec;
+  --white: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
 }
 
-.heart-icon:hover {
-    color: #99ddc8;
-    transform: scale(1.2);
+.btn {
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
+
+.btn-outline-primary {
+  border: 1px solid var(--primary) !important;
+  background: transparent;
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+}
+
+.heart-icon,
+.back-icon {
+  font-size: 1.8rem;
+  color: var(--heart);
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.heart-icon:hover,
+.back-icon:hover {
+  transform: scale(1.1);
+}
+
 
 .back-icon {
-    font-size: 2rem;
-    color: #283f3b;
-    cursor: pointer;
-    transition: transform 0.4s;
-}
-
-.back-icon:hover {
-    color: #99ddc8;
-    transform: scale(1.2);
-}
-
-.stars {
-    font-size: 1rem;
-    color: #659b5e;
+  margin-left: 25%;
 }
 
 .img-fluid {
-    float: right;
-    margin: 1rem; /* spacing around the image */
-    max-width: 40%;
-    border-radius: 10px;
+  float: right;
+  margin: 1rem;
+  max-width: 40%;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: transform 0.3s ease;
 }
 
-/*Beginning of experiment*/
+.img-fluid:hover {
+  transform: scale(1.05);
+}
+
 .card-container {
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    background-color: #f9f9f9;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 14px;
+  background-color: #f9f9f9;
 }
 
 .card {
-    background-color: white;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
 }
 
 .card h4 {
-    margin: 0 0 5px;
-    font-size: 1.1rem;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .card small {
-    color: gray;
+  color: gray;
 }
 
 .card p {
-    margin: 5px 0 0;
+  margin: 6px 0 0;
+  font-size: 0.95rem;
 }
-/* End of experiment */
 
-@media (min-width: 100px) and (max-width: 700px) {
-    .mb-4 {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .img-fluid {
-        align-self: start !important;
-        margin: 0 auto;
-        border-radius: 10px;
-        min-width: 100% !important;
-        height: auto;
-    }
+.stars {
+  font-size: 1rem;
+  color: #659b5e;
 }
+
+@media (max-width: 700px) {
+  .mb-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .img-fluid {
+    align-self: start !important;
+    margin: 0 auto;
+    border-radius: 10px;
+    min-width: 100% !important;
+    height: auto;
+    float: none;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.campsite-info {
+  font-size: 16px;
+  color: #333;
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 20px;
+  padding-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.info-grid {
+  margin-top: 12px;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+}
+
+.campsite-info .material-icons {
+  color: #607d8b;
+}
+
+ul.columns {
+  column-count: 2;
+}
+
+.waveContainer{
+  height: 100vh;
+  overflow: hidden;
+}
+.viewBox{
+  height: 100%;
+  width: 100%;
+}
+.path{
+  stroke: none;
+  fill: rgb(237, 115, 115);
+}
+
+
+.wave-background-bottom svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave-background-bottom path {
+  fill: rgb(237, 115, 115); /* Match your theme */
+}
+
+/* Ensure your content appears above the wave */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.card:last-of-type {
+  margin-bottom: 140px; /* leave space so the last card isn't hidden behind the wave */
+}
+
+.wave-background-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 820px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.wave-background-bottom svg path {
+  fill: rgb(44, 71, 44);
+}
+
+
+main {
+  position: relative;
+  z-index: 1; /* Make sure content stays above */
+}
+
+.image-hover-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  height: 260px;
+  width: 100%;
+  box-shadow: 0 8px 20px var(--shadow);
+}
+
+.image-hover-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.image-hover-container:hover img {
+  transform: scale(1.08);
+}
+
+.image-hover-title {
+  position: absolute;
+  bottom: 0;
+  background: rgba(40, 63, 59, 0.7); /* dark transparent overlay */
+  color: white;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-hover-container:hover .image-hover-title {
+  opacity: 1;
+}
+
+.overlay-title {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  font-size: 1.75rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.image-hover-container:hover .overlay-title {
+  opacity: 1;
+}
+
+.button-grow {
+  width: 12rem;
+  height: auto;
+  background: transparent;
+  position: relative;
+  display: inline-block;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  vertical-align: middle;
+  text-decoration: none;
+  padding: 0;
+  font-size: inherit;
+}
+.button-grow .circle {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: relative;
+  display: block;
+  margin: 0;
+  width: 3rem;
+  height: 3rem;
+  background: #659b5e;
+  border-radius: 1.625rem;
+}
+.button-grow .circle .icon {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background: #fff;
+}
+.button-grow .circle .icon.arrow {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  left: 0.625rem;
+  width: 1.125rem;
+  height: 0.125rem;
+  background: none;
+}
+.button-grow .circle .icon.arrow::before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  top: -0.25rem;
+  right: 0.0625rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-top: 0.125rem solid #fff;
+  border-right: 0.125rem solid #fff;
+  transform: rotate(45deg);
+}
+.button-grow .button-text {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem 0;
+  margin: 0 0 0 1.85rem;
+  color: #282936;
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  text-transform: uppercase;
+}
+.button-grow:hover .circle {
+  width: 100%;
+}
+.button-grow:hover .circle .icon.arrow {
+  background: #fff;
+  transform: translate(1rem, 0);
+}
+.button-grow:hover .button-text {
+  color: #fff;
+}
+

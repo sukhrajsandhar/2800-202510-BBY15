@@ -1,0 +1,53 @@
+.waveContainer{
+  height: 100vh;
+  overflow: hidden;
+}
+.viewBox{
+  height: 100%;
+  width: 100%;
+}
+.path{
+  stroke: none;
+  fill: rgb(237, 115, 115);
+}
+
+
+.wave-background-bottom svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave-background-bottom path {
+  fill: rgb(237, 115, 115); /* Match your theme */
+}
+
+/* Ensure your content appears above the wave */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.card:last-of-type {
+  margin-bottom: 140px; /* leave space so the last card isn't hidden behind the wave */
+}
+
+.wave-background-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 820px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.wave-background-bottom svg path {
+  fill: rgb(44, 71, 44);
+}
+
+
+main {
+  position: relative;
+  z-index: 1; /* Make sure content stays above */
+}

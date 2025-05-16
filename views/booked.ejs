@@ -1,7 +1,11 @@
 <%- include('templates/header.ejs', { cssFiles: ['booked.css'] }) %>
 
 <body>
-  <h1 class="no-background"><span class="title1"><b>Your Campsites</b></span></h1>
+  <main
+  class="main">
+            <div class="three">
+                <h1 class="text-center text-black mt-2">Your Campsites</h1>
+            </div>
   
   <div class="d-flex justify-content-center">
     <ul class="nav nav-tabs" id="myTab">
@@ -127,8 +131,9 @@
         </div>
       </div>
     </div>
+  <%- include("templates/bg") %>
+
   </div>
 
   <!-- Footer placeholder -->
   <%- include('templates/footer') %>
-</body>

@@ -1,114 +1,213 @@
 h3 {
-    border: 2px black solid;
-    padding-left: 4%;
-    padding-right: 4%;
-    border-radius: 11px;
+  border: 2px solid #283F3B;
+  padding: 0.5rem 1.5rem;
+  border-radius: 11px;
+  display: inline-block;
+  background-color: #f7f7f7;
+  font-weight: 500;
+  color: #283F3B;
+}
+
+.three h1 {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.4;
+  position: relative;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #283F3B;
+}
+
+.three h1::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 5px;
+  width: 55px;
+  background-color: #95BF74;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.three h1::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  height: 1px;
+  width: 95%;
+  max-width: 255px;
+  background-color: #283F3B;
+  transform: translateX(-50%);
 }
 
 .card-hover {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-#card1, #card2 {
-border: 5px solid #95BF74;
-border-radius: 10px;
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
 
-}
-.card-hover .card-img-overlay {
-    background-color: rgba(0, 0, 0, 0.4); /* normal */
-    transition: background-color 0.3s ease;
-    color: white;
-}
 
 .card-hover:hover .card-img-overlay {
-    background-color: rgba(40, 63, 59, 0.7); /* darker on hover */
+  background-color: rgba(40, 63, 59, 0.7);
 }
 
-#cancel1, #cancel2 {
-    background-color: #659B5E;
-    border: 2px solid #659B5E;
-    margin-top: 30%;
+#card1,
+#card2 {
+  border: 4px solid #95BF74;
+  border-radius: 10px;
 }
 
-#cancel3, #cancel4 {
-    background-color: #659B5E;
-    border: 2px solid #659B5E;
+.btn {
+  background-color: #B4D9A7; 
+  border: 2px solid #B4D9A7;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-#delete1, #delete2 {
-    background-color: #283F3B;
-    border: 2px solid #283F3B;
+.btn:hover {
+  background-color: #95BF74;  
+  border-color: #95BF74;
+  color: white;
 }
 
-#cancel1:hover, #cancel2:hover, #cancel3:hover, #cancel4:hover {
-    background-color: #95BF74;
-    border: 2px solid #95BF74;
+
+#cancel1,
+#cancel2,
+#cancel3,
+#cancel4,
+#homeBtn,
+#details1,
+#details2 {
+  background-color: #659B5E;
+  border: 2px solid #659B5E;
+  color: white;
 }
 
-.tent label {
-    float: left;
-    position: relative;
-    padding: 0px 5px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    background: #eee;
-    color: #24a24a;
-    font-size: 30px;
-    box-shadow: 1px 1px 2px #283F3B;
-    transform: skewx(-1deg);
-  }
-  .tent label:after {
-    content: '';
-    position: absolute;
-    right: -14px;
-    bottom: 1px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 45px 0 0 13px;
-    border-color: transparent transparent transparent #283F3B;
-  }
-
-h1 {
-    font: 40px sans-serif;
-    margin-top: 30px;
-    text-align: center;
-    text-transform: uppercase;
+#cancel1,
+#cancel2 {
+  margin-top: 30%;
 }
 
-h1.background {
-    position: relative;
-    z-index: 1;
-    
-    &:before {
-        border-top: 2px solid #dfdfdf;
-        content:"";
-        margin: 0 auto; /* this centers the line to the full width specified */
-        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
-        top: 50%; left: 0; right: 0; bottom: 0;
-        width: 95%;
-        z-index: -1;
-    }
-
-    span { 
-        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
-        background: #fff; 
-        padding: 0 15px; 
-    }
+#delete1,
+#delete2 {
+  background-color: #283F3B;
+  border: 2px solid #283F3B;
+  color: white;
 }
 
+#cancel1:hover,
+#cancel2:hover,
+#cancel3:hover,
+#cancel4:hover,
+#homeBtn:hover,
+#details1:hover,
+#details2:hover {
+  background-color: #95BF74;
+  border-color: #95BF74;
+  color: white;
+}
 
 .material-icons {
-    vertical-align: middle;
-    color:#659B5E;
-  }
+  vertical-align: middle;
+  color: #659B5E;
+  font-size: 1.3rem;
+}
 
-  h1 {
-    border-top: 3px solid #24a24a;
-    margin-left: 10%;
-    margin-right: 10%;
-    border-radius: 10px;
-    border-bottom: 3px solid #24a24a;
-    text-shadow: 3px 3px 0px #95BF74;
+.main {
+  position: absolute;
+  padding-top: 4%;
+  padding-bottom: 10%;
+  left: 0;
+  right: 0;
+  background-color: rgb(189, 211, 175);
+  overflow: auto;
+}
+
+body, html {
+  background-color: rgb(189, 211, 175);
+}
+
+.list-group-item {
+  font-size: 0.95rem;
+  color: black;
+  padding: 0.6rem 1rem;
+}
+
+.btn-primary {
+  font-weight: 600;
+  background-color: #283F3B;
+  border: #659B5E solid 1px;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-primary:hover {
+  background-color: #95BF74;
+  border-color: #95BF74;
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
+}
+
+
+.card{
+	transition:all 1s;
+	&:after,&:before{
+		content:" ";
+		width:10px;
+		height:10px;
+		position:absolute;
+		border :0px solid #fff;
+		transition:all 1s;
+		}
+	&:after{
+		top:-1px;
+		left:-1px;
+		border-top:5px solid black;
+		border-left:5px solid black;
+	}
+	&:before{
+		bottom:-1px;
+		right:-1px;
+		border-bottom:5px solid black;
+		border-right:5px solid black;
+	}
+	&:hover{
+		border-top-right-radius:0px;
+	border-bottom-left-radius:0px;
+	background:rgba(0,0,0,.5);
+	color:white;
+		&:before,&:after{
+			
+	width:100%;
+	height:100%;
+	border-color:white;
+  border-radius: 20px;
+		}
+	}
+}
+
+.data-container{
+	background:#ffebee;
+	height:100vh;
+	scale:2; 
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}

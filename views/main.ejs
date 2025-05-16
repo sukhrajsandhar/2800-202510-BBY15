@@ -23,6 +23,7 @@
 
     <!-- Your styles -->
     <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/map.css">
 </head>
 
@@ -33,289 +34,395 @@
     <!-- Floating search bar -->
         <div class="search-container">
             <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" id="location-lookup" placeholder="Search for a location..." autocomplete="address-line1">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="location-lookup" placeholder="Search for a location..." autocomplete="address-line1">
+                </div>
+                <button id="addCampsiteBtn" class="add-campsite-btn">
+                    <i class="fas fa-plus"></i> <span class="btn-text">Add Campsite</span>
+                </button>
             </div>
-            <div class="location-display">
-                <i class="fas fa-location-dot"></i>
-                <span id="current-location">Getting location...</span>
-            </div>
-            <div class="weather-display">
-                <span id="weather-info">Loading weather...</span>
+            <div class="location-weather-row">
+                <div class="location-display">
+                    <i class="fas fa-location-dot"></i>
+                    <span id="current-location">Getting location...</span>
+                </div>
+                <div class="weather-display">
+                    <span id="weather-info">Loading weather...</span>
+                </div>
             </div>
         </div>
 
-    <!-- Floating navigation -->
-    <!-- <nav class="nav-container">
-        <div class="nav-links">
-            <a href="main.html" class="nav-link active">
-                <i class="fas fa-compass"></i>
-                <span>Map</span>
-            </a>
-            <a href="favorites.html" class="nav-link">
-                <i class="fas fa-star"></i>
-                <span>Favorites</span>
-            </a>
-            <a href="bookings.html" class="nav-link">
-                <i class="fas fa-campground"></i>
-                <span>Bookings</span>
-            </a>
-            <a href="profile.html" class="nav-link">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
+        <!-- Add Campsite Modal -->
+        <div class="modal fade" id="addCampsiteModal" tabindex="-1" aria-labelledby="addCampsiteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCampsiteModalLabel">Add New Campsite</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCampsiteForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="campsiteName" class="form-label">Campsite Name</label>
+                                        <input type="text" class="form-control" id="campsiteName" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="campsiteType" class="form-label">Type</label>
+                                        <select class="form-control" id="campsiteType" required>
+                                            <option value="Provincial Park">Provincial Park</option>
+                                            <option value="Backcountry">Backcountry</option>
+                                            <option value="Private Campground">Private Campground</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campsiteDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="campsiteDescription" rows="2" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="campsiteSeason" class="form-label">Season</label>
+                                        <input type="text" class="form-control" id="campsiteSeason" placeholder="e.g., May-September" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="campsiteDifficulty" class="form-label">Difficulty</label>
+                                        <select class="form-control" id="campsiteDifficulty" required>
+                                            <option value="Easy">Easy</option>
+                                            <option value="Moderate">Moderate</option>
+                                            <option value="Hard">Hard</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campsiteFees" class="form-label">Fees (per night)</label>
+                                <input type="text" class="form-control" id="campsiteFees" placeholder="e.g., $35" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campsiteRating" class="form-label">Initial Rating (1-5)</label>
+                                <div class="rating-input">
+                                    <div class="star-rating">
+                                        <input type="radio" id="star5" name="rating" value="5" />
+                                        <label for="star5" title="5 stars">★</label>
+                                        <input type="radio" id="star4" name="rating" value="4" />
+                                        <label for="star4" title="4 stars">★</label>
+                                        <input type="radio" id="star3" name="rating" value="3" />
+                                        <label for="star3" title="3 stars">★</label>
+                                        <input type="radio" id="star2" name="rating" value="2" />
+                                        <label for="star2" title="2 stars">★</label>
+                                        <input type="radio" id="star1" name="rating" value="1" />
+                                        <label for="star1" title="1 star">★</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Amenities</label>
+                                <div class="amenities-checkboxes">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Flush Toilets" id="amenityToilets">
+                                        <label class="form-check-label" for="amenityToilets">Flush Toilets</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Hot Showers" id="amenityShowers">
+                                        <label class="form-check-label" for="amenityShowers">Hot Showers</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Drinking Water" id="amenityWater">
+                                        <label class="form-check-label" for="amenityWater">Drinking Water</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Fire Pits" id="amenityFirePits">
+                                        <label class="form-check-label" for="amenityFirePits">Fire Pits</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Swimming Area" id="amenitySwimming">
+                                        <label class="form-check-label" for="amenitySwimming">Swimming Area</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Boat Launch" id="amenityBoatLaunch">
+                                        <label class="form-check-label" for="amenityBoatLaunch">Boat Launch</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campsiteLocation" class="form-label">Location</label>
+                                <div class="input-group">
+                                    <div id="campsite-geocoder" style="flex:1;"></div>
+                                </div>
+                                <input type="hidden" id="campsiteLocation" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveCampsite">Save Campsite</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </nav> -->
+
+        <%- include('templates/footer') %>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="/js/campsites.js"></script>
 
-        <script type="module">
-        // Get the Mapbox token from the server
+    <script type="module">
+        // Set Mapbox access token at the very top
         const mapboxKey = '<%= mapboxKey %>';
-
-        // Initialize map
-        mapboxgl.accessToken = mapboxKey;
-        const map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
-            center: [-123.1207, 49.1527],
-            zoom: 9
-        });
-
-        // Add geolocation control
-        const geolocateControl = new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true,
-            showUserHeading: true
-        });
-
-        map.addControl(geolocateControl);
-
-        // Update location display when position changes
-        geolocateControl.on('geolocate', async (e) => {
-            const locationDisplay = document.getElementById('current-location');
-            const weatherInfo = document.getElementById('weather-info');
-            const lat = e.coords.latitude;
-            const lng = e.coords.longitude;
-            
-            try {
-                // Reverse geocode the coordinates to get the address
-                const response = await fetch(
-                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
-                );
-                const data = await response.json();
-                
-                if (data.features && data.features.length > 0) {
-                    // Get the most relevant address
-                    const address = data.features[0].place_name;
-                    locationDisplay.textContent = address;
-                } else {
-                    locationDisplay.textContent = 'Address not found';
-                }
-            } catch (error) {
-                console.error('Error getting address:', error);
-                locationDisplay.textContent = 'Error getting address';
-            }
-
-            // Fetch weather from OpenWeatherMap
-            try {
-                const OPENWEATHER_API_KEY = 'f7cb5e5c969b57971a8aa3ff7dac3f59';
-                const weatherRes = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${OPENWEATHER_API_KEY}`
-                );
-                const weatherData = await weatherRes.json();
-                if (weatherData && weatherData.weather && weatherData.weather.length > 0) {
-                    const temp = Math.round(weatherData.main.temp);
-                    const desc = weatherData.weather[0].description;
-                    const icon = weatherData.weather[0].icon;
-                    weatherInfo.innerHTML = `<img src='https://openweathermap.org/img/wn/${icon}.png' alt='${desc}' style='vertical-align:middle;width:20px;height:20px;'> ${temp}°C, ${desc}`;
-                } else {
-                    weatherInfo.textContent = 'Weather not found';
-                }
-            } catch (error) {
-                console.error('Error getting weather:', error);
-                weatherInfo.textContent = 'Error getting weather';
-            }
-        });
-
-        // Add navigation control
-        map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), 'top-right');
-
-        // Add geocoder
-        const geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            placeholder: 'Search for a location...',
-            marker: false,
-            flyTo: {
-                bearing: 0,
-                essential: true,
-                padding: {top: 0, bottom: 0, left: 0, right: 0},
-                zoom: 14
-            }
-        });
-
-        // Add geocoder to the search input
-        const searchInput = document.getElementById('location-lookup');
-        searchInput.parentNode.replaceChild(geocoder.onAdd(map), searchInput);
-
-        // Handle geocoder results
-        geocoder.on('result', (event) => {
-            const result = event.result;
-            // Fly to the selected location
-            map.flyTo({
-                center: result.center,
-                zoom: 14,
-                essential: true
-            });
-        });
-
-        // Handle geocoder clear
-        geocoder.on('clear', () => {
-            // Reset the map view when search is cleared
-            map.flyTo({
+        window.mapboxgl.accessToken = mapboxKey;
+        if (!window.mapboxgl.accessToken) {
+            console.error('Mapbox access token is missing!');
+            alert('Mapbox access token is missing! Please check your configuration.');
+        } else {
+            // Initialize map
+            window.map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/str4t/cm7s21ut7003s01snduvec3nn',
                 center: [-123.1207, 49.1527],
-                zoom: 9,
-                essential: true
+                zoom: 9
             });
-        });
 
-        // Add active state to current page in navigation
-        const currentPage = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-            if (link.getAttribute('href') === currentPage) {
-                link.classList.add('active');
-            }
-        });
+            // Add geolocation control
+            const geolocateControl = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true,
+                showUserHeading: true
+            });
 
-        // Add BC Parks camping locations
-        map.on('load', () => {
-            // Sample camping locations in BC with detailed information
-            const campingLocations = [
-                {
-                    name: "Porteau Cove",
-                    coordinates: [-123.2337, 49.5557],
-                    rating: 4.5,
-                    reviews: 128,
-                    description: "A scenic waterfront campground with stunning views of Howe Sound.",
-                    type: "Provincial Park",
-                    season: "Year-round",
-                    difficulty: "Easy",
-                    fees: {
-                        camping: "$35/night"
-                    },
-                    amenities: [
-                        "Flush Toilets",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Picnic Tables",
-                        "Boat Launch"
-                    ],
-                    reservation: "https://bcparks.ca/reserve/porteau-cove/"
-                },
-                {
-                    name: "Alice Lake",
-                    coordinates: [-123.1207, 49.1527],
-                    rating: 4.3,
-                    reviews: 95,
-                    description: "Family-friendly campground surrounded by four lakes and mountain views.",
-                    type: "Provincial Park",
-                    season: "May-September",
-                    difficulty: "Easy",
-                    fees: {
-                        camping: "$35/night"
-                    },
-                    amenities: [
-                        "Flush Toilets",
-                        "Hot Showers",
-                        "Drinking Water",
-                        "Fire Pits",
-                        "Swimming Area"
-                    ],
-                    reservation: "https://bcparks.ca/reserve/alice-lake/"
-                },
-                {
-                    name: "Garibaldi Lake",
-                    coordinates: [-123.0017, 49.9500],
-                    rating: 4.8,
-                    reviews: 156,
-                    description: "Backcountry camping with breathtaking views of Garibaldi Lake and surrounding peaks.",
-                    type: "Backcountry",
-                    season: "July-September",
-                    difficulty: "Moderate",
-                    fees: {
-                        camping: "$10/night"
-                    },
-                    amenities: [
-                        "Pit Toilets",
-                        "Food Storage",
-                        "Tent Pads",
-                        "Water Source"
-                    ],
-                    reservation: "https://bcparks.ca/reserve/garibaldi/"
+            window.map.addControl(geolocateControl);
+
+            // Update location display when position changes
+            geolocateControl.on('geolocate', async (e) => {
+                const locationDisplay = document.getElementById('current-location');
+                const weatherInfo = document.getElementById('weather-info');
+                const lat = e.coords.latitude;
+                const lng = e.coords.longitude;
+                
+                try {
+                    // Reverse geocode the coordinates to get the address
+                    const response = await fetch(
+                        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${window.mapboxgl.accessToken}`
+                    );
+                    const data = await response.json();
+                    
+                    if (data.features && data.features.length > 0) {
+                        // Get the most relevant address
+                        const address = data.features[0].place_name;
+                        locationDisplay.textContent = address;
+                    } else {
+                        locationDisplay.textContent = 'Address not found';
+                    }
+                } catch (error) {
+                    console.error('Error getting address:', error);
+                    locationDisplay.textContent = 'Error getting address';
                 }
-            ];
 
-            // Add markers for each camping location
-            campingLocations.forEach(location => {
-                // Create a custom marker element with enhanced styling
-                const el = document.createElement('div');
-                el.className = 'camping-marker';
-                el.innerHTML = `
-                    <div class="marker-container">
-                        <div class="marker-icon">
-                            <i class="fas fa-campground"></i>
-                        </div>
-                        <div class="marker-pulse"></div>
-                    </div>
-                `;
-                el.style.cursor = 'pointer';
-
-                // Add click listener to redirect to /campsite-info
-                el.addEventListener('click', () => {
-                    window.location.href = '/campsite-info';
-                });
-
-                // Create popup content with more details
-                const popupContent = `
-                    <div class="camping-popup">
-                        <h4>${location.name}</h4>
-                        <div class="popup-rating">
-                            <span class="stars">${'★'.repeat(Math.floor(location.rating))}${'☆'.repeat(5-Math.floor(location.rating))}</span>
-                            <span class="rating">${location.rating} (${location.reviews} reviews)</span>
-                        </div>
-                        <p class="description">${location.description}</p>
-                        <div class="popup-details">
-                            <p><strong>Type:</strong> ${location.type}</p>
-                            <p><strong>Season:</strong> ${location.season}</p>
-                            <p><strong>Difficulty:</strong> ${location.difficulty}</p>
-                            <p><strong>Fees:</strong> ${location.fees.camping}</p>
-                        </div>
-                        <div class="popup-amenities">
-                            <h5>Amenities:</h5>
-                            <ul>
-                                ${location.amenities.map(amenity => `<li>${amenity}</li>`).join('')}
-                            </ul>
-                        </div>
-                        <div class="popup-actions">
-                            <a href="${location.reservation}" target="_blank" class="reserve-btn">Make Reservation</a>
-                        </div>
-                    </div>
-                `;
-
-                // Create and add the marker
-                new mapboxgl.Marker(el)
-                    .setLngLat(location.coordinates)
-                    .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
-                    .addTo(map);
+                // Fetch weather from OpenWeatherMap
+                try {
+                    const OPENWEATHER_API_KEY = '<%= process.env.OPENWEATHER_API_KEY %>';
+                    const weatherRes = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${OPENWEATHER_API_KEY}`
+                    );
+                    const weatherData = await weatherRes.json();
+                    if (weatherData && weatherData.weather && weatherData.weather.length > 0) {
+                        const temp = Math.round(weatherData.main.temp);
+                        const desc = weatherData.weather[0].description;
+                        const icon = weatherData.weather[0].icon;
+                        weatherInfo.innerHTML = `<img src='https://openweathermap.org/img/wn/${icon}.png' alt='${desc}' style='vertical-align:middle;width:20px;height:20px;'> ${temp}°C, ${desc}`;
+                    } else {
+                        weatherInfo.textContent = 'Weather not found';
+                    }
+                } catch (error) {
+                    console.error('Error getting weather:', error);
+                    weatherInfo.textContent = 'Error getting weather';
+                }
             });
-        });
-        </script> 
 
-<%- include("templates/footer") %>
+            // Add navigation control
+            window.map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), 'top-right');
+
+            // Initialize geocoder after map is ready
+            window.map.on('load', () => {
+                // Initialize the geocoder
+                initializeGeocoder();
+                // Load campsites and trails
+                loadMapData();
+                // Load all campsites from DB and add to map
+                if (typeof loadCampsitesFromDB === 'function') {
+                    loadCampsitesFromDB();
+                }
+            });
+        }
+
+        // Mapbox Geocoder integration for the search bar
+        function initializeGeocoder() {
+            const geocoder = new MapboxGeocoder({
+                accessToken: window.mapboxgl.accessToken,
+                mapboxgl: window.mapboxgl,
+                marker: false,
+                placeholder: "Search for a location...",
+                flyTo: {
+                    bearing: 0,
+                    speed: 1.2,
+                    curve: 1,
+                    essential: true
+                },
+                countries: 'ca'
+            });
+            // Place geocoder in the search bar
+            const searchInputWrapper = document.querySelector('.search-input-wrapper');
+            if (searchInputWrapper) {
+                // Remove the custom input and add geocoder
+                const customInput = searchInputWrapper.querySelector('#location-lookup');
+                if (customInput) customInput.remove();
+                searchInputWrapper.appendChild(geocoder.onAdd(window.map));
+            }
+            // Pan/zoom map on result
+            geocoder.on('result', (e) => {
+                if (e.result && e.result.center) {
+                    window.map.flyTo({ center: e.result.center, zoom: 12 });
+                }
+            });
+        }
+
+        // Function to load map data
+        async function loadMapData() {
+            try {
+                // Load campsites
+                const campsitesResponse = await fetch('/api/campsites');
+                if (!campsitesResponse.ok) {
+                    throw new Error(`HTTP error! status: ${campsitesResponse.status}`);
+                }
+                const campsitesData = await campsitesResponse.json();
+                if (Array.isArray(campsitesData.features)) {
+                    campsitesData.features.forEach(campsite => {
+                        addCampsiteToMap(campsite);
+                    });
+                } else if (Array.isArray(campsitesData)) {
+                    campsitesData.forEach(campsite => {
+                        addCampsiteToMap(campsite);
+                    });
+                } else {
+                    console.error('Campsites data is not an array:', campsitesData);
+                }
+
+                // Load trails - with error handling for missing endpoint
+                try {
+                    const trailsResponse = await fetch('/api/trails');
+                    if (trailsResponse.ok) {
+                        const trailsData = await trailsResponse.json();
+                        if (Array.isArray(trailsData)) {
+                            trailsData.forEach(trail => {
+                                addTrailToMap(trail);
+                            });
+                        } else {
+                            console.error('Trails data is not an array:', trailsData);
+                        }
+                    } else {
+                        console.warn('Trails endpoint not available:', trailsResponse.status);
+                    }
+                } catch (error) {
+                    console.warn('Error loading trails:', error);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Function to add a trail to the map
+        function addTrailToMap(trail) {
+            const el = document.createElement('div');
+            el.className = 'trail-marker';
+            el.innerHTML = `
+                <div class="marker-container">
+                    <div class="marker-icon">
+                        <i class="fas fa-hiking"></i>
+                    </div>
+                    <div class="marker-pulse"></div>
+                </div>
+            `;
+            el.style.cursor = 'pointer';
+
+            const popupContent = `
+                <div class="camping-popup">
+                    <h4>${trail.name}</h4>
+                    <div class="popup-rating">
+                        <span class="stars">${'★'.repeat(Math.floor(trail.rating))}${'☆'.repeat(5-Math.floor(trail.rating))}</span>
+                        <span class="rating">${trail.rating} (${trail.reviews} reviews)</span>
+                    </div>
+                    <p class="description">${trail.description}</p>
+                    <div class="popup-details">
+                        <p><strong>Type:</strong> ${trail.type}</p>
+                        <p><strong>Difficulty:</strong> ${trail.difficulty}</p>
+                        <p><strong>Length:</strong> ${trail.length}</p>
+                        <p><strong>Elevation Gain:</strong> ${trail.elevation}</p>
+                        <p><strong>Time:</strong> ${trail.time}</p>
+                    </div>
+                    <div class="popup-amenities">
+                        <h5>Features:</h5>
+                        <ul>
+                            ${trail.features && Array.isArray(trail.features) ? trail.features.map(feature => `<li>${feature}</li>`).join('') : ''}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat(trail.coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
+                .addTo(window.map);
+
+            el.addEventListener('click', () => {
+                marker.togglePopup();
+            });
+        }
+
+        // Add Mapbox Geocoder to the Add Campsite modal for location entry
+        function initializeCampsiteGeocoder() {
+            const geocoder = new MapboxGeocoder({
+                accessToken: window.mapboxgl.accessToken,
+                mapboxgl: window.mapboxgl,
+                marker: false,
+                placeholder: "Search for a location in Canada...",
+                countries: 'ca'
+            });
+            const geocoderContainer = document.getElementById('campsite-geocoder');
+            if (geocoderContainer) {
+                geocoderContainer.innerHTML = '';
+                geocoderContainer.appendChild(geocoder.onAdd(window.map));
+            }
+            // When a result is selected, store the coordinates in the hidden input
+            geocoder.on('result', (e) => {
+                if (e.result && e.result.center) {
+                    document.getElementById('campsiteLocation').value = JSON.stringify({
+                        lng: e.result.center[0],
+                        lat: e.result.center[1],
+                        place_name: e.result.place_name
+                    });
+                    // Also update selectedCoordinates for form validation
+                    window.selectedCoordinates = e.result.center;
+                }
+            });
+        }
+
+        // Initialize the modal geocoder when the modal is shown
+        const modal = document.getElementById('addCampsiteModal');
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', initializeCampsiteGeocoder);
+        }
+    </script> 
 

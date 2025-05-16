@@ -1,0 +1,29 @@
+body {
+    background-color: rgb(85, 111, 68);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    bottom: 80px;
+    left: auto;
+    right: auto;
+    width: 100%;
+    align-items: center;
+    padding: 20px;
+    overflow: auto;
+}
+
+.title{
+    font-size: 2em;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.card {
+    padding: 20px;
+    margin: 10px;
+}
+

@@ -1,0 +1,47 @@
+<!-- TO DO: Add way to contact user from contact button-->
+
+<%- include('templates/header', { cssFiles: ['/viewBooking.css'] }) %>
+
+<main>
+    <div>
+        <h1 class="text-center title">
+            <%= campsite.name %> <br />Bookings List
+        </h1>
+    </div>
+    <div class="container">
+        <% if (booking && booking.length > 0) { %>
+            <% booking.forEach(function(booking) { %>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>DATES: </h5>
+                        <p><%= booking.startDate %> - <%= booking.endDate %></p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="card-title d-flex">
+                            <h5><%= booking.firstName %></h5>
+                            <small style="position: absolute; right: 20px;">Tent spots: <%= booking.tentSpots %></small>
+                        </div>
+                        <p class="card-text">
+                            <%= booking.summary %>
+                        </p>
+                        <a
+                            href="#"
+                            style="
+                                background-color: rgb(40, 63, 59);
+                                outline-color: #95bf74;
+                            "
+                            class="btn btn-primary"
+                            >Contact</a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div style="color: #888">
+                No bookings available for this campsite yet.
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('templates/footer') %>

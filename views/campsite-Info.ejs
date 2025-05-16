@@ -1,262 +1,346 @@
-<%- include('templates/header', { cssFiles: ['campsite-info.css']}) %>
 
-<main style="display: flex; flex-direction: column; align-items: center">
-    <div class="container mt-5" style="width: 80%">
-        <!--Campsite Name and Saved Icon-->
-        <div
-            class="mb-3"
-            style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            "
-        >
-            <h1 style="color: #283f3b"><%= campsite.name %></h1>
-            <div class="icon-container">
-                <i
-                    id="heart"
-                    class="far fa-heart heart-icon"
-                    style="margin: 1rem"
-                ></i>
-                <a href="/" class="back-link" style="margin: 1rem">
-                    <i class="fas fa-arrow-left back-icon"></i>
-                </a>
-            </div>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
+
+<main style="display: flex; flex-direction: column; align-items: center; margin-top: 0; padding-top: 0;">
+    <div style="width: 100%; max-width: 700px; margin: 0 auto;">
+        <!-- Header Bar with Back and Favourite Buttons -->
+        <div class="d-flex justify-content-between align-items-center" style="gap: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+            <a href="/" class="back-link" title="Back to Map">
+                <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
+            </a>
+            <i id="heart" class="far fa-heart heart-icon" style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
         </div>
-        <!--Campsite Card and Image-->
-        <div class="mb-4" style="display: flex; gap: 1rem">
-            <div class="card-body">
-                <br />
-                <h5>Description</h5>
-                <p style="justify-content: center"><%= campsite.bio %></p>
-                <h6>Address:</h6>
-                <p><%= campsite.address %></p>
-                <h6>Rating:</h6>
-                <div id="starContainer" class="stars">
-                    <p id="ratingValue"><%= campsite.rating %></p>
+
+        
+        <!-- Details Card -->
+        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
+            
+            <!-- Banner Image -->
+            <div class="fade-in-up"
+                style="width: 100%; height: 260px; background: #eee; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
+                <img src="<%= campsite.imageUrl || '/default-campsite.jpg' %>" id="campsiteImage"
+                    class="img-fluid w-100 h-100" alt="Campsite image"
+                    style="object-fit: cover; width: 100%; height: 100%; min-height: 180px;" />
+            </div>
+            <!-- Details Card -->
+            <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+                    <h1 class="mb-2 mb-md-0" style="color: #283f3b">
+                        <%= campsite.name %>
+                    </h1>
+                    <!-- Weather Status (moved here, right of the name) -->
+                    <div>
+                    <% if (weather) { %>
+                        <div
+                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
+                            <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon"
+                                style="width: 40px; height: 40px;">
+                            <div style="margin-left: 0.5rem;">
+                                <div><strong><%= weather.temp %>°C</strong></div>
+                                <div style="text-transform: capitalize; font-size: 0.95em;"><%= weather.desc %></div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div
+                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
+                            <div style="margin-left: 0.5rem;">
+                                <div><strong>Weather data unavailable</strong></div>
+                            </div>
+                        </div>
+                    <% } %>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <% if (campsite.place_name) { %>
+                        <span>
+                            <%= campsite.place_name %>
+                        </span>
+                        <% } else { %>
+                            <span style="color: #888;">No address available</span>
+                            <% } %>
+                </div>
+                <div class="mb-2">
+                    <span class="stars" id="starContainer"></span>
+                    <span class="ms-2" id="ratingValue">
+                        <%= campsite.rating %>
+                    </span>
+                </div>
+                <hr />
+                <div class="row g-4 campsite-info">
+                    <div class="col-12">
+                      <h5 class="section-title">Description</h5>
+                      <p><%= campsite.description %></p>
+                  
+                      <div class="row g-3 mt-2 info-grid">
+                        <div class="col-6 col-md-4 info-item">
+                          <span class="material-icons">terrain</span>
+                          <strong>Type:</strong> <%= campsite.type %>
+                        </div>
+                        <div class="col-6 col-md-4 info-item">
+                          <span class="material-icons">calendar_today</span>
+                          <strong>Season:</strong> <%= campsite.season %>
+                        </div>
+                        <div class="col-6 col-md-4 info-item">
+                          <span class="material-icons">fitness_center</span>
+                          <strong>Difficulty:</strong> <%= campsite.difficulty %>
+                        </div>
+                        <div class="col-6 col-md-4 info-item">
+                          <span class="material-icons">attach_money</span>
+                          <strong>Fees:</strong> <%= campsite.fees && campsite.fees.camping %>
+                        </div>
+                      </div>
+                  
+                      <div class="mt-4">
+                        <span class="material-icons">emoji_objects</span>
+                        <strong>Amenities:</strong>
+                        <ul class="columns">
+                          <% if (campsite.amenities && campsite.amenities.length > 0) { %>
+                            <% campsite.amenities.forEach(function(amenity) { %>
+                              <li><%= amenity %></li>
+                            <% }) %>
+                          <% } else { %>
+                            <li>No amenities listed.</li>
+                          <% } %>
+                        </ul>
+                      </div>
+                      
+                  
+                        <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
+                    </div>
+
+                    <!-- Fun Fact Section -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h5>
+                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
+                            Fun Fact
+                        </h5>
+                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Fetch the fun fact but keep it hidden initially
+                            let funFactText = "";
+                            fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    funFactText = data.funFact;
+                                })
+                                .catch(() => {
+                                    funFactText = "Could not load fun fact.";
+                                });
+
+                            const funFactElem = document.getElementById("funFact");
+                            const lightbulb = document.getElementById("revealFunFact");
+                            let revealed = false;
+
+                            lightbulb.addEventListener("click", function() {
+                                if (!revealed) {
+                                    funFactElem.style.filter = "none";
+                                    funFactElem.style.userSelect = "auto";
+                                    funFactElem.textContent = funFactText || "Could not load fun fact.";
+                                    lightbulb.style.filter = "none";
+                                    revealed = true;
+                                }
+                            });
+                        });
+                    </script>
                 </div>
             </div>
-            <img
-                src="<%= campsite.imageUrl %>"
-                id="campsiteImage"
-                class="img-fluid rounded-start"
-                alt="..."
-            />
+        </div>
+
+        
+        <!-- Bookings Section -->
+        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Bookings</h2>
+                <a
+                    href="/createBooking/<%= campsite._id %>"
+                    class="btn btn-success"
+                    style="background-color: rgb(40, 63, 59)"
+                    >New Booking</a
+                >
+            </div>
+
+            <!-- Booking: List of Bookings for specific campsite -->
+            <div class="card-container">
+                <% if (booking && booking.length > 0) { %> 
+                    <% booking.forEach(function(booking) { %>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div
+                                    class="d-flex justify-content-between align-items-center mb-2"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            style="
+                                                width: 40px;
+                                                height: 40px;
+                                                background-color: #d0ddd7;
+                                                border-radius: 50%;
+                                            "
+                                        ></div>
+                                        <div class="ms-2">
+                                    <h6 class="mb-0"><%= booking.firstName %></h6>
+                                    <small class="text-muted"><%= booking.tentSpace %></small>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
+                        <p class="mb-0">
+                            <%= booking.summary %>
+                        </p>
+                    </div>
+                </div>
+                    <% }) %> <% } else { %>
+                        <div style="color: #888">
+                            No bookings available for this campsite yet.
+                        </div>
+                    <% } %>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a
+                    href="/viewBookings/<%= campsite._id %>"
+                    class="btn btn-outline-primary"
+                    style="
+                        color: white;
+                        background-color: rgb(40, 63, 59);
+                        border: #95bf74;
+                    "
+                    >See All</a
+                >
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Reviews</h2>
+                <a
+                    href="/createReview/<%= campsite._id %>"
+                    class="btn btn-success"
+                    >New Review</a
+                >
+            </div>
+
+            <!-- Database Review: List of Reviews for specific campsite -->
+            <div class="card-container">
+                <%
+                review.sort((a, b) => new Date(b.dateVisited) - new Date(a.dateVisited));
+                %>
+                <% if (review && review.length > 0) { %> 
+                    <%review.forEach(function(review) { %>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div
+                                    class="d-flex justify-content-between align-items-center mb-2"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            style="
+                                                width: 40px;
+                                                height: 40px;
+                                                background-color: #d0ddd7;
+                                                border-radius: 50%;
+                                            "
+                                        ></div>
+                                        <div class="ms-2">
+                                    <h6 class="mb-0"><%= review.firstName || user.firstName %></h6>
+                                    <small class="text-muted">
+                                        <% if (review.overallRating) { 
+                                            const fullStars = '🌟'.repeat(review.overallRating);
+                                        %>
+                                            <%= fullStars %>
+                                        <% } else { %>
+                                            No rating
+                                        <% } %>
+                                        </small>
+                                </div>
+                            </div>
+                            <small class="text-muted"><%= review.dateVisited || 'Unknown' %></small>
+                        </div>
+                        <p class="mb-0">
+                            <%= review.additionalComments || 'No comments' %>
+                        </p>
+                    </div>
+                        </div>
+                <% }) %> <% } else { %>
+                <div style="color: #888">
+                    No reviews available for this campsite yet.
+                </div>
+                <% } %>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-3">
+                <a href="/viewReviews/<%= campsite._id %>" class="btn btn-success btn-sm"
+                    >See All</a
+                >
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Alerts</h2>
+                <a
+                    href="/createAlert/<%= campsite._id %>"
+                    class="btn btn-danger"
+                    >New Alert</a
+                >
+            </div>
+            <div class="card-container">
+                <%
+                alert.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
+                %>
+                <% if (alert && alert.length > 0) { %> 
+                    <%alert.forEach(function(alert) { %>
+                <div
+                    style="
+                        margin-bottom: 0.5rem;
+                        padding: 0.5rem;
+                        background-color: #fff3cd;
+                        border-radius: 4px;
+                    "
+                >
+                    <strong><%= alert.alertType %></strong>
+                    <small class="text-muted"><%= alert.alertDate || 'Unknown' %></small>
+                    <%= alert.message %>
+                </div>
+                <% }) %> <% } else { %>
+                <div style="color: #888">
+                    No alerts available for this campsite yet.
+                </div>
+                <% } %>
+            </div>
+
+
+            <div class="d-flex justify-content-end mt-3">
+                <a href="/viewAlerts/<%= campsite._id %>" class="btn btn-danger btn-sm">See All</a>
+            </div>
         </div>
     </div>
 
-    <!--Bookings Section-->
-    <section
-        style="
-            width: 80%;
-
-            margin-bottom: 2rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-        "
-    >
-        <div
-            style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            "
-        >
-            <h2>Bookings</h2>
-            <a
-                href="/bookingAvailability"
-                style="
-                    background-color: #8212b6;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    text-decoration: none;
-                "
-                >New Booking</a
-            >
-        </div>
-
-        <!--Campsite specific scrollable bookings section-->
-        <div class="card-container">
-            <% bookings.forEach(function(bookings) { %>
-            <div class="card">
-                <h4><%= bookings.title %></h4>
-                <small
-                    ><%= bookings.dateStart %> to <%= bookings.dateEnd %></small
-                >
-                <p>Availability:</p>
-                <small
-                    >People: <%= bookings.tents %>, Tents: <%= bookings.people
-                    %></small
-                >
-                <p><%= bookings.summary %></p>
-                <a
-                    href="#"
-                    class="btn btn-secondary"
-                    style="max-width: 20%; align-self: flex-end"
-                    >Contact</a
-                >
-            </div>
-            <% }) %>
-        </div>
-    </section>
-
-    <!-- Reviews Section -->
-    <section
-        style="
-            width: 80%;
-            margin-bottom: 2rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-        "
-    >
-        <div
-            style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            "
-        >
-            <h2>Reviews</h2>
-            <a
-                href="/createReview"
-                style="
-                    background-color: #4caf50;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    text-decoration: none;
-                "
-                >New Review</a
-            >
-        </div>
-        <div
-            style="
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                background-color: #f9f9f9;
-                border-radius: 4px;
-            "
-        >
-            <strong>User123:</strong> Beautiful spot! Lots of trees and quiet at
-            night.
-        </div>
-        <div
-            style="
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                background-color: #f9f9f9;
-                border-radius: 4px;
-            "
-        >
-            <strong>CamperJane:</strong> Great hiking trails nearby and clean
-            facilities.
-        </div>
-    </section>
-
-    <!-- Alerts Section -->
-    <section
-        style="
-            width: 80%;
-            margin-bottom: 2rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-        "
-    >
-        <div
-            style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            "
-        >
-            <h2>Alerts</h2>
-            <a
-                href="/createAlert"
-                style="
-                    background-color: #f44336;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    text-decoration: none;
-                "
-                >New Alert</a
-            >
-        </div>
-        <div
-            style="
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                background-color: #fff3cd;
-                border-radius: 4px;
-            "
-        >
-            <strong>Ranger Notice:</strong> Fire ban in effect until next week.
-        </div>
-        <div
-            style="
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                background-color: #fff3cd;
-                border-radius: 4px;
-            "
-        >
-            <strong>Weather Alert:</strong> Heavy rain expected tomorrow, pack
-            accordingly.
-        </div>
-    </section>
-</main>
-
-<script>
+    <script src="/public/js/campsite-info.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
     // Heart icon toggle functionality
-
-    const heart = document.getElementById("heart");
-
-    heart.addEventListener("click", () => {
-        // Toggle between outlined (far) and solid (fas)
-        if (heart.classList.contains("far")) {
-            heart.classList.remove("far");
-            heart.classList.add("fas");
-        } else {
-            heart.classList.remove("fas");
-            heart.classList.add("far");
+        const heart = document.getElementById("heart");
+        if (heart) {
+            heart.addEventListener("click", () => {
+                if (heart.classList.contains("far")) {
+                    heart.classList.remove("far");
+                    heart.classList.add("fas");
+                } else {
+                    heart.classList.remove("fas");
+                    heart.classList.add("far");
+                }
+            });
         }
     });
+    </script>
 
-    // Star rating functionality
-
-    const rating = parseFloat(
-        document.getElementById("ratingValue").textContent
-    );
-    const starContainer = document.getElementById("starContainer");
-
-    const fullStars = Math.floor(rating);
-    const hasHalf = rating % 1 >= 0.25 && rating % 1 < 0.75;
-    const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-
-    for (let i = 0; i < fullStars; i++) {
-        starContainer.innerHTML += '<i class="fas fa-star"></i>';
-    }
-    if (hasHalf) {
-        starContainer.innerHTML += '<i class="fas fa-star-half-alt"></i>';
-    }
-    for (let i = 0; i < emptyStars; i++) {
-        starContainer.innerHTML += '<i class="far fa-star"></i>';
-    }
-
-    // // Get the rating from the hidden div
-    // const rating = parseInt(document.getElementById("ratingValue").textContent);
-    // const clampedRating = Math.max(0, Math.min(5, rating)); // Clamp 0–5
-    // const starContainer = document.getElementById("starContainer");
-
-    // // Render the stars
-    // starContainer.innerHTML = "★".repeat(clampedRating);
-</script>
+</div>
+</main>
 
 <%- include('templates/footer') %>
