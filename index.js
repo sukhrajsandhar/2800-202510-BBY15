@@ -417,21 +417,6 @@ app.post("/update-profile", async (req, res) => {
 });
 
 
-/**
- * Sydney viewBookings 
- */
-// app.get("/viewBookings/:campsiteId", (req, res) => {
-//     const campsiteId = req.params.campsiteId;
-//     Booking.find({ campsiteId: campsiteId })
-//         .then(bookings => {
-//             res.render("viewBookings", { bookings });
-//         })
-//         .catch(err => {
-//             console.error("Error fetching bookings:", err);
-//             res.status(500).send("Error fetching bookings");
-//         });
-// });
-
 
 
 
@@ -471,21 +456,7 @@ app.post("/toggle-trusted", async (req, res) => {
     
 });
 
-//Sydney
-app.get("/viewBookings/:id", async (req, res) => {
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
-try {
-        const campsite = await Campsite.findById(req.params.id).lean();
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
-        if (!campsite) {
-            return res.status(404).send('Campsite not found');
-        }
-        res.render("viewBookings", { campsite, booking });
-    } catch (err) {
-        res.status(500).send("Error loading bookings");
-    }
-});
+
 
 //Admin toggle admin role
 app.post("/toggle-role", async (req, res) => {
@@ -513,6 +484,20 @@ app.get("/viewAlerts", (req, res) => {
 
 app.get("/viewReviews", (req, res) => {
     res.render("viewReviews");
+});
+
+//Sydney
+app.get("/viewBookings/:id", async (req, res) => {
+try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("viewBookings", { campsite, booking });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
+    }
 });
 
 app.get("/favourites", (req, res) => {

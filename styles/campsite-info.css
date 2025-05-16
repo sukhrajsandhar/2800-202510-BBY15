@@ -5,18 +5,16 @@ body {
 main {
     display: flex;
     flex-direction: column;
-    position:absolute;
-    top:60px;
+    position: absolute;
+    top: 60px;
     bottom: 80px;
-    left:auto;
-    right:auto;
+    left: auto;
+    right: auto;
     width: 100%;
     align-items: center;
     padding: 20px;
     overflow: auto;
 }
-
-
 
 h2 {
     font-size: 20px;
@@ -127,10 +125,6 @@ button {
     transform: scale(1.05);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Sydney_bookings_database_connection
 .card-container {
     max-height: 200px;
     overflow-y: auto;
@@ -161,7 +155,6 @@ button {
     margin: 5px 0 0;
 }
 
-
 @media (min-width: 100px) and (max-width: 700px) {
     .mb-4 {
         display: flex;
@@ -177,62 +170,61 @@ button {
     }
 }
 
-<<<<<<< HEAD
 @keyframes fadeInUp {
     from {
-      opacity: 0;
-      transform: translateY(20px);
+        opacity: 0;
+        transform: translateY(20px);
     }
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  .fade-in-up {
-    animation: fadeInUp 0.6s ease-out both;
-  }
+}
 
-  .campsite-info {
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+.campsite-info {
     font-size: 16px;
     color: #333;
-  }
-  
-  .section-title {
+}
+
+.section-title {
     font-weight: 600;
     font-size: 20px;
     padding-bottom: 14px;
     margin-bottom: 12px;
-  }
-  
-  .info-grid {
+}
+
+.info-grid {
     margin-top: 12px;
-  }
-  
-  .info-item {
+}
+
+.info-item {
     display: flex;
     gap: 8px;
     padding: 6px;
-  }
-  
-  .campsite-info .material-icons {
-    color: #607d8b;
-  }
-  
-  ul.columns {
-    column-count: 2;
-  }
+}
 
-  .card {
+.campsite-info .material-icons {
+    color: #607d8b;
+}
+
+ul.columns {
+    column-count: 2;
+}
+
+.card {
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.3s ease;
-  }
- 
-=======
+}
+
 @media (max-width: 700px) {
-    .container, .card {
+    .container,
+    .card {
         max-width: 100% !important;
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
@@ -240,7 +232,8 @@ button {
     .card {
         padding: 1rem !important;
     }
-    .back-link, .heart-icon {
+    .back-link,
+    .heart-icon {
         font-size: 1.5rem !important;
     }
     #campsiteImage {
@@ -252,4 +245,3 @@ button {
         padding: 0.75rem !important;
     }
 }
->>>>>>> Sydney_bookings_database_connection

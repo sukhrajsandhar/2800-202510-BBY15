@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
 
 <main style="display: flex; flex-direction: column; align-items: center; margin-top: 0; padding-top: 0;">
@@ -107,117 +107,8 @@
                       
                   
                         <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
-=======
-<!--Populate the bookings, reviews, alerts by newest created first. Limit 3. -->
+                    </div>
 
-<%- include('templates/header', { cssFiles: ['/styles.css', '/campsite-info.css'] }) %>
-<main>
-<div
-    style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 0;
-        padding-top: 0;
-    "
->
-    <div style="width: 100%; max-width: 700px; margin: 0 auto">
-        <!-- Header Bar with Back and Favourite Buttons -->
-        <div
-            class="d-flex justify-content-between align-items-center"
-            style="gap: 1rem; margin-top: 1rem; margin-bottom: 1rem"
-        >
-            <a href="/" class="back-link" title="Back to Map">
-                <i
-                    class="fas fa-arrow-left back-icon"
-                    style="font-size: 2rem; color: #283f3b"
-                ></i>
-            </a>
-            <i
-                id="heart"
-                class="far fa-heart heart-icon"
-                style="font-size: 2rem; color: rgb(40, 63, 59); cursor: pointer"
-            ></i>
-        </div>
-        <!-- Banner Image -->
-        <div
-            style="
-                width: 100%;
-                height: 260px;
-                background: #eee;
-                border-radius: 18px;
-                overflow: hidden;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            "
-        >
-            <img
-                src="<%= campsite.imageUrl || '/default-campsite.jpg' %>"
-                id="campsiteImage"
-                class="img-fluid w-100 h-100"
-                alt="Campsite image"
-                style="
-                    object-fit: cover;
-                    width: 100%;
-                    height: 100%;
-                "
-            />
-        </div>
-        <!-- Details Card -->
-        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
-            <div
-                class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3"
-            >
-                <h1 class="mb-2 mb-md-0" style="color: #283f3b">
-                    <%= campsite.name %>
-                </h1>
-            </div>
-            <div class="mb-2">
-                <i class="fas fa-map-marker-alt"></i>
-                <% if (campsite.place_name) { %>
-                    <span> <%= campsite.place_name %> </span>
-                <% } else { %>
-                    <span style="color: #888">No address available</span>
-                <% } %>
-            </div>
-            <div class="mb-2">
-                <span class="stars" id="starContainer"></span>
-                <span class="ms-2" id="ratingValue">
-                    <%= campsite.rating %>
-                </span>
-            </div>
-            <hr />
-            <div class="row g-3">
-                <div class="col-12">
-                    <h5>Description</h5>
-                    <p><%= campsite.description %></p>
-                    <div class="row g-2">
-                        <div class="col-6 col-md-4">
-                            <strong>Type:</strong>
-                            <%= campsite.type %>
-                        </div>
-                        <div class="col-6 col-md-4">
-                            <strong>Season:</strong>
-                            <%= campsite.season %>
-                        </div>
-                        <div class="col-6 col-md-4">
-                            <strong>Difficulty:</strong>
-                            <%= campsite.difficulty %>
-                        </div>
-                        <div class="col-6 col-md-4">
-                            <strong>Fees:</strong>
-                            <%= campsite.fees && campsite.fees.camping %>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <strong>Amenities:</strong>
-                        <span>
-                            <%= campsite.amenities && campsite.amenities.join(', ') %></span
-                        >
->>>>>>> Sydney_bookings_database_connection
-                    </div>
                     <!-- Fun Fact Section -->
                     <div class="mt-4 p-3 bg-light rounded">
                         <h5>
@@ -259,11 +150,7 @@
         </div>
 
         <!-- Bookings Section -->
-<<<<<<< HEAD
         <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
-=======
-        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
->>>>>>> Sydney_bookings_database_connection
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Bookings</h2>
                 <a
@@ -299,51 +186,17 @@
                             </div>
                             
                         </div>
-<<<<<<< HEAD
+                        
                     <% }) %>
                 <% } else { %>
                     <div style="color: #888;">No bookings available for this campsite yet.</div>
                 <% } %>
             </div>
         </div>
-        <!-- Reviews Section -->
-        <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">Reviews</h2>
-                <a href="/createReview/<%= campsite._id %>" class="btn btn-success">New Review</a>
-            </div>
-            <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #f9f9f9; border-radius: 4px;">
-                <strong>User123:</strong> Beautiful spot! Lots of trees and quiet at night.
-            </div>
-            <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #f9f9f9; border-radius: 4px;">
-                <strong>CamperJane:</strong> Great hiking trails nearby and clean facilities.
-=======
-                        <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
-                        <p class="mb-0">
-                            <%= booking.summary %>
-                        </p>
-                    </div>
-                </div>
-                    <% }) %> <% } else { %>
-                        <div style="color: #888">
-                            No bookings available for this campsite yet.
-                        </div>
-                    <% } %>
->>>>>>> Sydney_bookings_database_connection
-            </div>
-            <div class="d-flex justify-content-end mt-3">
-                <a
-                    href="/viewBookings/<%= campsite._id %>"
-                    class="btn btn-outline-primary"
-                    style="
-                        color: white;
-                        background-color: rgb(40, 63, 59);
-                        border: #95bf74;
-                    "
-                    >See All</a
-                >
             </div>
         </div>
+
+        
 
         <!-- Reviews Section -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
@@ -392,8 +245,6 @@
                 </div>
                 <% } %>
             </div>
-            
-
             <div class="d-flex justify-content-end mt-3">
                 <a href="/viewReviews" class="btn btn-success btn-sm"
                     >See All</a
@@ -402,11 +253,7 @@
         </div>
 
         <!-- Alerts Section -->
-<<<<<<< HEAD
         <div class="card shadow-sm p-4 mt-4 mb-5 fade-in-up" style="border-radius: 18px;">
-=======
-        <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px">
->>>>>>> Sydney_bookings_database_connection
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Alerts</h2>
                 <a
@@ -467,41 +314,3 @@
 </main>
 
 <%- include('templates/footer') %>
-
-<<<<<<< HEAD
-<script>
-    // Heart icon toggle functionality
-    const heart = document.getElementById("heart");
-    if (heart) {
-        heart.addEventListener("click", () => {
-            if (heart.classList.contains("far")) {
-                heart.classList.remove("far");
-                heart.classList.add("fas");
-            } else {
-                heart.classList.remove("fas");
-                heart.classList.add("far");
-            }
-        });
-    }
-    // Star rating functionality
-    const rating = parseFloat(document.getElementById("ratingValue").textContent);
-    const starContainer = document.getElementById("starContainer");
-    if (starContainer) {
-        const fullStars = Math.floor(rating);
-        const hasHalf = rating % 1 >= 0.25 && rating % 1 < 0.75;
-        const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-        for (let i = 0; i < fullStars; i++) {
-            starContainer.innerHTML += ' <i class="fas fa-star"></i>';
-        }
-        if (hasHalf) {
-            starContainer.innerHTML += '<i class="fas fa-star-half-alt"></i>';
-        }
-        for (let i = 0; i < emptyStars; i++) {
-            starContainer.innerHTML
-            += '<i class="far fa-star"></i>';
-        }
-    } </script>
-
- <%- include('templates/footer') %>
-=======
->>>>>>> Sydney_bookings_database_connection
