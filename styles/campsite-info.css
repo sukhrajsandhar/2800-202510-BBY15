@@ -1,142 +1,215 @@
-.heart-icon {
-    font-size: 2rem;
-    color: #283f3b;
-    cursor: pointer;
-    transition: transform 0.4s;
-    margin: 1%;
+:root {
+  --primary: #283f3b;
+  --accent: #99ddc8;
+  --heart: #8212b6;
+  --bg: #edf3ec;
+  --white: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
 }
 
-.heart-icon:hover {
-    color: #99ddc8;
-    transform: scale(1.2);
+.btn {
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
+
+.btn-outline-primary {
+  border: 1px solid var(--primary) !important;
+  background: transparent;
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+}
+
+.heart-icon,
+.back-icon {
+  font-size: 1.8rem;
+  color: var(--heart);
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.heart-icon:hover,
+.back-icon:hover {
+  transform: scale(1.1);
+}
+
 
 .back-icon {
-    font-size: 2rem;
-    color: #283f3b;
-    cursor: pointer;
-    transition: transform 0.4s;
-    margin-left: 25%;
-}
-
-.back-icon:hover {
-    color: #99ddc8;
-    transform: scale(1.2);
-}
-
-.stars {
-    font-size: 1rem;
-    color: #659b5e;
+  margin-left: 25%;
 }
 
 .img-fluid {
-    float: right;
-    margin: 1rem;
-    max-width: 40%;
-    border-radius: 12px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+  float: right;
+  margin: 1rem;
+  max-width: 40%;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: transform 0.3s ease;
 }
 
 .img-fluid:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .card-container {
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    background-color: #f9f9f9;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 14px;
+  background-color: #f9f9f9;
 }
 
 .card {
-    background-color: white;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
 }
 
 .card h4 {
-    margin: 0 0 5px;
-    font-size: 1.1rem;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .card small {
-    color: gray;
+  color: gray;
 }
 
 .card p {
-    margin: 5px 0 0;
+  margin: 6px 0 0;
+  font-size: 0.95rem;
 }
-/* End of experiment */
 
-@media (min-width: 100px) and (max-width: 700px) {
-    .mb-4 {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .img-fluid {
-        align-self: start !important;
-        margin: 0 auto;
-        border-radius: 10px;
-        min-width: 100% !important;
-        height: auto;
-    }
+.stars {
+  font-size: 1rem;
+  color: #659b5e;
+}
+
+@media (max-width: 700px) {
+  .mb-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .img-fluid {
+    align-self: start !important;
+    margin: 0 auto;
+    border-radius: 10px;
+    min-width: 100% !important;
+    height: auto;
+    float: none;
+  }
 }
 
 @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .fade-in-up {
-    animation: fadeInUp 0.6s ease-out both;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  .campsite-info {
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .section-title {
-    font-weight: 600;
-    font-size: 20px;
-    padding-bottom: 14px;
-    margin-bottom: 12px;
-  }
-  
-  .info-grid {
-    margin-top: 12px;
-  }
-  
-  .info-item {
-    display: flex;
-    gap: 8px;
-    padding: 6px;
-  }
-  
-  .campsite-info .material-icons {
-    color: #607d8b;
-  }
-  
-  ul.columns {
-    column-count: 2;
-  }
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out both;
+}
 
-  .card {
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.3s ease;
-  }
- 
+.campsite-info {
+  font-size: 16px;
+  color: #333;
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 20px;
+  padding-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.info-grid {
+  margin-top: 12px;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+}
+
+.campsite-info .material-icons {
+  color: #607d8b;
+}
+
+ul.columns {
+  column-count: 2;
+}
+
+.waveContainer{
+  height: 100vh;
+  overflow: hidden;
+}
+.viewBox{
+  height: 100%;
+  width: 100%;
+}
+.path{
+  stroke: none;
+  fill: rgb(237, 115, 115);
+}
+
+
+.wave-background-bottom svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wave-background-bottom path {
+  fill: rgb(237, 115, 115); /* Match your theme */
+}
+
+/* Ensure your content appears above the wave */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.card:last-of-type {
+  margin-bottom: 140px; /* leave space so the last card isn't hidden behind the wave */
+}
+
+.wave-background-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 820px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.wave-background-bottom svg path {
+  fill: rgb(44, 71, 44);
+}
+
+
+main {
+  position: relative;
+  z-index: 1; /* Make sure content stays above */
+}
+

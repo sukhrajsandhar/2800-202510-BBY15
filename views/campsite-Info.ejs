@@ -1,4 +1,5 @@
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css'] }) %>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css', '/funFact.css'] }) %>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <main style="display: flex; flex-direction: column; align-items: center; margin-top: 80; padding-top: 0;">
         <div style="width: 100%; max-width: 700px;">
@@ -9,7 +10,7 @@
                     <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
                 </a>
                 <i id="heart" class="far fa-heart heart-icon"
-                    style="font-size: 2rem; color: #8212b6; cursor: pointer;"></i>
+                    style="font-size: 2rem; color: #8212b6; cursor: pointer;" data-campsite-id="<%= campsite._id %>"></i>
             </div>
             <!-- Banner Image -->
             <div class="fade-in-up"
@@ -84,13 +85,26 @@
                         <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
                     </div>
                     <!-- Fun Fact Section -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <h5>
-                            <i class="fas fa-lightbulb text-warning" id="revealFunFact" style="cursor:pointer; filter: grayscale(80%) blur(1px);" title="Click to reveal fun fact"></i>
-                            Fun Fact
-                        </h5>
-                        <p id="funFact" style="filter: blur(5px); user-select: none;">Click the lightbulb to reveal the fun fact!</p>
-                    </div>
+           <div class="box data-container">
+                <!-- Left quote icon -->
+                <i class="fas fa-quote-left quote-icon quote-left"></i>
+
+                <div class="quote-content">
+                    <h3>
+                    <i class="fas fa-lightbulb text-warning" id="revealFunFact" 
+                        style="cursor:pointer; filter: grayscale(80%) blur(1px);"
+                        title="Click to reveal fun fact"></i> 
+                    Fun Fact
+                    </h3>
+                    <p id="funFact" class="fun-fact-text">
+                    Click the lightbulb to reveal the fun fact!
+                    </p>
+                </div>
+
+                <!-- Right quote icon -->
+                <i class="fas fa-quote-right quote-icon quote-right"></i>
+                </div>
+
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
                             // Fetch the fun fact but keep it hidden initially
@@ -121,7 +135,6 @@
                     </script>
                 </div>
             </div>
-        </div>
         <!-- Bookings Section -->
         <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -178,7 +191,10 @@
                 <a href="/viewAlerts" class="btn btn-danger btn-sm">See All</a>
             </div>
         </div>
+    </div>
+    <%- include("templates/bg") %>
 </main>
+
 
 <style>
 @media (max-width: 700px) {
