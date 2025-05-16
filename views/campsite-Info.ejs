@@ -222,18 +222,37 @@
 
 <script>
     // Heart icon toggle functionality
-    const heart = document.getElementById("heart");
-    if (heart) {
-        heart.addEventListener("click", () => {
-            if (heart.classList.contains("far")) {
-                heart.classList.remove("far");
-                heart.classList.add("fas");
-            } else {
-                heart.classList.remove("fas");
-                heart.classList.add("far");
-            }
-        });
+// Get the heart icon element by its ID
+const heart = document.getElementById("heart");
+
+if (heart) {
+  heart.addEventListener("click", async () => {
+    // Get the campsite ID from a data attribute on the heart element
+    const campsiteId = heart.dataset.campsiteId;
+
+    const isAdding = heart.classList.contains("far");
+
+    heart.classList.toggle("far");
+    heart.classList.toggle("fas");
+
+    try {
+      const response = await fetch(`/favourites/${campsiteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: isAdding ? "add" : "remove" })
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update favourites.");
+        // If you want, you could toggle back the heart here to show failure
+      }
+    } catch (error) {
+      console.error("Error updating favourites:", error);
+      // Optionally toggle back the heart here as well
     }
+  });
+}
+
     // Star rating functionality
     const rating = parseFloat(document.getElementById("ratingValue").textContent);
     const starContainer = document.getElementById("starContainer");
