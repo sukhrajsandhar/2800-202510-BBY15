@@ -10,6 +10,7 @@ const Trail = require("./models/Trail");
 const Review = require('./models/Review');
 const Alert = require('./models/Alert');
 const Booking = require('./models/Booking');
+const User = require("./models/User");
 const saltRounds = 12;
 const { CohereClient } = require('cohere-ai');
 const cohere = new CohereClient({ apiKey: process.env.COHERE_API_KEY });
@@ -282,6 +283,7 @@ app.post("/loginSubmit", async (req, res) => {
         req.session.lastName = user.lastName;
         req.session.user_type = user.user_type; // Store user type in session
         req.session.cookie.maxAge = expireTime;
+        req.session.userId = user._id; // Store user ID in session
 
         res.redirect("/");
     } else {
@@ -307,11 +309,15 @@ app.get("/logout", (req, res) => {
 app.get("/createReview/:campsiteId", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        const user = await User.findById(req.session.userId).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         res.render("createReview", {
-            campsiteId: req.params.campsiteId, campsiteName: campsite.name});
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            userId: user._id
+        });
     } catch (err) {
         res.status(500).send("Error loading review form");
     }
@@ -320,12 +326,14 @@ app.get("/createReview/:campsiteId", async (req, res) => {
 app.get("/createAlert/:campsiteId", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        const user = await User.findById(req.session.userId).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         res.render("createAlert", {
             campsiteId: req.params.campsiteId,
-            campsiteName: campsite.name
+            campsiteName: campsite.name,
+            userId: user._id
         });
     } catch (err) {
         res.status(500).send("Error loading alert form");
@@ -417,9 +425,6 @@ app.post("/update-profile", async (req, res) => {
 });
 
 
-
-
-
 // Admin panel route
 app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
         try {
@@ -456,8 +461,6 @@ app.post("/toggle-trusted", async (req, res) => {
     
 });
 
-
-
 //Admin toggle admin role
 app.post("/toggle-role", async (req, res) => {
     const userId = req.body.userId;
@@ -478,13 +481,50 @@ app.post("/toggle-role", async (req, res) => {
     }
 });
 
-app.get("/viewAlerts", (req, res) => {
-    res.render("viewAlerts");
+app.get("/viewAlerts/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        if (!campsite) {
+            return res.status(404).send("Campsite not found");
+        }
+
+        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+
+        alerts.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
+
+        res.render("viewAlerts", {
+            campsite,
+            alerts
+        });
+    } catch (err) {
+        console.error("Error loading alerts:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
-app.get("/viewReviews", (req, res) => {
-    res.render("viewReviews");
+app.get("/viewReviews/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        if (!campsite) {
+            return res.status(404).send("Campsite not found");
+        }
+
+        let reviews = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+
+        // Sort reviews by dateCreated descending (most recent first)
+        reviews.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+
+        res.render("viewReviews", {
+            campsite,
+            reviews
+        });
+    } catch (err) {
+        console.error("Error loading reviews:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
 });
+
+
 
 //Sydney
 app.get("/viewBookings/:id", async (req, res) => {
@@ -763,8 +803,9 @@ app.post("/api/reviews", async (req, res) => {
         const reviewData = req.body;
 
         // Validate the review data
-        if (!reviewData.campsiteId || !reviewData.overallRating || !reviewData.dateVisited) {
+        if (!reviewData.campsiteId || !reviewData.overallRating || !reviewData.dateVisited || !reviewData.userId) {
             console.log('Missing required fields:', {
+                userId: !reviewData.userId,
                 campsiteId: !reviewData.campsiteId,
                 overallRating: !reviewData.overallRating,
                 dateVisited: !reviewData.dateVisited
@@ -774,6 +815,7 @@ app.post("/api/reviews", async (req, res) => {
 
         // Create a new review document
         const review = new Review({
+            userId: reviewData.userId || null,
             campsiteId: reviewData.campsiteId,
             overallRating: reviewData.overallRating,
             dateVisited: reviewData.dateVisited,
@@ -806,8 +848,9 @@ app.post("/api/alerts", async (req, res) => {
         const alertData = req.body;
 
         // Validate the alert data
-        if (!alertData.campsiteId || !alertData.alertType || !alertData.alertDate) {
+        if (!alertData.campsiteId || !alertData.alertType || !alertData.alertDate || !alertData.userId) {
             console.log('Missing required fields:', {
+                userId: !alertData.userId,
                 campsiteId: !alertData.campsiteId,
                 alertType: !alertData.alertType,
                 alertDate: !alertData.alertDate
@@ -817,6 +860,7 @@ app.post("/api/alerts", async (req, res) => {
 
         // Create a new alert document
         const alert = new Alert({
+            userId: alertData.userId || null,
             campsiteId: alertData.campsiteId,
             alertType: alertData.alertType,
             alertDate: alertData.alertDate,

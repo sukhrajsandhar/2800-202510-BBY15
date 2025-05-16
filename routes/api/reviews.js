@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
     console.log('Received review data:', req.body); // Log incoming data
     // Only use fields defined in the schema
     const review = new Review({
+        userId: req.body.userId,
         campsiteId: req.body.campsiteId,
         overallRating: req.body.overallRating,
         dateVisited: req.body.dateVisited,

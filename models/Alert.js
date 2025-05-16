@@ -7,6 +7,11 @@ const alertSchema = new mongoose.Schema({
         ref: 'Campsite',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     alertType: {
         type: String,
         required: true
