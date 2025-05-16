@@ -30,9 +30,13 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "joi": "^17.13.3",
+<<<<<<< HEAD
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.3",
     "nodemon": "^3.1.10"
+=======
+    "mongoose": "^7.8.7"
+>>>>>>> Sydney_bookings_database_connection
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

@@ -9,6 +9,7 @@ const Campsite = require("./models/Campsite");
 const Trail = require("./models/Trail");
 const Review = require('./models/Review');
 const Alert = require('./models/Alert');
+const Booking = require('./models/Booking');
 const saltRounds = 12;
 const { CohereClient } = require('cohere-ai');
 const cohere = new CohereClient({ apiKey: process.env.COHERE_API_KEY });
@@ -303,10 +304,6 @@ app.get("/logout", (req, res) => {
     });
 });
 
-app.get("/pseudoCampsite", (req, res) => {
-    res.render("pseudoCampsite");
-});
-
 app.get("/createReview/:campsiteId", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
@@ -314,7 +311,7 @@ app.get("/createReview/:campsiteId", async (req, res) => {
             return res.status(404).send('Campsite not found');
         }
         res.render("createReview", {
-             campsiteId: req.params.campsiteId, campsiteName: campsite.name});
+            campsiteId: req.params.campsiteId, campsiteName: campsite.name});
     } catch (err) {
         res.status(500).send("Error loading review form");
     }
@@ -332,6 +329,25 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
         });
     } catch (err) {
         res.status(500).send("Error loading alert form");
+    }
+});
+
+/**
+ * Sydney Create Booking!!!
+ */
+app.get("/createBooking/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createBooking", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            firstName: req.session.firstName || null,
+        });
+    } catch (err) {
+        res.status(500).send("Error loading booking form");
     }
 });
 
@@ -365,17 +381,14 @@ app.post("/profile/picture", async (req, res) => {
   if (!req.session.authenticated || !req.session.email) {
     return res.redirect("/login");
   }
-
   const avatar = req.body.avatar;
   if (!avatar) {
     return res.status(400).send("No avatar selected.");
   }
-
   await userCollection.updateOne(
     { email: req.session.email },
     { $set: { profileImage: `/images/avatars/${avatar}` } }
   );
-
   res.redirect("/profile");
 });
 
@@ -403,9 +416,24 @@ app.post("/update-profile", async (req, res) => {
   res.redirect("/profile");
 });
 
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
-    });
+
+/**
+ * Sydney viewBookings 
+ */
+// app.get("/viewBookings/:campsiteId", (req, res) => {
+//     const campsiteId = req.params.campsiteId;
+//     Booking.find({ campsiteId: campsiteId })
+//         .then(bookings => {
+//             res.render("viewBookings", { bookings });
+//         })
+//         .catch(err => {
+//             console.error("Error fetching bookings:", err);
+//             res.status(500).send("Error fetching bookings");
+//         });
+// });
+
+
+
 
 // Admin panel route
 app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
@@ -439,6 +467,23 @@ app.post("/toggle-trusted", async (req, res) => {
     } catch (err) {
         console.error("Error toggling trusted badge:", err);
         res.status(500).send("Internal Server Error /toggle-trusted");
+    }
+    
+});
+
+//Sydney
+app.get("/viewBookings/:id", async (req, res) => {
+app.get("/bookingAvailability", (req, res) => {
+    res.render("bookingAvailability");
+try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("viewBookings", { campsite, booking });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
     }
 });
 
@@ -481,21 +526,18 @@ app.get("/favourites", (req, res) => {
     res.render("favourites", { favCampsites });
 });
 
-app.get("/campsite-example", (req, res) => {
-    const favCampExample = {
-        id: 1,
-        name: "Porteau Cove",
-        imageUrl: "/PorteauCove.svg",
-        rating: 4.5,
-        bio: "Porteau Cove is a scenic provincial park located along the Sea-to-Sky Highway in British Columbia, known for its waterfront campsites, rocky beach, and stunning views of Howe Sound. It is popular for activities like scuba diving, stargazing, and quick getaways from Vancouver due to its proximity and natural beauty.",
-    };
-    res.render("campsite-example", { favCampExample });
-});
-
+/**
+ * Campsite-Info! connect and read from mongoDB
+ * --> bookings, reviews, alerts
+ */
 // Added weather info to the campsite-info page 
+
 app.get("/campsite-info/:id", async (req, res) => {
     try {
-        const campsite = await Campsite.findById(req.params.id).lean();
+        const campsite = await Campsite.findById(req.params.id).lean(); 
+        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
         if (!campsite) {
             return res.status(404).send("Campsite not found");
         }
@@ -526,7 +568,7 @@ app.get("/campsite-info/:id", async (req, res) => {
         }
         // Always pass weather, even if null
         // Render the campsite-info page with the campsite and weather data
-        res.render("campsite-Info", { campsite, weather, bookings: [] });
+        res.render("campsite-Info", { campsite, weather, review, booking, alert });
     } catch (err) {
         console.error("Error loading campsite info:", err.message);
         res.status(500).send("Internal Server Error");
@@ -548,6 +590,7 @@ app.get('/api/funfact/:campsiteName', async (req, res) => {
         res.status(500).json({ funFact: "Could not generate fun fact." });
     }
 });
+
 
 // Update the GET /api/campsites endpoint to use MongoDB
 app.get("/api/campsites", async (req, res) => {
@@ -659,6 +702,22 @@ app.get("/api/trails", (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+/**
+ * Sydney: include an app.get for bookings, alerts, reviews?
+ */
+
+app.get("/api/bookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find().lean();
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+});
+
+
 
 // Add POST endpoint for /api/campsites
 app.post("/api/campsites", async (req, res) => {
@@ -789,6 +848,47 @@ app.post("/api/alerts", async (req, res) => {
     } catch (error) {
         console.error('Error saving alert:', error);
         res.status(500).json({ error: 'Failed to save alert: ' + error.message });
+    }
+});
+
+
+app.post("/api/bookings", async (req, res) => {
+    try {
+        console.log('Received booking data:', req.body);
+        const bookingData = req.body;
+
+        // Validate the booking data
+        if (!bookingData.campsiteId || !bookingData.startDate || !bookingData.endDate) {
+            console.log('Missing required fields:', {
+                campsiteId: !bookingData.campsiteId,
+                //firstName: !bookingData.firstName,
+                startDate: !bookingData.startDate,
+                endDate: !bookingData.endDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new booking document
+        const booking = new Booking({
+            campsiteId: bookingData.campsiteId,
+            firstName: bookingData.firstName || 'Anonymous',
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+            dateCreated: new Date(),
+            tentSpots: bookingData.tentSpots || 0,
+            contactInfo: bookingData.contactInfo || '',
+            summary: bookingData.summary || ''
+        });
+
+        console.log('Created booking document:', booking);
+
+        // Save the booking to MongoDB
+        const savedBooking = await booking.save();
+        console.log('Successfully saved booking:', savedBooking);
+        res.status(201).json(savedBooking);
+    } catch (error) {
+        console.error('Error saving booking:', error);
+        res.status(500).json({ error: 'Failed to save booking: ' + error.message });
     }
 });
 

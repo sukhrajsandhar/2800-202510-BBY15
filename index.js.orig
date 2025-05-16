@@ -4,10 +4,12 @@ const bcrypt = require("bcrypt");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const axios = require('axios');
 const Campsite = require("./models/Campsite");
 const Trail = require("./models/Trail");
 const Review = require('./models/Review');
 const Alert = require('./models/Alert');
+const Booking = require('./models/Booking');
 const saltRounds = 12;
 const { CohereClient } = require('cohere-ai');
 const cohere = new CohereClient({ apiKey: process.env.COHERE_API_KEY });
@@ -86,6 +88,39 @@ app.use(async (req, res, next) => {
     next();
   });
   
+// Middleware to check if the user is authenticated
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+// Middleware to check if the user is an admin
+function isAdmin(req) {
+	if (req.session.user_type === 'admin') {
+		return true;
+	}
+	return false;
+}
+
+function adminAuthorization(req, res, next) {
+	if (!isAdmin(req)) {
+		res.status(403);
+		res.render("errorMessage", { error: "Not Authorized" });
+		return;
+	}
+	next();
+}
+
 
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
@@ -182,6 +217,7 @@ app.post("/signUpSubmit", async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
+            user_type: "user" 
         });
         console.log("Inserted user");
 
@@ -216,9 +252,11 @@ app.post("/loginSubmit", async (req, res) => {
         return;
     }
 
+    //*on the admin side I added a user_type field to the user collection
+    // so that we can check if the user is an admin or not
     const result = await userCollection
         .find({ email: email })
-        .project({ firstName: 1, lastName: 1, email: 1, password: 1, _id: 1 })
+        .project({ firstName: 1, lastName: 1, email: 1, password: 1, user_type: 1, _id: 1 }) 
         .toArray();
 
     console.log(result);
@@ -234,12 +272,15 @@ app.post("/loginSubmit", async (req, res) => {
 
     const user = result[0];
 
+    // Check if the password is correct
+    // bcrypt.compare will return true or false
     if (await bcrypt.compare(password, user.password)) {
         console.log("correct password");
         req.session.authenticated = true;
         req.session.email = user.email;
         req.session.firstName = user.firstName;
         req.session.lastName = user.lastName;
+        req.session.user_type = user.user_type; // Store user type in session
         req.session.cookie.maxAge = expireTime;
 
         res.redirect("/");
@@ -263,10 +304,6 @@ app.get("/logout", (req, res) => {
     });
 });
 
-app.get("/pseudoCampsite", (req, res) => {
-    res.render("pseudoCampsite");
-});
-
 app.get("/createReview/:campsiteId", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
@@ -274,7 +311,7 @@ app.get("/createReview/:campsiteId", async (req, res) => {
             return res.status(404).send('Campsite not found');
         }
         res.render("createReview", {
-             campsiteId: req.params.campsiteId, campsiteName: campsite.name});
+            campsiteId: req.params.campsiteId, campsiteName: campsite.name});
     } catch (err) {
         res.status(500).send("Error loading review form");
     }
@@ -295,6 +332,25 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
     }
 });
 
+/**
+ * Sydney Create Booking!!!
+ */
+app.get("/createBooking/:campsiteId", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createBooking", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            firstName: req.session.firstName || null,
+        });
+    } catch (err) {
+        res.status(500).send("Error loading booking form");
+    }
+});
+
 app.get("/booked", (req, res) => {
     const campsite = {
         id: 1,
@@ -309,98 +365,68 @@ app.get("/booked", (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
-<<<<<<< HEAD
-    // user authentication
-    if (!req.session.authenticated || !req.session.email) {
-      return res.redirect("/login");
-    }
-  
-    var user = await userCollection.findOne({ email: req.session.email });
-    if (!user) return res.status(404).send("User not found");
-  
-    res.render("profile", { user });
-  });
-  
-  app.post("/profile/picture", async (req, res) => {
-    if (!req.session.authenticated || !req.session.email) {
-      return res.redirect("/login");
-    }
-  
-    const avatar = req.body.avatar;
-    if (!avatar) {
-      return res.status(400).send("No avatar selected.");
-    }
-  
-    try {
-      await userCollection.updateOne(
-        { email: req.session.email },
-        { $set: { profileImage: `/images/avatars/${avatar}` } }
-      );
-  
-      res.redirect("/profile");
-    } catch (err) {
-      console.error("Avatar update error:", err);
-      res.status(500).send("Failed to update avatar.");
-    }
-  });
-  
-app.post("/update-profile", async (req, res) => {
-    // make sure they’re logged in
-    if (!req.session.authenticated || !req.session.email) {
-      return res.redirect("/login");
-    }
-  
-    // take all the information from the user input
-    var { firstName, lastName, email, bio, userLevel } = req.body;
-  
-    try {
-      // update the DB document
-      await userCollection.updateOne(
-        { email: req.session.email },  
-        {
-          $set: {
-            firstName,
-            lastName,
-            email,
-            bio: bio || "",
-            // only set userLevel if it's been updated
-            ...(userLevel ? { userLevel } : {})
-          }
-        }
-      );
-  
-      // if the user changed their email, session will update
-      req.session.email = email;
-  
-      // send them back to the profile page
-      res.redirect("/profile");
-    } catch (err) {
-      console.error("Profile update error:", err);
-      res.status(500).render("error", { message: "Could not update profile." });
-    }
-  });
-  
-=======
-    if (!req.session.authenticated) {
-        return res.redirect("/login"); // Redirect to login if the user is not authenticated
-    }
+  if (!req.session.authenticated) {
+    return res.redirect("/login");
+  }
 
-    try {
-        const user = await userCollection.findOne({ email: req.session.email });
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+  const user = await userCollection.findOne({ email: req.session.email });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
 
-        res.render("profile", { user });
-    } catch (err) {
-        console.error("Error fetching user data:", err);
-        res.status(500).send("Internal Server Error");
-    }
+  res.render("profile", { user });
 });
 
+app.post("/profile/picture", async (req, res) => {
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+
+  const avatar = req.body.avatar;
+  if (!avatar) {
+    return res.status(400).send("No avatar selected.");
+  }
+
+  await userCollection.updateOne(
+    { email: req.session.email },
+    { $set: { profileImage: `/images/avatars/${avatar}` } }
+  );
+
+  res.redirect("/profile");
+});
+
+app.post("/update-profile", async (req, res) => {
+  if (!req.session.authenticated || !req.session.email) {
+    return res.redirect("/login");
+  }
+
+  const { firstName, lastName, email, bio, userLevel } = req.body;
+
+  await userCollection.updateOne(
+    { email: req.session.email },
+    {
+      $set: {
+        firstName,
+        lastName,
+        email,
+        bio: bio || "",
+        ...(userLevel ? { userLevel } : {}),
+      },
+    }
+  );
+
+  req.session.email = email;
+  res.redirect("/profile");
+});
+
+<<<<<<< HEAD
+app.get("/bookingAvailability", (req, res) => {
+    res.render("bookingAvailability");
+    });
+
 // Admin panel route
-app.get("/admin", async (req, res) => {
-    try {
+app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
+        try {
         //fetch all user from the database
         const users = await userCollection.find().toArray(); 
         // render the admin.ejs page with the users
@@ -433,14 +459,55 @@ app.post("/toggle-trusted", async (req, res) => {
     }
 });
 
-app.get("/createAlert", (req, res) => {
-    res.render("createAlert");
-});
->>>>>>> kevin_admin_page
+//Admin toggle admin role
+app.post("/toggle-role", async (req, res) => {
+    const userId = req.body.userId;
+    try {
+        const user = await userCollection.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+        if (!user) {
+            return res.status(404).render("errorMessage", { error: "User not found." });
+        }
+        const newRole = user.user_type === "admin" ? "user" : "admin";
+        await userCollection.updateOne(
+            { _id: new mongoose.Types.ObjectId(userId) },
+            { $set: { user_type: newRole } }
+        );
+        res.redirect("/admin");
+    } catch (err) {
+        console.error("Role toggle error:", err);
+        res.status(500).render("errorMessage", { error: "Could not update user role." });
+=======
 
-app.get("/bookingAvailability", (req, res) => {
-    res.render("bookingAvailability");
+/**
+ * Sydney viewBookings 
+ */
+// app.get("/viewBookings/:campsiteId", (req, res) => {
+//     const campsiteId = req.params.campsiteId;
+//     Booking.find({ campsiteId: campsiteId })
+//         .then(bookings => {
+//             res.render("viewBookings", { bookings });
+//         })
+//         .catch(err => {
+//             console.error("Error fetching bookings:", err);
+//             res.status(500).send("Error fetching bookings");
+//         });
+// });
+
+
+app.get("/viewBookings/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("viewBookings", { campsite, booking });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
+>>>>>>> Sydney_bookings_database_connection
+    }
 });
+
 
 app.get("/viewAlerts", (req, res) => {
     res.render("viewAlerts");
@@ -461,6 +528,7 @@ app.get("/favourites", (req, res) => {
     res.render("favourites", { favCampsites });
 });
 
+<<<<<<< HEAD
 app.get("/campsite-example", (req, res) => {
     const favCampExample = {
         id: 1,
@@ -472,15 +540,57 @@ app.get("/campsite-example", (req, res) => {
     res.render("campsite-example", { favCampExample });
 });
 
+// Added weather info to the campsite-info page 
+=======
+/**
+ * Campsite-Info! connect and read from mongoDB
+ * --> bookings, reviews, alerts
+ */
+>>>>>>> Sydney_bookings_database_connection
 app.get("/campsite-info/:id", async (req, res) => {
     try {
-        const campsite = await Campsite.findById(req.params.id).lean();
+        const campsite = await Campsite.findById(req.params.id).lean(); 
+        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
         if (!campsite) {
-            return res.status(404).send('Campsite not found');
+            return res.status(404).send("Campsite not found");
         }
-        res.render('campsite-Info', { campsite, bookings: [] });
+<<<<<<< HEAD
+        // Fetch weather data using OpenWeatherMap API
+        // Ensure that the coordinates are available before making the API call
+        let weather = null;
+        // Check if coordinates are available
+        if (!campsite.coordinates || campsite.coordinates.length !== 2) {
+            console.error("Invalid coordinates for campsite:", campsite);
+            return res.status(400).send("Invalid coordinates");
+        }
+        const [longitude, latitude] = campsite.coordinates || [];
+        // Fetch weather data only if latitude and longitude are available
+        if (latitude && longitude) {
+            try {
+                const apiKey = process.env.OPENWEATHER_API_KEY;
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+                const weatherResponse = await axios.get(weatherUrl);
+                const weatherData = weatherResponse.data;
+                weather = {
+                    icon: weatherData.weather[0].icon,
+                    temp: weatherData.main.temp,
+                    desc: weatherData.weather[0].description,
+                };
+            } catch (error) {
+                console.error("Error fetching weather data:", error.message);
+            }
+        }
+        // Always pass weather, even if null
+        // Render the campsite-info page with the campsite and weather data
+        res.render("campsite-Info", { campsite, weather, bookings: [] });
+=======
+        res.render('campsite-Info', { campsite, review, booking, alert });
+>>>>>>> Sydney_bookings_database_connection
     } catch (err) {
-        res.status(500).send('Error loading campsite info');
+        console.error("Error loading campsite info:", err.message);
+        res.status(500).send("Internal Server Error");
     }
 });
 
@@ -499,6 +609,7 @@ app.get('/api/funfact/:campsiteName', async (req, res) => {
         res.status(500).json({ funFact: "Could not generate fun fact." });
     }
 });
+
 
 // Update the GET /api/campsites endpoint to use MongoDB
 app.get("/api/campsites", async (req, res) => {
@@ -610,6 +721,22 @@ app.get("/api/trails", (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+/**
+ * Sydney: include an app.get for bookings, alerts, reviews?
+ */
+
+app.get("/api/bookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find().lean();
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+});
+
+
 
 // Add POST endpoint for /api/campsites
 app.post("/api/campsites", async (req, res) => {
@@ -740,6 +867,47 @@ app.post("/api/alerts", async (req, res) => {
     } catch (error) {
         console.error('Error saving alert:', error);
         res.status(500).json({ error: 'Failed to save alert: ' + error.message });
+    }
+});
+
+
+app.post("/api/bookings", async (req, res) => {
+    try {
+        console.log('Received booking data:', req.body);
+        const bookingData = req.body;
+
+        // Validate the booking data
+        if (!bookingData.campsiteId || !bookingData.startDate || !bookingData.endDate) {
+            console.log('Missing required fields:', {
+                campsiteId: !bookingData.campsiteId,
+                //firstName: !bookingData.firstName,
+                startDate: !bookingData.startDate,
+                endDate: !bookingData.endDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new booking document
+        const booking = new Booking({
+            campsiteId: bookingData.campsiteId,
+            firstName: bookingData.firstName || 'Anonymous',
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+            dateCreated: new Date(),
+            tentSpots: bookingData.tentSpots || 0,
+            contactInfo: bookingData.contactInfo || '',
+            summary: bookingData.summary || ''
+        });
+
+        console.log('Created booking document:', booking);
+
+        // Save the booking to MongoDB
+        const savedBooking = await booking.save();
+        console.log('Successfully saved booking:', savedBooking);
+        res.status(201).json(savedBooking);
+    } catch (error) {
+        console.error('Error saving booking:', error);
+        res.status(500).json({ error: 'Failed to save booking: ' + error.message });
     }
 });
 
