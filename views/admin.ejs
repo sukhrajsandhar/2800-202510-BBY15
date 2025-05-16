@@ -10,6 +10,8 @@
                     <th>Email</th>
                     <th>Trusted Badge</th>
                     <th>Action</th>
+                    <th>Role</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +33,21 @@
                                     <button type="submit" class="btn btn-danger">Remove Trusted Badge</button>
                                 <% } else { %>
                                     <button type="submit" class="btn btn-primary">Give Trusted Badge</button>
+                                <% } %>
+                            </form>
+                        </td>
+                        <td>
+                            <span class="badge <%= user.user_type === 'admin' ? 'bg-primary' : 'bg-secondary' %>">
+                                <%= user.user_type === 'admin' ? 'Admin' : 'User' %>
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/toggle-role" method="POST" style="display: inline;">
+                                <input type="hidden" name="userId" value="<%= user._id %>">
+                                <% if (user.user_type === 'admin') { %>
+                                    <button type="submit" class="btn btn-warning ms-2">Demote to user</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn btn-success ms-2">Promote to admin</button>
                                 <% } %>
                             </form>
                         </td>
