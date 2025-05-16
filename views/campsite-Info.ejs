@@ -166,7 +166,7 @@
         <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Reviews</h2>
-                <a href="/createReview/<%= campsite._id %>" class="btn btn-success">New Review</a>
+                <a href="/createReview/<%= campsite._id %>" class="btn btn-outline-primary">New Review</a>
             </div>
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #f9f9f9; border-radius: 4px;">
                 <strong>User123:</strong> Beautiful spot! Lots of trees and quiet at night.
@@ -174,16 +174,24 @@
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #f9f9f9; border-radius: 4px;">
                 <strong>CamperJane:</strong> Great hiking trails nearby and clean facilities.
             </div>
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/viewReviews" class="btn btn-success btn-sm">See All</a>
-            </div>
+                <div class="d-flex justify-content-end mt-3">
+                <div class="c-button c-button--grow">
+                    <a class="button-grow" href="/viewReviews" style="text-decoration: none;">
+                    <span class="circle">
+                        <span class="icon arrow"></span>
+                    </span>
+                    <span class="button-text">See All</span>
+                    </a>
+                </div>
+</div>
+
         </div>
 
         <!-- Alerts Section -->
         <div class="card shadow-sm p-4 mt-4 mb-5 fade-in-up" style="border-radius: 18px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Alerts</h2>
-                <a href="/createAlert/<%= campsite._id %>" class="btn btn-danger">New Alert</a>
+                    <a href="/createAlert/<%= campsite._id %>" class="btn btn-outline-primary">New Alert</a>
             </div>
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #fff3cd; border-radius: 4px;">
                 <strong>Ranger Notice:</strong> Fire ban in effect until next week.
@@ -191,9 +199,17 @@
             <div style="margin-bottom: 0.5rem; padding: 0.5rem; background-color: #fff3cd; border-radius: 4px;">
                 <strong>Weather Alert:</strong> Heavy rain expected tomorrow, pack accordingly.
             </div>
-            <div class="d-flex justify-content-end mt-3">
-                <a href="/viewAlerts" class="btn btn-danger btn-sm">See All</a>
+            <div class="p-button d-flex justify-content-end mt-3">
+            <div class="c-button c-button--grow">
+                <a class="button-grow " href="/viewAlerts" style="text-decoration: none;">
+                <span class="circle">
+                    <span class="icon arrow"></span>
+                </span>
+                <span class="button-text">See All</span>
+                </a>
             </div>
+</div>
+
         </div>
     </div>
     <%- include("templates/bg") %>
