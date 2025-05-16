@@ -86,6 +86,39 @@ app.use(async (req, res, next) => {
     next();
   });
   
+// Middleware to check if the user is authenticated
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+// Middleware to check if the user is an admin
+function isAdmin(req) {
+	if (req.session.user_type === 'admin') {
+		return true;
+	}
+	return false;
+}
+
+function adminAuthorization(req, res, next) {
+	if (!isAdmin(req)) {
+		res.status(403);
+		res.render("errorMessage", { error: "Not Authorized" });
+		return;
+	}
+	next();
+}
+
 
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
@@ -396,8 +429,8 @@ app.get("/bookingAvailability", (req, res) => {
 });
 
 // Admin panel route
-app.get("/admin", async (req, res) => {
-    try {
+app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
+        try {
         //fetch all user from the database
         const users = await userCollection.find().toArray(); 
         // render the admin.ejs page with the users
