@@ -65,5 +65,13 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+router.get('/listBookings', async (req, res) => {
+    try {
+        const bookings = await Booking.find().lean();
+        res.render('viewBookings', { bookings });
+    } catch (err) {
+        res.status(500).send('Error loading bookings');
+    }
+});
 
 module.exports = router;

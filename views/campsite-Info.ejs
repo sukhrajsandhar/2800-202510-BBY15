@@ -1,5 +1,7 @@
-<%- include('templates/header', { cssFiles: ['/styles.css', '/campsite-info.css', '/bookingAvailability.css'] }) %>
+<!--Populate the bookings, reviews, alerts by newest created first. Limit 3. -->
 
+<%- include('templates/header', { cssFiles: ['/styles.css', '/campsite-info.css'] }) %>
+<main>
 <div
     style="
         display: flex;
@@ -50,7 +52,6 @@
                     object-fit: cover;
                     width: 100%;
                     height: 100%;
-                    min-height: 180px;
                 "
             />
         </div>
@@ -109,6 +110,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Bookings Section -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -125,22 +127,33 @@
             <div class="card-container">
                 <% if (booking && booking.length > 0) { %> 
                     <% booking.forEach(function(booking) { %>
-                        <div class="card mb-3 p-3">
-                            <h4><%= booking.title %></h4>
-                            <small
-                                ><%= booking.dateStart %> to <%= booking.dateEnd %></small>
-                            <p>Availability:</p>
-                            <small
-                                >People: <%= booking.people %>, Tents: <%= booking.tents %></small
-                            >
-                            <p><%= booking.summary %></p>
-                            <a
-                                href="#"
-                                class="btn btn-secondary"
-                                style="max-width: 20%; align-self: flex-end"
-                                >Contact</a
-                            >
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div
+                                    class="d-flex justify-content-between align-items-center mb-2"
+                                >
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            style="
+                                                width: 40px;
+                                                height: 40px;
+                                                background-color: #d0ddd7;
+                                                border-radius: 50%;
+                                            "
+                                        ></div>
+                                        <div class="ms-2">
+                                    <h6 class="mb-0"><%= booking.firstName %></h6>
+                                    <small class="text-muted"><%= booking.tentSpace %></small>
+                                </div>
+                            </div>
+                            
                         </div>
+                        <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
+                        <p class="mb-0">
+                            <%= booking.summary %>
+                        </p>
+                    </div>
+                </div>
                     <% }) %> <% } else { %>
                         <div style="color: #888">
                             No bookings available for this campsite yet.
@@ -149,7 +162,7 @@
             </div>
             <div class="d-flex justify-content-end mt-3">
                 <a
-                    href="/viewBookings"
+                    href="/viewBookings/<%= campsite._id %>"
                     class="btn btn-outline-primary"
                     style="
                         color: white;
@@ -201,43 +214,14 @@
                             <%= review.additionalComments || 'No comments' %>
                         </p>
                     </div>
-                </div>
+                        </div>
                 <% }) %> <% } else { %>
                 <div style="color: #888">
                     No reviews available for this campsite yet.
                 </div>
                 <% } %>
             </div>
-            <!--Hardcoded alert-->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div
-                        class="d-flex justify-content-between align-items-center mb-2"
-                    >
-                        <div class="d-flex align-items-center">
-                            <div
-                                style="
-                                    width: 40px;
-                                    height: 40px;
-                                    background-color: #d0ddd7;
-                                    border-radius: 50%;
-                                "
-                            ></div>
-                            <div class="ms-2">
-                                <h6 class="mb-0">Hiker123</h6>
-                                <small class="text-muted"
-                                    >Trail Obstruction</small
-                                >
-                            </div>
-                        </div>
-                        <small class="text-muted">2025-05-01</small>
-                    </div>
-                    <p class="mb-0">
-                        A large fallen tree is blocking part of the north trail.
-                        Caution advised.
-                    </p>
-                </div>
-            </div>
+            
 
             <div class="d-flex justify-content-end mt-3">
                 <a href="/viewReviews" class="btn btn-success btn-sm"
@@ -277,25 +261,18 @@
                 </div>
                 <% } %>
             </div>
-            <div
-                style="
-                    margin-bottom: 0.5rem;
-                    padding: 0.5rem;
-                    background-color: #fff3cd;
-                    border-radius: 4px;
-                "
-            >
-                <strong>Ranger Notice:</strong> Fire ban in effect until next
-                week.
-            </div>
+
+
             <div class="d-flex justify-content-end mt-3">
                 <a href="/viewAlerts" class="btn btn-danger btn-sm">See All</a>
             </div>
         </div>
     </div>
 
+    <script src="/public/js/campsite-info.js"></script>
     <script>
-        // Heart icon toggle functionality
+    document.addEventListener("DOMContentLoaded", function () {
+    // Heart icon toggle functionality
         const heart = document.getElementById("heart");
         if (heart) {
             heart.addEventListener("click", () => {
@@ -308,28 +285,11 @@
                 }
             });
         }
-        // Star rating functionality
-        const rating = parseFloat(
-            document.getElementById("ratingValue").textContent
-        );
-        const starContainer = document.getElementById("starContainer");
-        if (starContainer) {
-            const fullStars = Math.floor(rating);
-            const hasHalf = rating % 1 >= 0.25 && rating % 1 < 0.75;
-            const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
-            for (let i = 0; i < fullStars; i++) {
-                starContainer.innerHTML += ' <i class="fas fa-star"></i>';
-            }
-            if (hasHalf) {
-                starContainer.innerHTML +=
-                    '<i class="fas fa-star-half-alt"></i>';
-            }
-            for (let i = 0; i < emptyStars; i++) {
-                starContainer.innerHTML += '<i class="far fa-star"></i>';
-            }
-        }
+    });
     </script>
+
 </div>
+</main>
 
 <%- include('templates/footer') %>
 

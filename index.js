@@ -321,14 +321,31 @@ app.get("/profile", (req, res) => {
 /**
  * Sydney viewBookings 
  */
-app.get("/viewBookings", (req, res) => {
-    res.render("viewBookings", { campsite: null, bookings: [] });
+// app.get("/viewBookings/:campsiteId", (req, res) => {
+//     const campsiteId = req.params.campsiteId;
+//     Booking.find({ campsiteId: campsiteId })
+//         .then(bookings => {
+//             res.render("viewBookings", { bookings });
+//         })
+//         .catch(err => {
+//             console.error("Error fetching bookings:", err);
+//             res.status(500).send("Error fetching bookings");
+//         });
+// });
+
+
+app.get("/viewBookings/:id", async (req, res) => {
+    try {
+        const campsite = await Campsite.findById(req.params.id).lean();
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("viewBookings", { campsite, booking });
+    } catch (err) {
+        res.status(500).send("Error loading bookings");
+    }
 });
-
-
-
-
-
 
 
 app.get("/viewAlerts", (req, res) => {
@@ -357,39 +374,17 @@ app.get("/favourites", (req, res) => {
 app.get("/campsite-info/:id", async (req, res) => {
     try {
         const campsite = await Campsite.findById(req.params.id).lean(); 
-        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean(); // NOTE: must limit to 2 reviews
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
-        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         res.render('campsite-Info', { campsite, review, booking, alert });
-        console.log('Campsite:', campsite);
-        console.log('Reviews:', review);
-        console.log('Alerts:', alert);
-        console.log('Bookings:', booking);
     } catch (err) {
         res.status(500).send('Error loading campsite info');
     }
 });
-
-// //Original /campsite-info/:id route
-// app.get("/campsite-info/:id", async (req, res) => {
-//     try {
-//         const campsite = await Campsite.findById(req.params.id).lean();
-//         if (!campsite) {
-//             return res.status(404).send('Campsite not found');
-//         }
-//         res.render('campsite-Info', { campsite, bookings: [] });
-//     } catch (err) {
-//         res.status(500).send('Error loading campsite info');
-//     }
-// });
-
-
-
-
-
 
 
 // Update the GET /api/campsites endpoint to use MongoDB
@@ -671,7 +666,7 @@ app.post("/api/bookings", async (req, res) => {
         // Create a new booking document
         const booking = new Booking({
             campsiteId: bookingData.campsiteId,
-            firstName: bookingData.firstName || null,
+            firstName: bookingData.firstName || 'Anonymous',
             startDate: bookingData.startDate,
             endDate: bookingData.endDate,
             dateCreated: new Date(),
