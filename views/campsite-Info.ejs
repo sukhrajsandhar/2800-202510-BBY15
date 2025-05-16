@@ -149,8 +149,9 @@
             </div>
         </div>
 
+        
         <!-- Bookings Section -->
-        <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
+        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Bookings</h2>
                 <a
@@ -186,17 +187,31 @@
                             </div>
                             
                         </div>
-                        
-                    <% }) %>
-                <% } else { %>
-                    <div style="color: #888;">No bookings available for this campsite yet.</div>
-                <% } %>
+                        <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
+                        <p class="mb-0">
+                            <%= booking.summary %>
+                        </p>
+                    </div>
+                </div>
+                    <% }) %> <% } else { %>
+                        <div style="color: #888">
+                            No bookings available for this campsite yet.
+                        </div>
+                    <% } %>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a
+                    href="/viewBookings/<%= campsite._id %>"
+                    class="btn btn-outline-primary"
+                    style="
+                        color: white;
+                        background-color: rgb(40, 63, 59);
+                        border: #95bf74;
+                    "
+                    >See All</a
+                >
             </div>
         </div>
-            </div>
-        </div>
-
-        
 
         <!-- Reviews Section -->
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
@@ -245,6 +260,8 @@
                 </div>
                 <% } %>
             </div>
+            
+
             <div class="d-flex justify-content-end mt-3">
                 <a href="/viewReviews" class="btn btn-success btn-sm"
                     >See All</a
@@ -253,7 +270,7 @@
         </div>
 
         <!-- Alerts Section -->
-        <div class="card shadow-sm p-4 mt-4 mb-5 fade-in-up" style="border-radius: 18px;">
+        <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Alerts</h2>
                 <a
@@ -314,3 +331,4 @@
 </main>
 
 <%- include('templates/footer') %>
+
