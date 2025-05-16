@@ -1,81 +1,43 @@
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css'] }) %>
 
-    <!-- Template cards for database -->
-    <!-- <div class="card mb-3">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="d-flex align-items-center">
-                <div style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;">
-                </div>
-                <div class="ms-2">
-                    <h6 class="mb-0">{{ username }}</h6>
-                    <small class="text-muted">{{ category }}</small>
-                </div>
-            </div>
-                <small class="text-muted">{{ date }}</small>
-        </div>
-            <p class="mb-0">{{ description }}</p>
-        </div>
-    </div> -->
+<!-- Scrollable alerts container -->
+<div class="container mt-5" style="max-height: calc(100vh - 150px); overflow-y: auto;">
+    <h4 class="mb-4">Alerts for <%= campsite.name %></h4>
 
-    <!-- Scrollable alerts container -->
-    <div class="container mt-5" style="max-height: calc(100vh - 150px); overflow-y: auto;">
-        <!-- Placeholder card #1 -->
-        <div class="card mt-5 mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar1.png"></div>
-                        <div class="ms-2">
-                            <h6 class="mb-0">Hiker123</h6>
-                            <small class="text-muted">Trail Obstruction</small>
+    <% if (alerts && alerts.length > 0) { %>
+        <% alerts.forEach(function(alert) { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <img 
+                                    style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
+                                    src="/images/avatars/avatar<%= Math.floor(Math.random() * 6) + 1 %>.png"
+                                    alt="avatar"
+                                >
+                            </div>
+                            <div class="ms-2">
+                                <h6 class="mb-0"><%= user.firstName + ' ' + user.lastName %></h6>
+                                <small class="text-muted"><%= alert.alertType %></small>
+                            </div>
                         </div>
+                        <small class="text-muted"><%= new Date(alert.alertDate).toLocaleDateString() %></small>
                     </div>
-                    <small class="text-muted">2025-05-01</small>
+                    <p class="mb-0"><%= alert.message %></p>
                 </div>
-                <p class="mb-0">A large fallen tree is blocking part of the north trail. Caution advised.</p>
             </div>
-        </div>
+        <% }) %>
+    <% } else { %>
+        <p class="text-muted">No alerts available for this campsite yet.</p>
+    <% } %>
 
-        <!-- Placeholder card #2 -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar2.png"></div>
-                        <div class="ms-2">
-                            <h6 class="mb-0">NatureWatcher</h6>
-                            <small class="text-muted">Wildlife Sighting</small>
-                        </div>
-                    </div>
-                    <small class="text-muted">2025-05-02</small>
-                </div>
-                <p class="mb-0">Saw a bear near the west campground early morning. Please keep food secured.</p>
-            </div>
-        </div>
-
-        <!-- Placeholder card #3 -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                        <div><img style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" src="/images/avatars/avatar4.png"></div>
-                        <div class="ms-2">
-                            <h6 class="mb-0">CamperGal</h6>
-                            <small class="text-muted">Weather Warning</small>
-                        </div>
-                    </div>
-                    <small class="text-muted">2025-05-03</small>
-                </div>
-                <p class="mb-0">Heavy rain expected tonight; some campsites might flood. Prepare accordingly.</p>
-            </div>
-        </div>
-                    <%- include("templates/bg") %>
-    </div>
+    <%- include("templates/bg") %>
+</div>
 
 <%- include('templates/footer') %>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>

@@ -46,6 +46,8 @@
 
                     <!-- Hidden campsiteId -->
                     <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
+                    <!-- Hidden userId -->
+                    <input type="hidden" id="userId" value="<%= userId %>">
                 </div>
 
                 <!-- Cancel and Submit Buttons -->
@@ -82,6 +84,7 @@
             const customCategory = document.getElementById('customCategory').value;
 
             const formData = {
+                userId: document.getElementById('userId').value,
                 campsiteId: document.getElementById('campsiteId').value,
                 alertType: document.getElementById('alertCategory').value,
                 alertDate: document.getElementById('alertDate').value,

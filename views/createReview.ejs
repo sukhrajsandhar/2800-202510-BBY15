@@ -105,6 +105,8 @@
 
                         <!-- Hidden campsiteId (ensure this is in your form) -->
                         <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
+                        <!-- Hidden userId (ensure this is in your form) -->
+                        <input type="hidden" id="userId" value="<%= userId %>">
 
                         <!-- Submit and Cancel buttons -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-between">
@@ -127,6 +129,7 @@
                 e.preventDefault();
 
                 const formData = {
+                    userId: document.getElementById('userId').value,
                     campsiteId: document.getElementById('campsiteId').value,
                     overallRating: document.getElementById('overallRating').value,
                     dateVisited: document.getElementById('dateVisited').value,

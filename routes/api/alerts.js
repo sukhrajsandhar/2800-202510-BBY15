@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
     console.log('Received alert data:', req.body);
 
     const alert = new Alert({
+        userId: req.body.userId,
         campsiteId: req.body.campsiteId,
         alertType: req.body.category,    
         alertDate: req.body.date,          

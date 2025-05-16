@@ -7,6 +7,11 @@ const reviewSchema = new mongoose.Schema({
         ref: 'Campsite',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     overallRating: {
         type: Number,
         min: 0,

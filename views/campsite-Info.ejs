@@ -226,6 +226,9 @@
 
             <!-- Database Review: List of Reviews for specific campsite -->
             <div class="card-container">
+                <%
+                review.sort((a, b) => new Date(b.dateVisited) - new Date(a.dateVisited));
+                %>
                 <% if (review && review.length > 0) { %> 
                     <%review.forEach(function(review) { %>
                         <div class="card mb-3">
@@ -243,8 +246,16 @@
                                             "
                                         ></div>
                                         <div class="ms-2">
-                                    <h6 class="mb-0"><%= review.firstName || 'Anonymous' %></h6>
-                                    <small class="text-muted"><%= review.overallRating || 'No rating' %></small>
+                                    <h6 class="mb-0"><%= review.firstName || user.firstName %></h6>
+                                    <small class="text-muted">
+                                        <% if (review.overallRating) { 
+                                            const fullStars = '🌟'.repeat(review.overallRating);
+                                        %>
+                                            <%= fullStars %>
+                                        <% } else { %>
+                                            No rating
+                                        <% } %>
+                                        </small>
                                 </div>
                             </div>
                             <small class="text-muted"><%= review.dateVisited || 'Unknown' %></small>
@@ -261,9 +272,8 @@
                 <% } %>
             </div>
             
-
             <div class="d-flex justify-content-end mt-3">
-                <a href="/viewReviews" class="btn btn-success btn-sm"
+                <a href="/viewReviews/<%= campsite._id %>" class="btn btn-success btn-sm"
                     >See All</a
                 >
             </div>
@@ -280,6 +290,9 @@
                 >
             </div>
             <div class="card-container">
+                <%
+                alert.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
+                %>
                 <% if (alert && alert.length > 0) { %> 
                     <%alert.forEach(function(alert) { %>
                 <div
@@ -303,7 +316,7 @@
 
 
             <div class="d-flex justify-content-end mt-3">
-                <a href="/viewAlerts" class="btn btn-danger btn-sm">See All</a>
+                <a href="/viewAlerts/<%= campsite._id %>" class="btn btn-danger btn-sm">See All</a>
             </div>
         </div>
     </div>
