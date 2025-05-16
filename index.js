@@ -274,13 +274,22 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
 });
 
 /**
- * Create Booking!!!
- * --> finish me here
+ * Sydney Create Booking!!!
  */
 app.get("/createBooking/:campsiteId", async (req, res) => {
-    res.render("createBooking", {
-        campsiteId: req.params.campsiteId,
-    });
+    try {
+        const campsite = await Campsite.findById(req.params.campsiteId).lean();
+        if (!campsite) {
+            return res.status(404).send('Campsite not found');
+        }
+        res.render("createBooking", {
+            campsiteId: req.params.campsiteId,
+            campsiteName: campsite.name,
+            firstName: req.session.firstName || null,
+        });
+    } catch (err) {
+        res.status(500).send("Error loading booking form");
+    }
 });
 
 app.get("/booked", (req, res) => {
@@ -310,7 +319,7 @@ app.get("/profile", (req, res) => {
 
 
 /**
- * viewBookings Finish!!
+ * Sydney viewBookings 
  */
 app.get("/viewBookings", (req, res) => {
     res.render("viewBookings", { campsite: null, bookings: [] });
@@ -358,6 +367,7 @@ app.get("/campsite-info/:id", async (req, res) => {
         console.log('Campsite:', campsite);
         console.log('Reviews:', review);
         console.log('Alerts:', alert);
+        console.log('Bookings:', booking);
     } catch (err) {
         res.status(500).send('Error loading campsite info');
     }
@@ -497,6 +507,17 @@ app.get("/api/trails", (req, res) => {
  * Sydney: include an app.get for bookings, alerts, reviews?
  */
 
+app.get("/api/bookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find().lean();
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+});
+
+
 
 // Add POST endpoint for /api/campsites
 app.post("/api/campsites", async (req, res) => {
@@ -627,6 +648,47 @@ app.post("/api/alerts", async (req, res) => {
     } catch (error) {
         console.error('Error saving alert:', error);
         res.status(500).json({ error: 'Failed to save alert: ' + error.message });
+    }
+});
+
+
+app.post("/api/bookings", async (req, res) => {
+    try {
+        console.log('Received booking data:', req.body);
+        const bookingData = req.body;
+
+        // Validate the booking data
+        if (!bookingData.campsiteId || !bookingData.startDate || !bookingData.endDate) {
+            console.log('Missing required fields:', {
+                campsiteId: !bookingData.campsiteId,
+                //firstName: !bookingData.firstName,
+                startDate: !bookingData.startDate,
+                endDate: !bookingData.endDate
+            });
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new booking document
+        const booking = new Booking({
+            campsiteId: bookingData.campsiteId,
+            firstName: bookingData.firstName || null,
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+            dateCreated: new Date(),
+            tentSpots: bookingData.tentSpots || 0,
+            contactInfo: bookingData.contactInfo || '',
+            summary: bookingData.summary || ''
+        });
+
+        console.log('Created booking document:', booking);
+
+        // Save the booking to MongoDB
+        const savedBooking = await booking.save();
+        console.log('Successfully saved booking:', savedBooking);
+        res.status(201).json(savedBooking);
+    } catch (error) {
+        console.error('Error saving booking:', error);
+        res.status(500).json({ error: 'Failed to save booking: ' + error.message });
     }
 });
 

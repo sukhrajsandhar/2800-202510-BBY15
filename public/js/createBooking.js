@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Create Booking script loaded');
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = {
             campsiteId: document.getElementById('campsiteId').value,
-            userId: document.getElementById('userId').value,
+            firstName: document.getElementById('firstName').value,
             startDate: document.getElementById('startDate').value,
             endDate: document.getElementById('endDate').value,
             dateCreated: new Date().toISOString(),
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contactInfo: document.getElementById('contactInfo').value,
             summary: document.getElementById('summary').value
         };
-
+        console.log(formData.firstName);
         try {
             const response = await fetch('/api/bookings', {
                 method: 'POST',

@@ -7,7 +7,7 @@
     <div style="padding: 20px">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                <h1 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center;">
                     Create New Tent
                 </h1>
                 <button
@@ -23,7 +23,7 @@
                 >
                     <div class="container">
                         <label>Campsite:</label>
-                        <strong class="readonly">Campsite XYZ</strong>
+                        <p class="readonly"><%= campsiteName %></p>
 
 
                         <label>Start Date:</label>
@@ -48,21 +48,21 @@
                     <button type="submit">Submit</button>
                     <!-- Hidden campsiteId -->
                     <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
-                    <input type="hidden" id="userId" value="<%= userId %>">
+                    <input type="hidden" id="firstName" value="<%= firstName %>">
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<script src="/public/js/createBooking.js"></script>
+<script src="/js/createBooking.js"></script>
 <!-- <script>
     document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = {
             campsiteId: document.getElementById('campsiteId').value,
-            userId: document.getElementById('userId').value,
+            firstName: document.getElementById('firstName').value,
             startDate: document.getElementById('startDate').value,
             endDate: document.getElementById('endDate').value,
             dateCreated: new Date().toISOString(),
