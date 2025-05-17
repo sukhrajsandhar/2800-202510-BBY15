@@ -123,10 +123,25 @@ function adminAuthorization(req, res, next) {
 }
 
 
+app.use((req, res, next) => {
+    const publicPaths = ['/login', '/signUp', '/index', '/404', '/errorMessage']; // add any static/public paths
+    if (publicPaths.some(path => req.path.startsWith(path))) {
+        return next();
+    }
+    sessionValidation(req, res, next);
+});
+
+
+app.get("/index", (req, res) => {
+    res.render("index");
+});
+
 app.get("/", (req, res) => {
     res.render("main", { mapboxKey: process.env.MAPBOX_ACCESS_TOKEN });
 });
 
+
+// EDIT THIS!!!!!!!
 app.get("/nosql-injection", async (req, res) => {
     var username = req.query.user;
 
@@ -426,7 +441,7 @@ app.post("/update-profile", async (req, res) => {
 
 
 // Admin panel route
-app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
+app.get('/admin', adminAuthorization, async (req, res) => {
         try {
         //fetch all user from the database
         const users = await userCollection.find().toArray(); 
@@ -534,6 +549,9 @@ try {
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
+        // Sort bookings by startDate descending (most recent first)
+        booking.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
         res.render("viewBookings", { campsite, booking });
     } catch (err) {
         res.status(500).send("Error loading bookings");
