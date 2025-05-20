@@ -87,7 +87,18 @@
                                 form="profileForm">Save</button>
                         </div>
                     </div>
-                </div>
+                    
+                    <!-- Logout Button -->
+                    <div class="d-flex justify-content-center mt-5">
+                      <form action="/logout" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-danger px-4" style="min-width: 100px;">
+                          Logout
+                        </button>
+                      </form>
+                    </div>
+                    <!-- End Logout Button -->
+                    
+                    </div>
             </div>
         </div>
        <%- include("templates/bg") %>
