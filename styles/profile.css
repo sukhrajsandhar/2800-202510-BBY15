@@ -106,3 +106,23 @@ body{
 #logoutBtn:hover {
 background-color: rgb(231, 116, 116);
 }
+
+#save1 {
+    width: 40%;
+    background-color: #659B5E;
+    border: solid #659B5E 2px;
+}
+
+#save1:hover {
+    background-color: #95BF74;
+    border: solid #95BF74 2px;
+}
+
+.favouriteAvatar {
+    position: fixed;
+    bottom: 20px;   
+    right: 20px;   
+    width: 50px;
+    height: 50px;
+    z-index: 1000;  
+  }

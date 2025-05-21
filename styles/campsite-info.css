@@ -696,3 +696,37 @@ main {
   width: 100px !important;
   border-radius: 20px !important;
 }
+
+h2 {
+  position: relative;
+  font-size: 28px;
+  color: #3D5943;
+  text-align: center;
+}
+
+h2::after {
+  content: '';
+  display: block;
+  width: 150px;
+  height: 10px;
+  background: #B4D9A7;
+  border-radius: 3px;
+  margin-left: 5px;
+}
+
+h1 {
+  position: relative;
+  font-size: 28px;
+  color: #3D5943;
+  text-align: center;
+}
+
+h1::after {
+  content: '';
+  display: block;
+  width: 380px;
+  height: 10px;
+  background: #B4D9A7;
+  border-radius: 3px;
+  margin-left: 55px;
+}

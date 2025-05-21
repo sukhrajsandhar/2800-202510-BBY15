@@ -113,3 +113,21 @@ main {
 body {
   background-color: #b3c8ad;
 }
+
+.alertAvatar {
+  position: absolute;
+  top: -50px;
+  left: 41%;
+  width: 80px;
+  height: 80px;
+  z-index: 1;
+}
+
+.reviewAvatar {
+  position: absolute;
+  top: -60px;
+  left: 43%;
+  width: 80px;
+  height: 100px;
+  z-index: 1;
+}

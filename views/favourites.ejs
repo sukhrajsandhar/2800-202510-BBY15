@@ -6,6 +6,8 @@
   </div>
 
 <div class="d-flex flex-row flex-wrap justify-content-center gap-4 mt-5">
+  <img class="favouriteAvatar" src="/images/favourites.png">
+
   
   <% campsites.forEach(favCampsite => { %>
       <div class="card card-hover rounded-4 img-fluid" style="width: 300px; height: 420px; cursor: pointer;">
@@ -41,7 +43,6 @@
           <i class="fas fa-heart heart-icon heart"
           style="font-size: 2rem; color: #8212b6; cursor: pointer;"
           data-campsite-id="<%= favCampsite._id %>"></i>
-       
         </div>
       </div>
     </a>

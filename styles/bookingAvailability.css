@@ -104,3 +104,16 @@ body {
     background-color: #397b56 !important;
     transition: background-color 0.3s ease;
   }
+
+  .bookingAvatar {
+    position: absolute;
+    top: -55px;
+    left: 41%;
+    width: 80px;
+    height: 80px;
+    z-index: 1;
+  }
+
+  html, body {
+    overflow: auto;
+  }

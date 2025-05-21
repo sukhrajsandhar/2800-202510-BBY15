@@ -5,17 +5,7 @@ body, html {
     padding: 0;
     font-family: sans-serif;
   }
-  
-  /* Headings */
-  h3 {
-    border: 2px solid #283F3B;
-    padding: 0.5rem 1.5rem;
-    border-radius: 11px;
-    display: inline-block;
-    background-color: #f7f7f7;
-    font-weight: 500;
-    color: #283F3B;
-  }
+
   
   .three h1 {
     font-size: 48px;
@@ -45,10 +35,16 @@ body, html {
     }
   }
   
-  .card, .card-hover {
+  .card,
+  .card-hover {
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 300px; /* or 100% if inside a grid/flex container */
+    height: 400px; /* consistent height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   
   .card-hover {
@@ -143,3 +139,11 @@ body, html {
     transform: scale(2);
   }
   
+  .favouriteAvatar {
+    position: fixed;
+    bottom: 20px;   
+    right: 20px;   
+    width: 50px;
+    height: 50px;
+    z-index: 1000;  
+  }
