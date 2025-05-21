@@ -23,7 +23,6 @@ h3 {
 .main {
   padding: 4% 2% 10%;
   background-color: #BDD3AF;
-  min-height: 100vh;
 }
 
 @media (max-width: 600px) {
@@ -38,7 +37,7 @@ h3 {
     overflow: scroll;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 300px; 
-    height: 400px; 
+    height: 390px !important; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -97,7 +96,6 @@ h3 {
   color: #283F3B;
   text-transform: uppercase;
   font-weight: 600;
-  padding: 0.5rem 1rem;
   border-radius: 10px;
   text-align: center;
   width: 100%;
@@ -169,9 +167,6 @@ h3 {
   z-index: 1000;  
 }
 
-h5 {
-  text-shadow: 2px 2px black;
-}
 h5 {
   text-shadow: 2px 2px black;
 }
