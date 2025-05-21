@@ -345,3 +345,8 @@ main {
   color: #fff;
 }
 
+
+.notAvail {
+  width: 100px !important;
+  border-radius: 20px !important;
+}

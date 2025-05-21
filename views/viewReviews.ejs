@@ -63,11 +63,12 @@
       </div>
     <% }); %>
   <% } else { %>
-    <p>No reviews available for this campsite.</p>
-  <% } %>
+    <div class="d-flex justify-content-center align-items-center p-4"style="color: #888">
+            No reviews available for this campsite yet.
+            <img class="notAvail p-2" src="/notAvail.png"/>
+        </div>  <% } %>
 
 </div>
-  <%- include("templates/bg") %>
 <%- include('templates/footer') %>
 
 <!-- Scripts -->
