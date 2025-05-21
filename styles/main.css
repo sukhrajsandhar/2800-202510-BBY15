@@ -59,9 +59,12 @@ body {
     z-index: 1000;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 18px !important;
+
 }
 
 .nav-links {
+    font-size: 18px !important;
     display: flex;
     gap: 1px;
 }
@@ -78,6 +81,8 @@ body {
     position: relative;
     overflow: hidden;
     min-width: 48px;
+    font-size: 18px !important;
+
 }
 
 .nav-link::before {

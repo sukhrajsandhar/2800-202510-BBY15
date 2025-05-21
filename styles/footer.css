@@ -30,6 +30,7 @@
     position: relative;
     overflow: hidden;
     min-width: 48px;
+
 }
 
 .nav-link::before {
@@ -60,6 +61,7 @@
     margin-bottom: 2px;
     transition: transform 0.2s ease, color 0.2s ease; /* Add transition for color */
     color: #666; /* Default color */
+    
 }
 
 .nav-link:hover i {

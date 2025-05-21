@@ -36,45 +36,53 @@
                       </li>
                     </ul>
                   </div>
+                  <div class="d-flex justify-content-center pt-3">                        
+                  <a href="/campsite-Info/<%= bookedCampsite.campsiteId?._id %>" class="btn w-100 text-decoration-none text-dark text-center">
+                    View Details
+                  </a>     
+                </div>
 
-                  <div class="d-flex justify-content-center pt-3">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancelModal-<%= bookedCampsite._id %>">
+                  <div class="d-flex justify-content-center pt-3">                        
+                    <button type="button" class="btn btn-primary w-100 text-decoration-none text-dark text-center" data-bs-toggle="modal" data-bs-target="#cancelModal-<%= bookedCampsite._id %>">
                       Cancel Booking
-                    </button>                            
+                    </button>                 
                   </div>
-                  
-                  <div class="modal fade" id="cancelModal-<%= bookedCampsite._id %>" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel-<%= bookedCampsite._id %>" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="cancelModalLabel-<%= bookedCampsite._id %>">Cancel Booking</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          Are you sure you want to cancel your booking at <%= bookedCampsite.campsiteId?.name %>?
-                        </div>
-                        <div class="modal-footer">
-                          <form method="POST" action="/bookings/<%= bookedCampsite._id %>/delete">
-                            <button type="submit" class="btn btn-danger">Yes, Cancel</button>
-                          </form>
+                </main>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="cancelModal-<%= bookedCampsite._id %>" tabindex="-1" aria-labelledby="cancelModalLabel-<%= bookedCampsite._id %>" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="cancelModalLabel-<%= bookedCampsite._id %>">Cancel Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to cancel your booking at <%= bookedCampsite.campsiteId?.name %>?
+                          </div>
+                          <div class="modal-footer">
+                            <form method="POST" action="/bookings/<%= bookedCampsite._id %>/delete">
+                              <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+                            </form>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+
                   
                   
                 </div>
               </div>
             <% }) %>
           <% } %>
-          <%- include("templates/bg") %>
-
+          <div class="wave-background-bottom">
+            <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+              <path d="M0.00,49.98 C254.51,72.06 306.43,22.41 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"></path>
+            </svg>
+          </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         
         <%- include('templates/footer') %>
-    </main>
 </body>

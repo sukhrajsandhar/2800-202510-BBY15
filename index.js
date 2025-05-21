@@ -581,27 +581,30 @@ app.get("/viewReviews/:id", async (req, res) => {
 
 //Sydney
 app.get("/viewBookings/:id", async (req, res) => {
-try {
-        const campsite = await Campsite.findById(req.params.id).lean();
-<<<<<<< Updated upstream
-        const bookings = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
-=======
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) })
-        .populate('userId')  
+    try {
+      const campsite = await Campsite.findById(req.params.id).lean();
+  
+      const bookings = await Booking.find({ campsiteId: req.params.id })
+        .populate('userId')
         .lean();
->>>>>>> Stashed changes
-        if (!campsite) {
-            return res.status(404).send('Campsite not found');
-        }
-        // Sort bookings by startDate descending (most recent first)
-        bookings.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-
-        res.render("viewBookings", { campsite, booking: bookings, currentUserFirstName: req.session.firstName });
+  
+      if (!campsite) {
+        return res.status(404).send('Campsite not found');
+      }
+  
+      bookings.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  
+      res.render("viewBookings", {
+        campsite,
+        booking: bookings,
+        currentUserFirstName: req.session.firstName || 'Camper'
+      });
     } catch (err) {
-        res.status(500).send("Error loading bookings");
+      console.error("Error in /viewBookings/:id", err); // debug
+      res.status(500).send("Error loading bookings");
     }
-});
-
+  });
+  
 // Route to fetch booking owner info
 //Sydney
 app.get("/booking/:id/contact-info", async (req, res) => {
