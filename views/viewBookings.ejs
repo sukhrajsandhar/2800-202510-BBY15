@@ -1,4 +1,5 @@
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css', '/header.css', '/bg.css'] }) %>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css',
+'/alerts.css', '/header.css', '/bg.css'] }) %>
 
 <main>
     <div>
@@ -7,39 +8,71 @@
         </h1>
     </div>
     <div class="container">
-        <% if (booking && booking.length > 0) { %>
-            <% booking.forEach(function(booking) { %>
-                <div class="card">
-                    <div class="card-header">
-                        <h5>DATES: </h5>
-                        <p><%= booking.startDate %> - <%= booking.endDate %></p>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="card-title d-flex">
-                            <h5><%= booking.firstName %></h5>
-                            <small style="position: absolute; right: 20px;">Tent spots: <%= booking.tentSpots %></small>
-                        </div>
-                        <p class="card-text">
-                            <%= booking.summary %>
-                        </p>
-                        <a
-                            href="#"
-                            style="
-                                background-color: rgb(40, 63, 59);
-                                outline-color: #95bf74;
-                            "
-                            class="btn btn-primary"
-                            >Contact</a>
-                    </div>
-                </div>
-            <% }) %>
-        <% } else { %>
-            <div style="color: #888">
-                No bookings available for this campsite yet.
+        <% if (booking && booking.length > 0) { %> <%
+        booking.forEach(function(booking) { %>
+        <div class="card">
+            <div class="card-header">
+                <h5>DATES:</h5>
+                <p><%= booking.startDate %> - <%= booking.endDate %></p>
             </div>
+
+            <div class="card-body">
+                <div class="card-title d-flex">
+                    <h5><%= booking.firstName %></h5>
+                    <small style="position: absolute; right: 20px"
+                        >Tent spots: <%= booking.tentSpots %></small
+                    >
+                </div>
+                <p class="card-text"><%= booking.summary %></p>
+                <button
+                    id="book-btn"
+                    type="button"
+                    style="
+                        background-color: rgb(40, 63, 59);
+                        outline-color: #95bf74;
+                    "
+                    class="btn btn-primary"
+                    data-booking-id="<%= booking._id %>"
+                >
+                    Contact Booking Owner
+                </button>
+            </div>
+        </div>
+        <% }) %> <% } else { %>
+        <div style="color: #888">
+            No bookings available for this campsite yet.
+        </div>
         <% } %>
     </div>
 </main>
+<script>
+    document.querySelectorAll("#book-btn").forEach((button) => {
+        button.onclick = () => contactOwner(button.dataset.bookingId);
+    });
+
+    function contactOwner(bookingId) {
+        fetch(`/booking/${bookingId}/contact-info`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const { name, email } = data;
+
+                window.open(
+                    `mailto:${email}?subject=Question about your campsite booking&body=Dear ${name},%0D%0A%0D%0AI have a question about your booking.%0D%0A%0D%0ASincerely,%0D%0A[Your Name Here]`
+                );
+                alert(
+                    "An email window has opened so you can contact the booking owner."
+                );
+            })
+            .catch((err) => {
+                console.error(err);
+                alert("Failed to get contact info.");
+            });
+    }
+</script>
 
 <%- include('templates/footer') %>

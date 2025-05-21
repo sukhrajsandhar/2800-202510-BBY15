@@ -368,6 +368,7 @@ app.get("/createBooking/:campsiteId", async (req, res) => {
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
             firstName: req.session.firstName || null,
+            userId: req.session.userId || null,
         });
     } catch (err) {
         res.status(500).send("Error loading booking form");
@@ -566,6 +567,30 @@ try {
         res.render("viewBookings", { campsite, booking });
     } catch (err) {
         res.status(500).send("Error loading bookings");
+    }
+});
+
+// Route to fetch booking owner info
+//Sydney
+app.get("/booking/:id/contact-info", async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id).populate('userId'); // assumes userId is a ref to User
+        if (!booking || !booking.userId) {
+            return res.status(404).json({ error: "Booking or user not found" });
+        }
+
+        // Prevent contacting yourself
+        if (req.session.userId === booking.userId._id.toString()) {
+            return res.status(403).json({ error: "You cannot contact yourself." });
+        }
+
+        res.json({
+            name: booking.userId.name,
+            email: booking.userId.email
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -1001,6 +1026,7 @@ app.post("/api/bookings", async (req, res) => {
         // Create a new booking document
         const booking = new Booking({
             campsiteId: bookingData.campsiteId,
+            userId: bookingData.userId || null,
             firstName: bookingData.firstName || 'Anonymous',
             startDate: bookingData.startDate,
             endDate: bookingData.endDate,
