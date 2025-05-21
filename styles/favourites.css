@@ -38,10 +38,10 @@ body, html {
   .card,
   .card-hover {
     border-radius: 10px;
-    overflow: hidden;
+    overflow: scroll;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 300px; /* or 100% if inside a grid/flex container */
-    height: 400px; /* consistent height */
+    width: 300px; 
+    height: 400px; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -146,4 +146,8 @@ body, html {
     width: 50px;
     height: 50px;
     z-index: 1000;  
+  }
+
+  h5 {
+    text-shadow: 2px 2px black;
   }

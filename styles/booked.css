@@ -24,7 +24,6 @@ h3 {
   padding: 4% 2% 10%;
   background-color: #BDD3AF;
   min-height: 100vh;
-  overflow: visible;
 }
 
 @media (max-width: 600px) {
@@ -33,22 +32,29 @@ h3 {
     padding-right: 1rem;
   }
 }
-
-  .card, .card-hover {
+  .card,
+  .card-hover {
     border-radius: 10px;
-    overflow: hidden;
+    overflow: scroll;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 300px; 
+    height: 400px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     z-index: 9999;
     background-color: white;
   }
 
 .card-hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  transform: translateY(-14px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
 }
 
 .card-hover:hover .card-img-overlay {
@@ -161,4 +167,11 @@ h3 {
   width: 50px;
   height: 50px;
   z-index: 1000;  
+}
+
+h5 {
+  text-shadow: 2px 2px black;
+}
+h5 {
+  text-shadow: 2px 2px black;
 }
