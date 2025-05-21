@@ -1,45 +1,47 @@
 function handleCategoryChange() {
-    const categorySelect = document.getElementById('alertCategory');
-    const customDiv = document.getElementById('customCategoryDiv');
-    if (categorySelect.value === 'Other') {
-        customDiv.classList.remove('d-none');
+    const categorySelect = document.getElementById("alertCategory");
+    const customDiv = document.getElementById("customCategoryDiv");
+    if (categorySelect.value === "Other") {
+        customDiv.classList.remove("d-none");
     } else {
-        customDiv.classList.add('d-none');
+        customDiv.classList.add("d-none");
     }
 }
 
-document.getElementById('alertForm').addEventListener('submit', async (e) => {
+document.getElementById("alertForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const selectedCategory = document.getElementById('alertCategory').value;
-    const customCategory = document.getElementById('customCategory').value;
+    const selectedCategory = document.getElementById("alertCategory").value;
+    const customCategory = document.getElementById("customCategory").value;
 
     const formData = {
-        userId: document.getElementById('userId').value,
-        campsiteId: document.getElementById('campsiteId').value,
-        alertType: document.getElementById('alertCategory').value,
-        alertDate: document.getElementById('alertDate').value,
-        message: document.getElementById('alertDescription').value
+        alertDate: document.getElementById("alertDate").value,
+        alertType: document.getElementById("alertCategory").value,
+        campsiteId: document.getElementById("campsiteId").value,
+        message: document.getElementById("alertDescription").value,
+        userId: document.getElementById("userId").value
     };
 
-    try {
-        const response = await fetch('/api/alerts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
+    fetch("/api/alerts", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(function (response) {
         if (response.ok) {
-            const data = await response.json();
-            alert('Alert created successfully!');
-            window.location.href = `/campsite-info/${data.campsiteId}`;
+            return response.json();
         } else {
-            alert('Error creating alert. Please try again.');
+            throw new Error("Error creating alert. Please try again.");
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again later.');
-    }
+    })
+    .then(function (data) {
+        alert("Alert created successfully!");
+        window.location.href = `/campsite-info/${data.campsiteId}`;
+    })
+    .catch(function (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again later.");
+    });
 });
