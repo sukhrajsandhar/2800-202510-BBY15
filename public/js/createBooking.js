@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = {
             campsiteId: document.getElementById('campsiteId').value,
+            userId: document.getElementById('userId').value,
             firstName: document.getElementById('firstName').value,
             startDate: document.getElementById('startDate').value,
             endDate: document.getElementById('endDate').value,
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contactInfo: document.getElementById('contactInfo').value,
             summary: document.getElementById('summary').value
         };
-        console.log(formData.firstName);
+        console.log(formData.userId);
         try {
             const response = await fetch('/api/bookings', {
                 method: 'POST',
