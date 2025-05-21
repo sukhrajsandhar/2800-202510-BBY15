@@ -12,6 +12,11 @@ const alertSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    firstName: {
+        type: String,
+        ref: 'User',
+        required: true
+    },
     alertType: {
         type: String,
         required: true
@@ -27,7 +32,7 @@ const alertSchema = new mongoose.Schema({
     dateCreated: {
         type: Date,
         default: Date.now
-  }
+    }
 });
 
 const Alert = mongoose.model('Alert', alertSchema);

@@ -1,8 +1,11 @@
+// This script handles the creation of alerts in the campsite management system.
+// It includes a form submission handler that collects data from the form,
 document.getElementById('reviewForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const formData = {
         userId: document.getElementById('userId').value,
+        firstName: document.getElementById('firstName').value,
         campsiteId: document.getElementById('campsiteId').value,
         overallRating: document.getElementById('overallRating').value,
         dateVisited: document.getElementById('dateVisited').value,

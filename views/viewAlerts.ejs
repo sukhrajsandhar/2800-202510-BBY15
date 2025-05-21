@@ -1,5 +1,7 @@
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css', '/header.css', '/bg.css'] }) %>
 
+<!-- Alert View Page -->
+<!-- This page displays the alerts for a specific campsite. -->
 <div class="container" style="margin-top: 80px; margin-bottom: 100px; max-width: 700px; overflow-y: auto;">
   <h4 class="mb-4">Alerts for <%= campsite.name %></h4>
 
@@ -16,7 +18,7 @@
                   alt="avatar">
               </div>
               <div class="ms-2">
-                <h6 class="mb-0"><%= user.firstName + ' ' + user.lastName %></h6>
+                <h6 class="mb-0"><%= alert.firstName %></h6>
                 <div class="text-muted">
                   <small><%= alert.alertType %> Alert</small>
                 </div>

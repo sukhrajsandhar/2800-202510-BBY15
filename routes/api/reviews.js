@@ -31,6 +31,7 @@ router.post('/', async (req, res) => {
     // Only use fields defined in the schema
     const review = new Review({
         userId: req.body.userId,
+        firstName: req.body.firstName,
         campsiteId: req.body.campsiteId,
         overallRating: req.body.overallRating,
         dateVisited: req.body.dateVisited,

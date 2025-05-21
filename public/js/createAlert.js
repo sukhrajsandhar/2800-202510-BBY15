@@ -1,3 +1,4 @@
+// This script handles the creation of alerts in the campsite management system.
 function handleCategoryChange() {
     const categorySelect = document.getElementById("alertCategory");
     const customDiv = document.getElementById("customCategoryDiv");
@@ -8,6 +9,7 @@ function handleCategoryChange() {
     }
 }
 
+// Event listener for the category select element
 document.getElementById("alertForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -19,7 +21,8 @@ document.getElementById("alertForm").addEventListener("submit", function (e) {
         alertType: document.getElementById("alertCategory").value,
         campsiteId: document.getElementById("campsiteId").value,
         message: document.getElementById("alertDescription").value,
-        userId: document.getElementById("userId").value
+        userId: document.getElementById("userId").value,
+        firstName: document.getElementById("firstName").value
     };
 
     fetch("/api/alerts", {

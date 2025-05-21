@@ -331,7 +331,8 @@ app.get("/createReview/:campsiteId", async (req, res) => {
         res.render("createReview", {
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
-            userId: user._id
+            userId: user._id,
+            firstName: user.firstName,
         });
     } catch (err) {
         res.status(500).send("Error loading review form");
@@ -348,7 +349,8 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
         res.render("createAlert", {
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
-            userId: user._id
+            userId: user._id,
+            firstName: user.firstName
         });
     } catch (err) {
         res.status(500).send("Error loading alert form");
@@ -985,6 +987,7 @@ app.post("/api/reviews", async (req, res) => {
         // Create a new review document
         const review = new Review({
             userId: reviewData.userId || null,
+            firstName: reviewData.firstName || 'Anonymous',
             campsiteId: reviewData.campsiteId,
             overallRating: reviewData.overallRating,
             dateVisited: reviewData.dateVisited,
@@ -1030,6 +1033,7 @@ app.post("/api/alerts", async (req, res) => {
         // Create a new alert document
         const alert = new Alert({
             userId: alertData.userId || null,
+            firstName: alertData.firstName || 'Anonymous',
             campsiteId: alertData.campsiteId,
             alertType: alertData.alertType,
             alertDate: alertData.alertDate,

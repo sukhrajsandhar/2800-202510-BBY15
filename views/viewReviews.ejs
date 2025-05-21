@@ -1,5 +1,6 @@
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css', '/header.css', '/bg.css'] }) %>
 
+<!-- Review View Page -->
 <div class="container" style="margin-top: 80px; margin-bottom: 100px; max-width: 700px; overflow-y: auto;">
   <h4 class="mb-4">Reviews for <%= campsite.name %></h4>
 
@@ -17,7 +18,7 @@
               </div>
               <div class="ms-2">
 
-                <h6 class="mb-0"><%= user.firstName + ' ' + user.lastName %></h6>
+                <h6 class="mb-0"><%= review.firstName %></h6>
                 <div class="text-warning">
                     <small class="text-muted">
                         <% if (review.overallRating) { 

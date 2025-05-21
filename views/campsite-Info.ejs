@@ -229,7 +229,7 @@
                                             style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
                             </div>
                                         <div class="ms-2">
-                                    <h6 class="mb-0"><%= review.firstName || user.firstName %></h6>
+                                    <h6 class="mb-0"><%= review.firstName %></h6>
                                     <small class="text-muted">
                                         <% if (review.overallRating) { 
                                             const fullStars = '🌟'.repeat(review.overallRating);
