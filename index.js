@@ -1075,7 +1075,6 @@ app.post("/api/bookings", async (req, res) => {
             endDate: bookingData.endDate,
             dateCreated: new Date(),
             tentSpots: bookingData.tentSpots || 0,
-            contactInfo: bookingData.contactInfo || '',
             summary: bookingData.summary || ''
         });
 

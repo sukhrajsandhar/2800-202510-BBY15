@@ -32,10 +32,6 @@ const bookingSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    contactInfo: {
-        type: String,
-        required: true
-    },
     summary: {
         type: String,
         required: true

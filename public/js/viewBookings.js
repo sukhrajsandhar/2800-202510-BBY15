@@ -1,3 +1,4 @@
+console.log("viewBookings.js loaded");
 document.querySelectorAll("button[data-booking-id]").forEach((button) => {
     button.onclick = () => contactOwner(button.dataset.bookingId);
   });

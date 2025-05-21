@@ -39,7 +39,6 @@ router.post('/', async (req, res) => {
         endDate: req.body.endDate,
         dateCreated: req.body.dateCreated || new Date(),
         tentSpots: req.body.tentSpots,
-        contactInfo: req.body.contactInfo,
         summary: req.body.summary
     });
 
