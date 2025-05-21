@@ -20,10 +20,11 @@ In order to make this app work, please install the following modules:
 --> cohere-ai
 --> mongoose
 --> axios
+--> node-cron
 
 For your convenience: 
 
-npm i express express-session connect-mongo dotenv ejs joi bcrypt cohere-ai mongoose axios
+npm i express express-session connect-mongo dotenv ejs joi bcrypt cohere-ai mongoose axios node-cron
 
 Add .env file.
 Add second .env file in scripts file.

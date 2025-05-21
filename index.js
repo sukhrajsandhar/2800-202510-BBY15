@@ -1061,6 +1061,9 @@ app.post("/api/bookings", async (req, res) => {
     }
 });
 
+const startCleanupJob = require('./scripts/cleanupBookings');
+startCleanupJob();
+
 // Add the correct catch-all middleware
 app.use((req, res) => {
     res.status(404);
