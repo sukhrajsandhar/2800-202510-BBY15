@@ -375,18 +375,31 @@ app.get("/createBooking/:campsiteId", async (req, res) => {
     }
 });
 
-app.get("/booked", (req, res) => {
-    const campsite = {
-        id: 1,
-        name: "Sunset Woods",
-        imageUrl: "/camp.png",
-        date: "2025-06-15",
-        tents: 2,
-        people: 4,
-    };
+app.get("/booked", async (req, res) => {
+    try{
+        if(!req.session.authenticated || !req.session.email) {
+            return res.redirect("/login");
+    }
 
-    res.render("booked", { campsite });
+    const user = await userCollection.findOne({ email: req.session.email });
+    if (!user || !user.bookings) {
+        console.log("No bookings found for this user.");
+        return res.render("booked", { campsite: [], bookings: [] });
+    }
+
+    const bookedCampsites = await Booking.find({
+        _id: { $in: user.bookings } });
+        console.log("bookedCampsites: ", bookedCampsites);
+    res.render("booked", { bookings: bookedCampsites , campsite: bookedCampsites.map(booking => booking.campsiteId) });
+    } catch (err) {
+        console.error("Error loading booked campsites:", err);
+        res.status(500).send("Something went wrong.");
+    }
 });
+
+
+
+
 
 // get the profile page
 app.get("/profile", async (req, res) => {

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             summary: document.getElementById('summary').value
         };
         console.log(formData.userId);
+
         try {
             const response = await fetch('/api/bookings', {
                 method: 'POST',
@@ -24,9 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(formData)
             });
 
+
+
             if (response.ok) {
                 const data = await response.json();
+                
+
+
                 alert('Booking created successfully!');
+
                 window.location.href = `/campsite-info/${data.campsiteId}`;
             } else {
                 alert('Error creating booking. Please try again.');
