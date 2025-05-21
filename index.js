@@ -570,14 +570,14 @@ app.get("/viewReviews/:id", async (req, res) => {
 app.get("/viewBookings/:id", async (req, res) => {
 try {
         const campsite = await Campsite.findById(req.params.id).lean();
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        const bookings = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         // Sort bookings by startDate descending (most recent first)
-        booking.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+        bookings.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
-        res.render("viewBookings", { campsite, booking });
+        res.render("viewBookings", { campsite, booking: bookings, currentUserFirstName: req.session.firstName });
     } catch (err) {
         res.status(500).send("Error loading bookings");
     }
@@ -587,9 +587,12 @@ try {
 //Sydney
 app.get("/booking/:id/contact-info", async (req, res) => {
     try {
-        const booking = await Booking.findById(req.params.id).populate('userId'); // assumes userId is a ref to User
-        if (!booking || !booking.userId) {
-            return res.status(404).json({ error: "Booking or user not found" });
+        const booking = await Booking.findById(req.params.id)
+            .populate('userId')
+            .populate('campsiteId'); // so you can get campsite name
+
+        if (!booking || !booking.userId || !booking.campsiteId) {
+            return res.status(404).json({ error: "Booking, user, or campsite not found" });
         }
 
         // Prevent contacting yourself
@@ -598,14 +601,19 @@ app.get("/booking/:id/contact-info", async (req, res) => {
         }
 
         res.json({
-            name: booking.userId.name,
-            email: booking.userId.email
+            name: booking.userId.name || booking.userId.firstName,
+            email: booking.userId.email,
+            userFirstName: booking.userId.firstName,
+            campsiteName: booking.campsiteId.name,
+            startDate: booking.startDate.toDateString(),
+            endDate: booking.endDate.toDateString()
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 // Adding or removing a campsite from favourites
 app.post('/favourites/:campsiteId', async (req, res) => {
