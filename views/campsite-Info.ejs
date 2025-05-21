@@ -9,8 +9,13 @@
                 <a href="/" class="back-link" title="Back to Map">
                     <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
                 </a>
-                <i id="heart" class="far fa-heart heart-icon"
-                    style="font-size: 2rem; color: #8212b6; cursor: pointer;" data-campsite-id="<%= campsite._id %>"></i>
+                <i id="heart"
+                class="far fa-heart heart-icon"
+                style="font-size: 2rem; color: #8212b6; cursor: pointer;"
+                data-campsite-id="<%= campsite._id %>"
+                data-is-favorited="<%= isFavorited ? 'true' : 'false' %>">
+             </i>
+             
             </div>
 
         
@@ -341,16 +346,29 @@
 <%- include('templates/bg') %>
 
         </main>
-    <script>
+        <script>
 const heart = document.getElementById("heart");
 
 if (heart) {
+  // On page load: fill the heart if data-is-favorited="true"
+  const isFavorited = heart.dataset.isFavorited === "true";
+
+  if (isFavorited) {
+    heart.classList.remove("far"); // empty heart
+    heart.classList.add("fas");    // filled heart
+  } else {
+    heart.classList.remove("fas");
+    heart.classList.add("far");
+  }
+
   heart.addEventListener("click", async () => {
     // Get the campsite ID from a data attribute on the heart element
     const campsiteId = heart.dataset.campsiteId;
 
+    // Determine if we are adding or removing the favorite
     const isAdding = heart.classList.contains("far");
 
+    // Toggle heart appearance immediately
     heart.classList.toggle("far");
     heart.classList.toggle("fas");
 
@@ -363,11 +381,15 @@ if (heart) {
 
       if (!response.ok) {
         console.error("Failed to update favourites.");
-        // If you want, you could toggle back the heart here to show failure
+        // Revert toggle if the request failed
+        heart.classList.toggle("far");
+        heart.classList.toggle("fas");
       }
     } catch (error) {
       console.error("Error updating favourites:", error);
-      // Optionally toggle back the heart here as well
+      // Revert toggle if there was an error
+      heart.classList.toggle("far");
+      heart.classList.toggle("fas");
     }
   });
 }

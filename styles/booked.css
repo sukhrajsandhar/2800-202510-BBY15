@@ -1,3 +1,12 @@
+/* Base Styles */
+body, html {
+  background-color: #BDD3AF;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/* Headings */
 h3 {
   border: 2px solid #283F3B;
   padding: 0.5rem 1.5rem;
@@ -12,41 +21,62 @@ h3 {
   font-size: 48px;
   font-weight: 600;
   line-height: 1.4;
-  position: relative;
   text-align: center;
   margin-bottom: 1.5rem;
   color: #283F3B;
+  position: relative;
 }
 
-.three h1::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  height: 5px;
-  width: 55px;
-  background-color: #95BF74;
-  transform: translateX(-50%);
-  border-radius: 2px;
-}
-
+.three h1::before,
 .three h1::after {
   content: "";
   position: absolute;
   left: 50%;
+  transform: translateX(-50%);
+}
+
+.three h1::before {
+  bottom: 0;
+  height: 5px;
+  width: 55px;
+  background-color: #95BF74;
+  border-radius: 2px;
+}
+
+.three h1::after {
   bottom: 2px;
   height: 1px;
   width: 95%;
   max-width: 255px;
   background-color: #283F3B;
-  transform: translateX(-50%);
+}
+
+/* Main Layout */
+.main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 4% 2% 10%;
+  background-color: #BDD3AF;
+  overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Cards */
+.card, .card-hover {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-hover {
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -55,88 +85,63 @@ h3 {
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
-
 .card-hover:hover .card-img-overlay {
   background-color: rgba(40, 63, 59, 0.7);
 }
 
-#card1,
-#card2 {
+#card1, #card2 {
   border: 4px solid #95BF74;
-  border-radius: 10px;
 }
 
-.btn {
-  background-color: #B4D9A7; 
-  border: 2px solid #B4D9A7;
-  color: white;
+/* Buttons */
+.btn,
+#cancel1, #cancel2, #cancel3, #cancel4,
+#homeBtn, #details1, #details2,
+#delete1, #delete2 {
   font-weight: 600;
-  text-align: center;
   text-transform: uppercase;
+  color: white;
+  border: 2px solid;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
+.btn {
+  background-color: #B4D9A7;
+  border-color: #B4D9A7;
+}
+
 .btn:hover {
-  background-color: #95BF74;  
+  background-color: #95BF74;
   border-color: #95BF74;
-  color: white;
 }
 
-
-#cancel1,
-#cancel2,
-#cancel3,
-#cancel4,
-#homeBtn,
-#details1,
-#details2 {
+#cancel1, #cancel2, #cancel3, #cancel4,
+#homeBtn, #details1, #details2 {
   background-color: #659B5E;
-  border: 2px solid #659B5E;
-  color: white;
+  border-color: #659B5E;
 }
 
-#cancel1,
-#cancel2 {
+#cancel1:hover, #cancel2:hover,
+#cancel3:hover, #cancel4:hover,
+#homeBtn:hover, #details1:hover, #details2:hover {
+  background-color: #95BF74;
+  border-color: #95BF74;
+}
+
+#cancel1, #cancel2 {
   margin-top: 30%;
 }
 
-#delete1,
-#delete2 {
+#delete1, #delete2 {
   background-color: #283F3B;
-  border: 2px solid #283F3B;
-  color: white;
+  border-color: #283F3B;
 }
 
-#cancel1:hover,
-#cancel2:hover,
-#cancel3:hover,
-#cancel4:hover,
-#homeBtn:hover,
-#details1:hover,
-#details2:hover {
-  background-color: #95BF74;
-  border-color: #95BF74;
-  color: white;
-}
-
+/* Misc */
 .material-icons {
   vertical-align: middle;
   color: #659B5E;
   font-size: 1.3rem;
-}
-
-.main {
-  position: absolute;
-  padding-top: 4%;
-  padding-bottom: 10%;
-  left: 0;
-  right: 0;
-  background-color: rgb(189, 211, 175);
-  overflow: auto;
-}
-
-body, html {
-  background-color: rgb(189, 211, 175);
 }
 
 .list-group-item {
@@ -148,9 +153,7 @@ body, html {
 .btn-primary {
   font-weight: 600;
   background-color: #283F3B;
-  border: #659B5E solid 1px;
-  transition: background-color 0.3s ease;
-  text-transform: uppercase;
+  border: 1px solid #659B5E;
 }
 
 .btn-primary:hover {
@@ -158,56 +161,11 @@ body, html {
   border-color: #95BF74;
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-
-.card{
-	transition:all 1s;
-	&:after,&:before{
-		content:" ";
-		width:10px;
-		height:10px;
-		position:absolute;
-		border :0px solid #fff;
-		transition:all 1s;
-		}
-	&:after{
-		top:-1px;
-		left:-1px;
-		border-top:5px solid black;
-		border-left:5px solid black;
-	}
-	&:before{
-		bottom:-1px;
-		right:-1px;
-		border-bottom:5px solid black;
-		border-right:5px solid black;
-	}
-	&:hover{
-		border-top-right-radius:0px;
-	border-bottom-left-radius:0px;
-	background:rgba(0,0,0,.5);
-	color:white;
-		&:before,&:after{
-			
-	width:100%;
-	height:100%;
-	border-color:white;
-  border-radius: 20px;
-		}
-	}
-}
-
-.data-container{
-	background:#ffebee;
-	height:100vh;
-	scale:2; 
-	display:flex;
-	justify-content:center;
-	align-items:center;
+.data-container {
+  background: #ffebee;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(2);
 }

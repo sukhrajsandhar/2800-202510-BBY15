@@ -7,7 +7,6 @@
 
 <div class="d-flex flex-row flex-wrap justify-content-center gap-4 mt-5">
   <% campsites.forEach(favCampsite => { %>
-    <a href="/campsite-Info/<%= favCampsite._id %>" class="text-decoration-none text-dark">
       <div class="card card-hover rounded-4 img-fluid" style="width: 300px; height: 420px; cursor: pointer;">
         <img class="card-img-top rounded-4" src="<%= favCampsite.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;">
         <div class="card-img-overlay p-3 d-flex flex-column justify-content-between">
@@ -34,14 +33,52 @@
           </div>
 
           <div class="d-flex justify-content-center pt-3">
-            <div class="btn w-100">View Details</div>
+            <a href="/campsite-Info/<%= favCampsite._id %>" class="btn w-100 text-decoration-none text-dark text-center">
+              View Details
+            </a>            
           </div>
+          <i class="fas fa-heart heart-icon heart"
+          style="font-size: 2rem; color: #8212b6; cursor: pointer;"
+          data-campsite-id="<%= favCampsite._id %>"></i>
+       
         </div>
       </div>
     </a>
   <% }) %>
 </div>
-                    <%- include("templates/bg") %>
-
+  <%- include("templates/bg") %>
+  <script>
+    document.querySelectorAll('.heart').forEach(heart => {
+      heart.addEventListener("click", async () => {
+        const campsiteId = heart.dataset.campsiteId;
+        const isAdding = heart.classList.contains("far");
+  
+        // Toggle visual state
+        heart.classList.toggle("far", !isAdding);
+        heart.classList.toggle("fas", isAdding);
+  
+        try {
+          const res = await fetch(`/favourites/${campsiteId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: isAdding ? "add" : "remove" })
+          });
+  
+          if (!res.ok) {
+            console.error("Failed to update favourites.");
+            // Revert on failure
+            heart.classList.toggle("far", isAdding);
+            heart.classList.toggle("fas", !isAdding);
+          }
+        } catch (err) {
+          console.error("Error updating favourites:", err);
+          heart.classList.toggle("far", isAdding);
+          heart.classList.toggle("fas", !isAdding);
+        }
+      });
+    });
+  </script>
+  
+  
 </main>
 <%- include('templates/footer') %>

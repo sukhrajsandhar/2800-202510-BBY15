@@ -387,57 +387,68 @@ app.get("/booked", (req, res) => {
     res.render("booked", { campsite });
 });
 
+// get the profile page
 app.get("/profile", async (req, res) => {
-  if (!req.session.authenticated) {
-    return res.redirect("/login");
-  }
-
-  const user = await userCollection.findOne({ email: req.session.email });
-  if (!user) {
-    return res.status(404).send("User not found");
-  }
-
-  res.render("profile", { user });
-});
-
-app.post("/profile/picture", async (req, res) => {
-  if (!req.session.authenticated || !req.session.email) {
-    return res.redirect("/login");
-  }
-  const avatar = req.body.avatar;
-  if (!avatar) {
-    return res.status(400).send("No avatar selected.");
-  }
-  await userCollection.updateOne(
-    { email: req.session.email },
-    { $set: { profileImage: `/images/avatars/${avatar}` } }
-  );
-  res.redirect("/profile");
-});
-
-app.post("/update-profile", async (req, res) => {
-  if (!req.session.authenticated || !req.session.email) {
-    return res.redirect("/login");
-  }
-
-  const { firstName, lastName, email, bio, userLevel } = req.body;
-
-  await userCollection.updateOne(
-    { email: req.session.email },
-    {
-      $set: {
-        firstName,
-        lastName,
-        email,
-        bio: bio || "",
-        ...(userLevel ? { userLevel } : {}),
-      },
+    if (!req.session.authenticated) return res.redirect("/login");
+  
+    try {
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user) return res.status(404).send("User not found");
+      res.render("profile", { user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server error");
     }
-  );
-
-  req.session.email = email;
-  res.redirect("/profile");
-});
+  });
+  
+  // update profile picture (avatar)
+  app.post("/profile/picture", async (req, res) => {
+    if (!req.session.authenticated) return res.redirect("/login");
+  
+    try {
+      const { avatar } = req.body;
+      if (!avatar) return res.status(400).send("No avatar selected.");
+  
+      await userCollection.updateOne(
+        { email: req.session.email },
+        { $set: { profileImage: `/images/avatars/${avatar}` } }
+      );
+  
+      res.redirect("/profile");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+  
+  // update profile info
+  app.post("/update-profile", async (req, res) => {
+    if (!req.session.authenticated) return res.redirect("/login");
+  
+    try {
+      const { firstName, lastName, email, bio, userLevel } = req.body;
+  
+      await userCollection.updateOne(
+        { email: req.session.email },
+        {
+          $set: {
+            firstName,
+            lastName,
+            email,
+            bio: bio || "",
+            ...(userLevel ? { userLevel } : {}),
+          },
+        }
+      );
+  
+      req.session.email = email; // update session email if changed
+      res.redirect("/profile");
+    } catch (err) {
+      console.error(err);
+      res.status(404).send("Server error");
+    }
+  });
+  
 
 
 // Admin panel route
@@ -558,55 +569,73 @@ try {
     }
 });
 
+// Adding or removing a campsite from favourites
 app.post('/favourites/:campsiteId', async (req, res) => {
-  const email = req.session.email;
-  if (!email) return res.status(401).send("Unauthorized");
+    const email = req.session.email;
+  
+    // Check if user is logged in
+    if (!email) {
+      return res.status(401).send("You must be logged in to do that.");
+    }
+  
+    try {
+      // Finds the user email
+      const user = await userCollection.findOne({ email });
+      if (!user) return res.status(404).send("User not found");
+  
+      const campsiteId = req.params.campsiteId;
+      const action = req.body.action; // either "add" or "remove" the campsiteId 
+  
+      let update;
+      if (action === "add") {
+        update = { $addToSet: { favourites: campsiteId } }; // add only if not already there
+      } else if (action === "remove") {
+        update = { $pull: { favourites: campsiteId } }; // remove if it exists
+      } else {
+        return res.status(404).send("Invalid action");
+      }
+  
+      // Update the user doc
+      await userCollection.updateOne({ _id: user._id }, update);
+      res.sendStatus(200);
+    } catch (err) {
+      console.error("Error updating favourites:", err);
+      res.status(500).send("Something went wrong.");
+    }
+  });
+  
 
-  try {
-    const user = await userCollection.findOne({ email });
-    if (!user) return res.status(404).send("User not found");
 
-    const campsiteId = req.params.campsiteId;
-    const action = req.body.action;
-
-    const update = action === "add"
-      ? { $addToSet: { favourites: campsiteId } }  // add without duplicates
-      : { $pull: { favourites: campsiteId } };     // remove
-
-    await userCollection.updateOne({ _id: user._id }, update);
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(404).send("Error updating favourites");
-  }
-});
-
-
-
+// Show the user's favourite campsites
 app.get("/favourites", async (req, res) => {
     try {
-        if (!req.session.authenticated || !req.session.email) {
-            return res.redirect("/login");
-        }
-
-        const user = await userCollection.findOne({ email: req.session.email });
-
-        if (!user || !user.favourites) {
-            return res.render("favourites", { campsites: [] });
-        }
-
-        // Fetch campsite documents by their IDs
-        const favouriteCampsites = await Campsite.find({
-            _id: { $in: user.favourites }
-        });
-
-        res.render("favourites", { campsites: favouriteCampsites });
+      // Redirect to login if not logged in
+      if (!req.session.authenticated || !req.session.email) {
+        return res.redirect("/login");
+      }
+  
+      // Find the user
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user || !user.favourites) {
+        return res.render("favourites", { campsites: [], favourites: [] });
+      }
+  
+      // Get all campsites that match the user's favourite IDs
+      const favouriteCampsites = await Campsite.find({
+        _id: { $in: user.favourites }
+      });
+  
+      // Render with the list of favourite campsites
+      res.render("favourites", {
+        campsites: favouriteCampsites,
+        favourites: user.favourites.map(id => id.toString()) // ensure strings for EJS
+      });
     } catch (err) {
-        console.error("Error loading favourites:", err);
-        res.status(500).send("Internal Server Error");
+      console.error("Error loading favourites:", err);
+      res.status(500).send("Something went wrong.");
     }
-});
+  });
+  
 
 
 /**
@@ -614,49 +643,63 @@ app.get("/favourites", async (req, res) => {
  * --> bookings, reviews, alerts
  */
 // Added weather info to the campsite-info page 
-
 app.get("/campsite-info/:id", async (req, res) => {
+    const campsiteId = req.params.id;
+    
     try {
-        const campsite = await Campsite.findById(req.params.id).lean(); 
-        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-        if (!campsite) {
-            return res.status(404).send("Campsite not found");
-        }
-        // Fetch weather data using OpenWeatherMap API
-        // Ensure that the coordinates are available before making the API call
-        let weather = null;
-        // Check if coordinates are available
-        if (!campsite.coordinates || campsite.coordinates.length !== 2) {
-            console.error("Invalid coordinates for campsite:", campsite);
-            return res.status(400).send("Invalid coordinates");
-        }
-        const [longitude, latitude] = campsite.coordinates || [];
-        // Fetch weather data only if latitude and longitude are available
+      // Make sure you get email from logged in user (adjust according to your auth)
+      const email = req.user?.email || req.session?.email;
+      if (!email) {
+        return res.status(401).send("Not authenticated");
+      }
+  
+      // Find the user by email
+      const user = await userCollection.findOne({ email });
+  
+      // Find campsite and related data
+      const campsite = await Campsite.findById(req.params.id).lean();
+      if (!campsite) return res.status(404).send("Campsite not found");
+  
+      const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+      const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+      const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+  
+      // Check if user has favorited this campsite
+      const isFavorited = user?.favourites?.map(id => id.toString()).includes(campsiteId);
+      console.log("isFavorited before render:", isFavorited);
+        
+      // Weather fetch logic remains unchanged
+      let weather = null;
+      if (campsite.coordinates && campsite.coordinates.length === 2) {
+        const [longitude, latitude] = campsite.coordinates;
         if (latitude && longitude) {
-            try {
-                const apiKey = process.env.OPENWEATHER_API_KEY;
-                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
-                const weatherResponse = await axios.get(weatherUrl);
-                const weatherData = weatherResponse.data;
-                weather = {
-                    icon: weatherData.weather[0].icon,
-                    temp: weatherData.main.temp,
-                    desc: weatherData.weather[0].description,
-                };
-            } catch (error) {
-                console.error("Error fetching weather data:", error.message);
-            }
+          try {
+            const apiKey = process.env.OPENWEATHER_API_KEY;
+            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+            const weatherResponse = await axios.get(weatherUrl);
+            const weatherData = weatherResponse.data;
+            weather = {
+              icon: weatherData.weather[0].icon,
+              temp: weatherData.main.temp,
+              desc: weatherData.weather[0].description,
+            };
+          } catch (error) {
+            console.error("Error fetching weather data:", error.message);
+          }
         }
-        // Always pass weather, even if null
-        // Render the campsite-info page with the campsite and weather data
-        res.render("campsite-Info", { campsite, weather, review, booking, alert });
+      } else {
+        console.error("Invalid coordinates for campsite:", campsite);
+        return res.status(400).send("Invalid coordinates");
+      }
+  
+      // Render page with all the data
+      res.render("campsite-Info", { campsite, weather, review, booking, alert, isFavorited });
     } catch (err) {
-        console.error("Error loading campsite info:", err.message);
-        res.status(500).send("Internal Server Error");
+      console.error("Error loading campsite info:", err.message);
+      res.status(500).send("Internal Server Error");
     }
-});
+  });
+  
 
 app.get('/api/funfact/:campsiteName', async (req, res) => {
     try {
