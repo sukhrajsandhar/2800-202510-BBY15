@@ -5,6 +5,10 @@
                 <div class="card-header text-center" style="background-color: #95BF74;">
                     <h5 class="three mb-0"> 🏕️ Review for <%= campsiteName %>
                     </h5>
+                    <button type="button" class="btn-close" 
+                    onclick="window.location.href='/campsite-info/<%= campsiteId %>'" 
+                    style="position: absolute; right: 15px; top: 15px;">
+                  </button>
                 </div>
                 <div class="card-body" style="max-height: 675px; overflow-y: auto;">
                     <form id="reviewForm">

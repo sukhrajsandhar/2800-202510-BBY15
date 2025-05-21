@@ -3,16 +3,21 @@
 <body>
     <main class="main">
         <div class="three">
-            <h1 class="text-center text-black mt-5">Your Bookings</h1>
+            <h1 class="text-center text-black mt-1">Your Bookings</h1>
         </div>
 
         <div class="d-flex flex-row flex-wrap justify-content-center gap-4 mt-5">
-          <% bookings.forEach(bookedCampsite => { %>
+          <% if (bookings.length === 0) { %>
+            <p class="d-flex align-items-center">You have no bookings yet.</p>
+            <img class="notAvail p-2" src="/notAvail.png"/>
+          <% } else { %>
+            <% bookings.forEach(bookedCampsite => { %>
               <div class="card card-hover rounded-4 img-fluid" style="width: 300px; height: 420px; cursor: pointer;">
-                <!-- <img class="card-img-top rounded-4" src="<%= favCampsite.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;"> -->
+                <img class="card-img-top rounded-4" src="<%= bookedCampsite.campsiteId?.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;"> 
                 <div class="card-img-overlay p-3 d-flex flex-column justify-content-between">
                   <div>
-                    <h4 class="card-title text-white mb-3"><%= campsite.name %></h4>
+                    
+                    <h4 class="card-title text-white mb-3"><%= bookedCampsite.campsiteId?.name || 'Unknown Campsite' %></h4>
                     <ul class="list-group list-group-flush bg-white rounded rounded-3">
                       <li class="list-group-item d-flex align-items-center gap-2">
                         <span class="material-icons material-symbols-outlined">info</span>
@@ -24,25 +29,52 @@
                       </li>
                       <li class="list-group-item d-flex align-items-center gap-2">
                         <span class="material-icons material-symbols-outlined">trending_up</span>
-                        <span>Dates: <%= bookedCampsite.startDate %> TO <%= bookedCampsite.endDate %></span>
+                        <span>Dates: 
+                          <%= new Date(bookedCampsite.startDate).toLocaleDateString() %> TO 
+                          <%= new Date(bookedCampsite.endDate).toLocaleDateString() %>
+                        </span>
                       </li>
                     </ul>
                   </div>
 
                   <div class="d-flex justify-content-center pt-3">
-                    <a href="#" class="btn w-100 text-decoration-none text-dark text-center">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancelModal-<%= bookedCampsite._id %>">
                       Cancel Booking
-                    </a>            
+                    </button>                            
                   </div>
                   
-              
+                  <div class="modal fade" id="cancelModal-<%= bookedCampsite._id %>" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel-<%= bookedCampsite._id %>" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="cancelModalLabel-<%= bookedCampsite._id %>">Cancel Booking</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to cancel your booking at <%= bookedCampsite.campsiteId?.name %>?
+                        </div>
+                        <div class="modal-footer">
+                          <form method="POST" action="/bookings/<%= bookedCampsite._id %>/delete">
+                            <button type="submit" class="btn btn-danger">Yes, Cancel</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
                 </div>
               </div>
-            </a>
-          <% }) %>
-        </div>
+            <% }) %>
+          <% } %>
+          <%- include("templates/bg") %>
 
-        <!-- Footer placeholder -->
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+        
         <%- include('templates/footer') %>
     </main>
 </body>

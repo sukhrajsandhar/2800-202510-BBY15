@@ -360,11 +360,13 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
  */
 app.get("/createBooking/:campsiteId", async (req, res) => {
     try {
+        const campsites = await Campsite.find().lean();   
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         res.render("createBooking", {
+            campsites,
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
             firstName: req.session.firstName || null,
@@ -376,30 +378,33 @@ app.get("/createBooking/:campsiteId", async (req, res) => {
 });
 
 app.get("/booked", async (req, res) => {
-    try{
-        if(!req.session.authenticated || !req.session.email) {
-            return res.redirect("/login");
-    }
-
-    const user = await userCollection.findOne({ email: req.session.email });
-    if (!user || !user.bookings) {
-        console.log("No bookings found for this user.");
-        return res.render("booked", { campsite: [], bookings: [] });
-    }
-
-    const bookedCampsites = await Booking.find({
-        _id: { $in: user.bookings } });
-        console.log("bookedCampsites: ", bookedCampsites);
-    res.render("booked", { bookings: bookedCampsites , campsite: bookedCampsites.map(booking => booking.campsiteId) });
+    try {
+      if (!req.session.authenticated || !req.session.email) {
+        return res.redirect("/login");
+      }
+  
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user) {
+        return res.render("booked", { bookings: [] });
+      }
+  
+      // Get bookings by userId and populate campsite details
+      const bookings = await Booking.find({ userId: user._id })
+        .populate('campsiteId')
+        .lean();
+  
+      res.render("booked", { bookings });
     } catch (err) {
-        console.error("Error loading booked campsites:", err);
-        res.status(500).send("Something went wrong.");
+      console.error("Error loading booked campsites:", err);
+      res.status(500).send("Something went wrong.");
     }
-});
-
-
-
-
+  });
+  
+  app.post('/bookings/:id/delete', async (req, res) => {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.redirect('/booked'); 
+  });
+  
 
 // get the profile page
 app.get("/profile", async (req, res) => {
@@ -436,31 +441,36 @@ app.get("/profile", async (req, res) => {
   });
   
   // update profile info
-  app.post("/update-profile", async (req, res) => {
-    if (!req.session.authenticated) return res.redirect("/login");
-  
-    try {
-      const { firstName, lastName, email, bio, userLevel } = req.body;
-  
-      await userCollection.updateOne(
-        { email: req.session.email },
-        {
-          $set: {
-            firstName,
-            lastName,
-            email,
-            bio: bio || "",
-            ...(userLevel ? { userLevel } : {}),
-          },
-        }
-      );
-  
-      req.session.email = email; // update session email if changed
-      res.redirect("/profile");
-    } catch (err) {
-      console.error(err);
-      res.status(404).send("Server error");
+  app.post("/update-profile", (req, res) => {
+    if (!req.session.authenticated) {
+      return res.redirect("/login");
     }
+  
+    const { firstName, lastName, email, bio, userLevel } = req.body;
+    const updateFields = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      bio: bio || "",
+    };
+  
+    if (userLevel) {
+      updateFields.userLevel = userLevel;
+    }
+  
+    userCollection.updateOne(
+      { email: req.session.email },
+      { $set: updateFields },
+      (err) => {
+        if (err) {
+          console.log("Error updating profile:", err);
+          return res.status(500).send("Server error");
+        }
+  
+        req.session.email = email;
+        res.redirect("/profile");
+      }
+    );
   });
   
 
@@ -528,7 +538,9 @@ app.get("/viewAlerts/:id", async (req, res) => {
             return res.status(404).send("Campsite not found");
         }
 
-        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) })
+        .populate('userId')  
+        .lean();
 
         alerts.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
 
@@ -549,15 +561,15 @@ app.get("/viewReviews/:id", async (req, res) => {
             return res.status(404).send("Campsite not found");
         }
 
-        let reviews = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        // Find reviews for this campsite and populate user info on each review
+        let reviews = await Review.find({ campsiteId: req.params.id })
+            .populate('userId')  // populate user info in each review
+            .lean();
 
         // Sort reviews by dateCreated descending (most recent first)
         reviews.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
 
-        res.render("viewReviews", {
-            campsite,
-            reviews
-        });
+        res.render("viewReviews", { campsite, reviews });
     } catch (err) {
         console.error("Error loading reviews:", err.message);
         res.status(500).send("Internal Server Error");
@@ -566,11 +578,18 @@ app.get("/viewReviews/:id", async (req, res) => {
 
 
 
+
 //Sydney
 app.get("/viewBookings/:id", async (req, res) => {
 try {
         const campsite = await Campsite.findById(req.params.id).lean();
+<<<<<<< Updated upstream
         const bookings = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+=======
+        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) })
+        .populate('userId')  
+        .lean();
+>>>>>>> Stashed changes
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
@@ -630,7 +649,7 @@ app.post('/favourites/:campsiteId', async (req, res) => {
       if (!user) return res.status(404).send("User not found");
   
       const campsiteId = req.params.campsiteId;
-      const action = req.body.action; // either "add" or "remove" the campsiteId 
+      const action = req.body.action; // add/remove campsites
   
       let update;
       if (action === "add") {
@@ -655,23 +674,23 @@ app.post('/favourites/:campsiteId', async (req, res) => {
 // Show the user's favourite campsites
 app.get("/favourites", async (req, res) => {
     try {
-      // Redirect to login if not logged in
+      // Redirect to login 
       if (!req.session.authenticated || !req.session.email) {
         return res.redirect("/login");
       }
   
-      // Find the user
+      // finds the email of the user 
       const user = await userCollection.findOne({ email: req.session.email });
       if (!user || !user.favourites) {
         return res.render("favourites", { campsites: [], favourites: [] });
       }
   
-      // Get all campsites that match the user's favourite IDs
+      // takes all campsites that match the user's favourite IDs
       const favouriteCampsites = await Campsite.find({
         _id: { $in: user.favourites }
       });
   
-      // Render with the list of favourite campsites
+      // renders with the list of favourite campsites
       res.render("favourites", {
         campsites: favouriteCampsites,
         favourites: user.favourites.map(id => id.toString()) // ensure strings for EJS
@@ -706,9 +725,9 @@ app.get("/campsite-info/:id", async (req, res) => {
       const campsite = await Campsite.findById(req.params.id).lean();
       if (!campsite) return res.status(404).send("Campsite not found");
   
-      const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-      const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-      const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
+      const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
+      const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
+      const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
   
       // Check if user has favorited this campsite
       const isFavorited = user?.favourites?.map(id => id.toString()).includes(campsiteId);
@@ -1047,8 +1066,8 @@ app.post("/api/bookings", async (req, res) => {
         // Create a new booking document
         const booking = new Booking({
             campsiteId: bookingData.campsiteId,
-            userId: bookingData.userId || null,
-            firstName: bookingData.firstName || 'Anonymous',
+            userId: req.session.userId,
+            firstName: req.session.firstName || 'Anonymous',            
             startDate: bookingData.startDate,
             endDate: bookingData.endDate,
             dateCreated: new Date(),

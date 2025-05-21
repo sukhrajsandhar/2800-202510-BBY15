@@ -178,12 +178,7 @@
         <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Bookings</h2>
-                <a
-                    href="/createBooking/<%= campsite._id %>"
-                    class="btn btn-success"
-                    style="background-color: rgb(40, 63, 59)"
-                    >New Booking</a
-                >
+                <a href="/createBooking/<%= campsite._id %>" class="btn btn-outline-primary">New Booking</a>
             </div>
 
             <!-- Booking: List of Bookings for specific campsite -->
@@ -197,10 +192,10 @@
                                 >
                                     <div class="d-flex align-items-center">
                                 <div>
-                                <img 
-                                    style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
-                                    src="/images/avatars/avatar<%= Math.floor(Math.random() * 6) + 1 %>.png"
-                                    alt="avatar">
+                                    <img 
+                                    src="<%= booking.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
+                                    alt="avatar" 
+                                    style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
                             </div>
                                         <div class="ms-2">
                                     <h6 class="mb-0"><%= booking.firstName %></h6>
@@ -257,10 +252,10 @@
                                 >
                                     <div class="d-flex align-items-center">
                                            <div>
-                                <img 
-                                    style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
-                                    src="/images/avatars/avatar<%= Math.floor(Math.random() * 6) + 1 %>.png"
-                                    alt="avatar">
+                                            <img 
+                                            src="<%= review.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
+                                            alt="avatar" 
+                                            style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
                             </div>
                                         <div class="ms-2">
                                     <h6 class="mb-0"><%= review.firstName || user.firstName %></h6>
@@ -309,7 +304,7 @@
                 <h2 class="mb-0">Alerts</h2>
                 <a
                     href="/createAlert/<%= campsite._id %>"
-                    class="btn btn-danger"
+                    class="btn btn-outline-primary"
                     >New Alert</a
                 >
             </div>
@@ -337,7 +332,7 @@
                                 No alerts available for this campsite yet.
                                 <img class="notAvail p-2" src="/notAvail.png"/>
                             </div>                   
-                        </div>
+                            </div>
                 <% } %>
             </div>
                 <div class="p-button d-flex justify-content-end mt-3">

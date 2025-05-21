@@ -1,98 +1,78 @@
 <%- include("templates/header", { cssFiles: ['/bookingAvailability.css'] }) %>
 
-<div
-    class="container"
-    style="margin-top: 80px; border-radius: 15px; margin-bottom: 100px; background-color: white"
->
-    <div style="padding: 20px">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center;">
-                    Create New Tent
-                </h1>
-                <button
-                    type="button"
-                    class="btn-close"
-                    onclick="window.location.href='/campsite-info/<%= campsiteId %>'"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <form
-                    id="bookingForm"
-                    style="height: 100%; display: flex; flex-direction: column"
-                >
-                    <div class="container">
-                        <label>Campsite:</label>
-                        <p class="readonly"><%= campsiteName %></p>
-
-
-                        <label>Start Date:</label>
-                        <div class="input-icon">
-                            <input type="date" id="startDate"/>
-                        </div>
-
-                        <label>End Date:</label>
-                        <div class="input-icon">
-                            <input type="date" id="endDate"/>
-                        </div>
-
-                        <label>Number of Available Tent spots:</label>
-                        <input type="number" id="tentSpots"/>
-
-                        <label>Contact Details:</label>
-                        <input type="text" id="contactInfo"/>
-
-                        <label>Summary:</label>
-                        <textarea rows="4" id="summary"></textarea>
-                    </div>
-                    <button type="submit">Submit</button>
-                    <!-- Hidden campsiteId -->
-                    <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
-                    <input type="hidden" id="userId" value="<%= userId %>">
-                    <input type="hidden" id="firstName" value="<%= firstName %>">
-                </form>
-            </div>
-        </div>
+<div class="container m-5">
+  <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7; display: flex; flex-direction: column;">
+    
+    <div class="card-header text-center" style="background-color: #95BF74;">
+      <h5 class="mb-0">📅 Create New Available Campsite</h5>
+      <button type="button" class="btn-close" 
+        onclick="window.location.href='/campsite-info/<%= campsiteId %>'" 
+        style="position: absolute; right: 15px; top: 15px;">
+      </button>
     </div>
+
+    <form id="bookingForm" style="flex: 1; display: flex; flex-direction: column;">
+      <div class="card-body" style="flex: 1; overflow-y: auto;">
+
+        <div class="mb-3">
+          <label for="location" class="form-label"><b>Location:</b></label>
+          <select id="location" name="campsiteId" class="form-select" required>
+            <% campsites.forEach(function(camp) { %>
+              <option value="<%= camp._id %>" <%= camp._id.toString() === campsiteId.toString() ? "selected" : "" %>>
+                <%= camp.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date:</label>
+          <input type="date" id="startDate" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date:</label>
+          <input type="date" id="endDate" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="tentSpots" class="form-label">Number of Available Tent Spots:</label>
+          <input type="number" id="tentSpots" class="form-control" min="1" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="contactInfo" class="form-label">Contact Details:</label>
+          <input type="text" id="contactInfo" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="summary" class="form-label">Summary:</label>
+          <textarea rows="4" id="summary" class="form-control" placeholder="Enter additional details..."></textarea>
+        </div>
+
+        
+
+        <!-- Hidden inputs -->
+        <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
+        <input type="hidden" id="userId" value="<%= userId %>">
+        <input type="hidden" id="firstName" value="<%= firstName %>">
+
+      </div>
+
+      <div class="p-3 mt-3 d-grid gap-2 d-md-flex justify-content-md-between">
+        <a href="/campsite-info/<%= campsiteId %>" class="btn" style="background-color: #95BF74; color: black;">Cancel</a>
+        <button type="submit" class="btn" style="background-color: #95BF74; color: black;">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="wave-background-bottom">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+      <path d="M0.00,49.98 C254.51,72.06 306.43,22.41 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"></path>
+    </svg>
+  </div>
 </div>
 
+
 <script src="/js/createBooking.js"></script>
-<!-- <script>
-    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = {
-            campsiteId: document.getElementById('campsiteId').value,
-            firstName: document.getElementById('firstName').value,
-            startDate: document.getElementById('startDate').value,
-            endDate: document.getElementById('endDate').value,
-            dateCreated: new Date().toISOString(),
-            tentSpots: document.getElementById('tentSpots').value,
-            contactInfo: document.getElementById('contactInfo').value,
-            summary: document.getElementById('summary').value
-        };
-
-        try {
-            const response = await fetch('/api/bookings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert('Booking created successfully!');
-                window.location.href = `/campsite-info/${data.campsiteId}`;
-            } else {
-                alert('Error creating booking. Please try again.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
-        }
-    });
-</script> -->
 
 <%- include("templates/footer") %>

@@ -11,10 +11,9 @@
             <div class="d-flex align-items-center">
               <div>
                 <img 
-                  style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
-                  src="/images/avatars/avatar<%= (Math.floor(Math.random() * 6) + 1) %>.png" 
-                  alt="avatar"
-                >
+                src="<%= review.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
+                alt="avatar" 
+                style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
               </div>
               <div class="ms-2">
                 <h6 class="mb-0"><%= user.firstName + ' ' + user.lastName %></h6>

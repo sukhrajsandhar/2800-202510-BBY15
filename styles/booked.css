@@ -1,12 +1,12 @@
-/* Base Styles */
 body, html {
   background-color: #BDD3AF;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #283F3B;
+  min-height: 100vh;
 }
 
-/* Headings */
 h3 {
   border: 2px solid #283F3B;
   padding: 0.5rem 1.5rem;
@@ -27,38 +27,10 @@ h3 {
   position: relative;
 }
 
-.three h1::before,
-.three h1::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.three h1::before {
-  bottom: 0;
-  height: 5px;
-  width: 55px;
-  background-color: #95BF74;
-  border-radius: 2px;
-}
-
-.three h1::after {
-  bottom: 2px;
-  height: 1px;
-  width: 95%;
-  max-width: 255px;
-  background-color: #283F3B;
-}
-
-/* Main Layout */
 .main {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   padding: 4% 2% 10%;
   background-color: #BDD3AF;
+  min-height: 100vh;
   overflow: auto;
 }
 
@@ -69,103 +41,93 @@ h3 {
   }
 }
 
-/* Cards */
-.card, .card-hover {
-  border-radius: 10px;
+.card {
+  border-radius: 15px;
   overflow: hidden;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  width: 300px;
+  height: 420px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card-hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-}
-
-.card-hover:hover .card-img-overlay {
-  background-color: rgba(40, 63, 59, 0.7);
-}
-
-#card1, #card2 {
-  border: 4px solid #95BF74;
-}
-
-/* Buttons */
-.btn,
-#cancel1, #cancel2, #cancel3, #cancel4,
-#homeBtn, #details1, #details2,
-#delete1, #delete2 {
-  font-weight: 600;
-  text-transform: uppercase;
+.card-img-overlay {
+  background-color: rgba(40, 63, 59, 0.6);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
   color: white;
-  border: 2px solid;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  border-radius: 15px;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.list-group {
+  background: white;
+  border-radius: 10px;
+  padding: 0.5rem;
+  color: #283F3B;
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+
+.list-group-item {
+  border: none;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #283F3B;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.material-icons {
+  font-size: 1.3rem;
+  color: #659B5E;
+  vertical-align: middle;
 }
 
 .btn {
   background-color: #B4D9A7;
-  border-color: #B4D9A7;
+  border: 2px solid #B4D9A7;
+  color: #283F3B;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .btn:hover {
   background-color: #95BF74;
   border-color: #95BF74;
+  color: #1B2E1B;
 }
 
-#cancel1, #cancel2, #cancel3, #cancel4,
-#homeBtn, #details1, #details2 {
-  background-color: #659B5E;
-  border-color: #659B5E;
-}
-
-#cancel1:hover, #cancel2:hover,
-#cancel3:hover, #cancel4:hover,
-#homeBtn:hover, #details1:hover, #details2:hover {
-  background-color: #95BF74;
-  border-color: #95BF74;
-}
-
-#cancel1, #cancel2 {
-  margin-top: 30%;
-}
-
-#delete1, #delete2 {
-  background-color: #283F3B;
-  border-color: #283F3B;
-}
-
-/* Misc */
-.material-icons {
-  vertical-align: middle;
-  color: #659B5E;
-  font-size: 1.3rem;
-}
-
-.list-group-item {
-  font-size: 0.95rem;
-  color: black;
-  padding: 0.6rem 1rem;
-}
-
-.btn-primary {
-  font-weight: 600;
-  background-color: #283F3B;
-  border: 1px solid #659B5E;
-}
-
-.btn-primary:hover {
-  background-color: #95BF74;
-  border-color: #95BF74;
-}
-
-.data-container {
-  background: #ffebee;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: scale(2);
+.notAvail {
+  width: 100px !important;
+  border-radius: 20px !important;
 }

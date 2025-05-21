@@ -5,7 +5,10 @@
             <div class="card-header text-center" style="background-color: #95BF74;">
                 <h5 class="mb-0">🛑 Alert for <%= campsiteName %>
                 </h5>
-
+                <button type="button" class="btn-close" 
+                onclick="window.location.href='/campsite-info/<%= campsiteId %>'" 
+                style="position: absolute; right: 15px; top: 15px;">
+              </button>
             </div>
 
             <form id="alertForm" style="flex: 1; display: flex; flex-direction: column;">

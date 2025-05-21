@@ -27,7 +27,7 @@ const alertSchema = new mongoose.Schema({
     dateCreated: {
         type: Date,
         default: Date.now
-    }
+  }
 });
 
 const Alert = mongoose.model('Alert', alertSchema);

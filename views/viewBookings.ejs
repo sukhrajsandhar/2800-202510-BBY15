@@ -1,49 +1,49 @@
-<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css',
-'/alerts.css', '/header.css', '/bg.css'] }) %>
+<%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/alerts.css', '/header.css', '/bg.css'] }) %>
 
-<main>
-    <div>
-        <div class="container" style="margin-top: 80px; margin-bottom: 100px; max-width: 700px; overflow-y: auto;">
-            <h4 class="mb-4">Reviews for <%= campsite.name %></h4>
-    </div>
-    <div class="container">
-        <% if (booking && booking.length > 0) { %> <%
-        booking.forEach(function(booking) { %>
-        <div class="card">
-            <div class="card-header">
-                <h5>DATES:</h5>
-                <p><%= booking.startDate %> - <%= booking.endDate %></p>
-            </div>
+<div class="container" style="margin-top: 80px; margin-bottom: 100px; max-width: 700px; overflow-y: auto;">
+  <h4 class="mb-4">Bookings for <%= campsite.name %></h4>
 
-            <div class="card-body">
-                <div class="card-title d-flex">
-                    <h5><%= booking.firstName %></h5>
-                    <small style="position: absolute; right: 20px"
-                        >Tent spots: <%= booking.tentSpots %></small
-                    >
+  <% if (booking && booking.length > 0) { %>
+    <% booking.forEach(function(booking) { %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center">
+              <div>
+                <img 
+                  style="width: 40px; height: 40px; background-color: #D0DDD7; border-radius: 50%;" 
+                  src="<%= booking.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
+                  alt="avatar">
+              </div>
+              <div class="ms-2">
+                <h6 class="mb-0"><%= booking.firstName %></h6>
+                <div class="text-muted">
+                  <small>Dates: <%= booking.startDate %> – <%= booking.endDate %></small>
                 </div>
-                <p class="card-text"><%= booking.summary %></p>
-                <button
-                    id="book-btn"
-                    type="button"
-                    style="
-                        background-color: rgb(40, 63, 59);
-                        outline-color: #95bf74;
-                    "
-                    class="btn btn-primary"
-                    data-booking-id="<%= booking._id %>"
-                >
-                    Contact Booking Owner
-                </button>
+              </div>
             </div>
+            <small class="text-muted">Tent spots: <%= booking.tentSpots %></small>
+          </div>
+
+          <p class="mb-2"><%= booking.summary %></p>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="background-color: rgb(40, 63, 59); outline-color: #95bf74;"
+            data-booking-id="<%= booking._id %>"
+          >
+            Contact Booking Owner
+          </button>
         </div>
-        <% }) %> <% } else { %>
-        <div class="d-flex justify-content-center align-items-center p-4"style="color: #888">
-            No bookings available for this campsite yet.
-            <img class="notAvail p-2" src="/notAvail.png"/>
-        </div>
-        <% } %>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="d-flex justify-content-center align-items-center p-4" style="color: #888;">
+      No bookings available for this campsite yet.
+      <img class="notAvail p-2" src="/notAvail.png" alt="No bookings available"/>
     </div>
+<<<<<<< Updated upstream
 </main>
 <!-- <script src="/js/viewBookings.js"></script> -->
 <script>
@@ -80,5 +80,37 @@
     }
 
 </script>
+=======
+  <% } %>
+</div>
+>>>>>>> Stashed changes
 
 <%- include('templates/footer') %>
+
+<!-- Contact Script -->
+<script>
+  document.querySelectorAll("button[data-booking-id]").forEach((button) => {
+    button.onclick = () => contactOwner(button.dataset.bookingId);
+  });
+
+  function contactOwner(bookingId) {
+    fetch(`/booking/${bookingId}/contact-info`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        const { name, email } = data;
+        window.open(
+          `mailto:${email}?subject=Question about your campsite booking&body=Dear ${name},%0D%0A%0D%0AI have a question about your booking.%0D%0A%0D%0ASincerely,%0D%0A[Your Name Here]`
+        );
+        alert("An email window has opened so you can contact the booking owner.");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Failed to get contact info.");
+      });
+  }
+</script>
