@@ -16,7 +16,7 @@
         <% } else { %>
           <% bookings.forEach(bookedCampsite => { %>
             <div class="card card-hover rounded-4 img-fluid">
-              <img class="card-img-top rounded-4" src="<%= bookedCampsite.campsiteId?.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;"> 
+              <img class="card-img-top rounded-4" src="<%= bookedCampsite.campsiteId?.imageUrl || '/images/emerald.png' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;"> 
               <div class="card-img-overlay p-3 d-flex flex-column justify-content-between">
                 <div>
                   <h5 class="card-title text-white mb-3"><%= bookedCampsite.campsiteId?.name || 'Unknown Campsite' %></h5>
