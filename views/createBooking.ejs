@@ -68,8 +68,10 @@
   </div>
 </div>
 
-
-<script>document.addEventListener('DOMContentLoaded', function() {
+<!-- ONLY uncomment this once the /styles route gets fixed!! won't work otherwise!!!!!-->
+<!-- <script src="/js/createBooking.js"></script> -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
   console.log('Create Booking script loaded');
   document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -113,6 +115,7 @@
           alert('An error occurred. Please try again later.');
       }
   });
-});</script>
+});
+</script>
 
 <%- include("templates/footer") %>
