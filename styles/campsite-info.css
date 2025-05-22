@@ -178,6 +178,16 @@ ul.columns {
 main {
   position: relative;
   z-index: 1;
+  display: flex; 
+  flex-direction: column;
+   align-items: center; 
+   margin-top: 80; 
+   padding-top: 0; 
+   padding-bottom: 4%;
+}
+
+.card {
+  border-radius: 18px;
 }
 
 .card:last-of-type {
@@ -721,12 +731,77 @@ h1 {
   text-align: center;
 }
 
-h1::after {
-  content: '';
-  display: block;
-  width: 380px;
-  height: 10px;
-  background: #B4D9A7;
-  border-radius: 3px;
-  margin-left: 55px;
+.alert-card {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fff3cd;
+  border-radius: 4px;
+}
+
+#review-avatar, #booking-avatar {
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  background-color: #D0DDD7
+}
+
+.campsiteImage {
+  object-fit: cover; 
+  width: 100%; 
+  height: 100%;
+}
+
+.header-container {
+  width: 100%; 
+  max-width: 700px;
+}
+
+.header-bar {
+  gap: 1rem; 
+  margin-top: 5rem; 
+  margin-bottom: 1rem;
+}
+
+.back-icon {
+  font-size: 2rem; color: #283f3b;
+}
+
+.heart-icon {
+  font-size: 2rem; 
+  color: #8212b6; 
+  cursor: pointer;
+}
+
+.image-hover-container {
+  position: relative; 
+  width: 100%; 
+  height: 360px;
+  border-radius: 20px; 
+  overflow: hidden;
+}
+
+.weather-container {
+  display: flex; 
+  align-items: center; 
+  background-color: rgba(255,255,255,0.9); 
+  padding: 0.5rem 1rem; 
+  border-radius: 12px; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10); 
+  min-width: 160px; 
+  justify-content: flex-end;
+}
+
+.weather-icon {
+  width: 40px; 
+  height: 40px;
+}
+
+.weather-desc {
+  text-transform: capitalize; 
+  font-size: 0.95em;
+}
+
+.text-warning {
+  cursor:pointer; 
+  filter: grayscale(80%) blur(1px);
 }

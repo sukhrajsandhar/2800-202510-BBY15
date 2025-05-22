@@ -151,3 +151,9 @@ body, html {
   h5 {
     text-shadow: 2px 2px black;
   }
+
+  .heart-icon {
+    font-size: 2rem; 
+    color: #8212b6; 
+    cursor: pointer;
+  }
