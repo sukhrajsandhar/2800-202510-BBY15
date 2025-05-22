@@ -1,28 +1,57 @@
-document.querySelectorAll('.heart').forEach(heart => {
-    heart.addEventListener("click", async () => {
-      const campsiteId = heart.dataset.campsiteId;
-      const isAdding = heart.classList.contains("far");
+// Take all the heart icons on the page
+var hearts = document.querySelectorAll('.heart');
 
-      heart.classList.toggle("far", !isAdding);
-      heart.classList.toggle("fas", isAdding);
+for (var i = 0; i < hearts.length; i++) {
+  var heart = hearts[i];
 
-      try {
-        const res = await fetch(`/favourites/${campsiteId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: isAdding ? "add" : "remove" })
-        });
+  heart.addEventListener("click", function () {
+    var heartIcon = this;
+    var campsiteId = heartIcon.getAttribute("data-campsite-id");
+    var isAdding = heartIcon.classList.contains("far");
 
-        if (!res.ok) {
-          console.error("Failed to update favourites.");
-          // Revert on failure
-          heart.classList.toggle("far", isAdding);
-          heart.classList.toggle("fas", !isAdding);
+    // on/off the icon classes
+    if (isAdding) {
+      heartIcon.classList.remove("far");
+      heartIcon.classList.add("fas");
+    } else {
+      heartIcon.classList.remove("fas");
+      heartIcon.classList.add("far");
+    }
+
+    // Sends the request 
+    var action = isAdding ? "add" : "remove";
+    var data = { action: action };
+
+    fetch("/favourites/" + campsiteId, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(function (response) {
+      if (!response.ok) {
+        // If failed ... 
+        if (isAdding) {
+          heartIcon.classList.remove("fas");
+          heartIcon.classList.add("far");
+        } else {
+          heartIcon.classList.remove("far");
+          heartIcon.classList.add("fas");
         }
-      } catch (err) {
-        console.error("Error updating favourites:", err);
-        heart.classList.toggle("far", isAdding);
-        heart.classList.toggle("fas", !isAdding);
+        console.error("Failed to update favourites.");
       }
+    })
+    .catch(function (error) {
+      // Handle erorrs if it doesn't work 
+      if (isAdding) {
+        heartIcon.classList.remove("fas");
+        heartIcon.classList.add("far");
+      } else {
+        heartIcon.classList.remove("far");
+        heartIcon.classList.add("fas");
+      }
+      console.error("Error updating favourites:", error);
     });
   });
+}

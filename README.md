@@ -195,6 +195,8 @@ Example:
 
 - Used Bootstrap Library for various icons, buttons, cards and layouts.
 - MongoDB for database and storage
+- Used CodePen to create button animations and the wave background 
+- Avatars were from a stock images site called FreePik
 
 ---
 
