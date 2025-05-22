@@ -93,6 +93,7 @@ Example:
 
 ## Project Structure
 
+```
 2800-202510-BBY15-MAIN/
 ├── .env
 ├── .gitignore
@@ -187,6 +188,7 @@ Example:
 └── node_modules/
     └── (various packages and dependencies)
 
+```
 ---
 
 ## Acknowledgments
