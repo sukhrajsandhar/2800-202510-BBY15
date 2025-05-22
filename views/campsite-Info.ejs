@@ -1,326 +1,256 @@
 <%- include('templates/header', { cssFiles: ['/styles.css', '/footer.css', '/campsite-info.css', '/header.css', '/funFact.css', '/bg.css'] }) %>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <main style="display: flex; flex-direction: column; align-items: center; margin-top: 80; padding-top: 0; padding-bottom: 4%;">
-        <div style="width: 100%; max-width: 700px;">
-            <!-- Header Bar with Back and Favourite Buttons -->
-            <div class="d-flex justify-content-between align-items-center"
-                style="gap: 1rem; margin-top: 5rem; margin-bottom: 1rem;">
-                <a href="/" class="back-link" title="Back to Map">
-                    <i class="fas fa-arrow-left back-icon" style="font-size: 2rem; color: #283f3b;"></i>
-                </a>
-                <i id="heart"
-                class="far fa-heart heart-icon"
-                style="font-size: 2rem; color: #8212b6; cursor: pointer;"
-                data-campsite-id="<%= campsite._id %>"
-                data-is-favorited="<%= isFavorited ? 'true' : 'false' %>">
-             </i>
-             
+<main>
+  <div class="header-container">
+    <!-- Header Bar with Back and Favourite Buttons -->
+    <div class="header-bar d-flex justify-content-between align-items-center">
+      <a href="/" class="back-link" title="Back to Map">
+        <i class="fas fa-arrow-left back-icon"></i>
+      </a>
+      <i id="heart"
+         class="far fa-heart heart-icon"
+         data-campsite-id="<%= campsite._id %>"
+         data-is-favorited="<%= isFavorited ? 'true' : 'false' %>">
+      </i>
+    </div>
+
+    <!-- Details Card -->
+    <div class="card shadow-sm p-4 mt-4">
+      <!-- Banner Image -->
+      <div class="image-hover-container fade-in-up">
+        <img src="<%= campsite.imageUrl || '/images/default-campsite.jpg' %>" id="campsiteImage" alt="Campsite image" />
+        <div class="overlay-title"><%= campsite.name %></div>
+      </div>
+
+      <!-- Details Card -->
+      <div class="card shadow-sm p-4 mt-4 fade-in-up">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+          <h1 class="mb-2 mb-md-0"><%= campsite.name %></h1>
+          <!-- Weather Status -->
+          <div>
+            <% if (weather) { %>
+              <div class="weather-container">
+                <img class="weather-icon" src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon">
+                <div>
+                  <div><strong><%= weather.temp %>°C</strong></div>
+                  <div class="weather-desc"><%= weather.desc %></div>
+                </div>
+              </div>
+            <% } else { %>
+              <div>
+                <div><strong>Weather data unavailable</strong></div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <i class="fas fa-map-marker-alt"></i>
+          <% if (campsite.place_name) { %>
+            <span><%= campsite.place_name %></span>
+          <% } else { %>
+            <span>No address available</span>
+          <% } %>
+        </div>
+
+        <div class="mb-2">
+          <span class="stars" id="starContainer"></span>
+          <span class="ms-2" id="ratingValue"><%= campsite.rating %></span>
+        </div>
+
+        <hr />
+        <div class="row g-4 campsite-info">
+          <div class="col-12">
+            <h5 class="section-title">Description</h5>
+            <p><%= campsite.description %></p>
+
+            <div class="row g-3 mt-2 info-grid">
+              <div class="col-6 col-md-4 info-item">
+                <span class="material-icons">terrain</span>
+                <strong>Type:</strong> <%= campsite.type %>
+              </div>
+              <div class="col-6 col-md-4 info-item">
+                <span class="material-icons">calendar_today</span>
+                <strong>Season:</strong> <%= campsite.season %>
+              </div>
+              <div class="col-6 col-md-4 info-item">
+                <span class="material-icons">fitness_center</span>
+                <strong>Difficulty:</strong> <%= campsite.difficulty %>
+              </div>
+              <div class="col-6 col-md-4 info-item">
+                <span class="material-icons">attach_money</span>
+                <strong>Fees:</strong> <%= campsite.fees && campsite.fees.camping %>
+              </div>
             </div>
 
-        
-        <!-- Details Card -->
-        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px;">
-            
-            <!-- Banner Image -->
-                <div class="image-hover-container fade-in-up" style="position: relative; width: 100%; height: 360px; border-radius: 20px; overflow: hidden;">
-                <img src="<%= campsite.imageUrl || '/default-campsite.jpg' %>" id="campsiteImage"
-                    alt="Campsite image"
-                    style="object-fit: cover; width: 100%; height: 100%;" />
+            <div class="mt-4">
+              <span class="material-icons">emoji_objects</span>
+              <strong>Amenities:</strong>
+              <ul class="columns">
+                <% if (campsite.amenities && campsite.amenities.length > 0) { %>
+                  <% campsite.amenities.forEach(function(amenity) { %>
+                    <li><%= amenity %></li>
+                  <% }) %>
+                <% } else { %>
+                  <li>No amenities listed.</li>
+                <% } %>
+              </ul>
+            </div>
 
-                <div class="overlay-title">
-                    <%= campsite.name %>
-                </div>
-                </div>
+            <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
+          </div>
 
-            <!-- Details Card -->
-            <div class="card shadow-sm p-4 mt-4 fade-in-up" style="border-radius: 18px;">
-                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-                    <h1 class="mb-2 mb-md-0" style="color: #283f3b">
-                        <%= campsite.name %>
-                    </h1>
-                    <!-- Weather Status (moved here, right of the name) -->
+          <!-- Fun Fact Section -->
+          <div class="box data-container">
+            <i class="fas fa-quote-left quote-icon quote-left"></i>
+            <div class="quote-content">
+              <h3>
+                <i class="fas fa-lightbulb text-warning" id="revealFunFact" title="Click to reveal fun fact"></i> 
+                Fun Fact
+              </h3>
+              <p id="funFact" class="fun-fact-text">
+                Click the lightbulb to reveal the fun fact!
+              </p>
+            </div>
+            <i class="fas fa-quote-right quote-icon quote-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookings Section -->
+    <div class="card shadow-sm p-4 mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Bookings</h2>
+        <a href="/createBooking/<%= campsite._id %>" class="btn btn-outline-primary">New Booking</a>
+      </div>
+      <div class="card-container">
+        <% if (booking && booking.length > 0) { %> 
+          <% booking.forEach(function(booking) { %>
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center">
                     <div>
-                    <% if (weather) { %>
-                        <div
-                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
-                            <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="Weather Icon"
-                                style="width: 40px; height: 40px;">
-                            <div style="margin-left: 0.5rem;">
-                                <div><strong><%= weather.temp %>°C</strong></div>
-                                <div style="text-transform: capitalize; font-size: 0.95em;"><%= weather.desc %></div>
-                            </div>
-                        </div>
-                    <% } else { %>
-                        <div
-                            style="display: flex; align-items: center; background-color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); min-width: 160px; justify-content: flex-end;">
-                            <div style="margin-left: 0.5rem;">
-                                <div><strong>Weather data unavailable</strong></div>
-                            </div>
-                        </div>
-                    <% } %>
+                      <img id="booking-avatar" src="<%= booking.userId?.profileImage || '/images/avatars/avatar1.png' %>" alt="avatar">
                     </div>
-                </div>
-                <div class="mb-2">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <% if (campsite.place_name) { %>
-                        <span>
-                            <%= campsite.place_name %>
-                        </span>
-                        <% } else { %>
-                            <span style="color: #888;">No address available</span>
-                            <% } %>
-                </div>
-                <div class="mb-2">
-                    <span class="stars" id="starContainer"></span>
-                    <span class="ms-2" id="ratingValue">
-                        <%= campsite.rating %>
-                    </span>
-                </div>
-                <hr />
-                <div class="row g-4 campsite-info">
-                    <div class="col-12">
-                      <h5 class="section-title">Description</h5>
-                      <p><%= campsite.description %></p>
-                  
-                      <div class="row g-3 mt-2 info-grid">
-                        <div class="col-6 col-md-4 info-item">
-                          <span class="material-icons">terrain</span>
-                          <strong>Type:</strong> <%= campsite.type %>
-                        </div>
-                        <div class="col-6 col-md-4 info-item">
-                          <span class="material-icons">calendar_today</span>
-                          <strong>Season:</strong> <%= campsite.season %>
-                        </div>
-                        <div class="col-6 col-md-4 info-item">
-                          <span class="material-icons">fitness_center</span>
-                          <strong>Difficulty:</strong> <%= campsite.difficulty %>
-                        </div>
-                        <div class="col-6 col-md-4 info-item">
-                          <span class="material-icons">attach_money</span>
-                          <strong>Fees:</strong> <%= campsite.fees && campsite.fees.camping %>
-                        </div>
-                      </div>
-                  
-                      <div class="mt-4">
-                        <span class="material-icons">emoji_objects</span>
-                        <strong>Amenities:</strong>
-                        <ul class="columns">
-                          <% if (campsite.amenities && campsite.amenities.length > 0) { %>
-                            <% campsite.amenities.forEach(function(amenity) { %>
-                              <li><%= amenity %></li>
-                            <% }) %>
-                          <% } else { %>
-                            <li>No amenities listed.</li>
-                          <% } %>
-                        </ul>
-                      </div>
-                      
-                  
-                        <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
+                    <div class="ms-2">
+                      <h6 class="mb-0"><%= booking.firstName %></h6>
+                      <small class="text-muted"><%= booking.tentSpace %></small>
                     </div>
-
-                         <!-- Fun Fact Section -->
-           <div class="box data-container">
-                <!-- Left quote icon -->
-                <i class="fas fa-quote-left quote-icon quote-left"></i>
-
-                <div class="quote-content">
-                    <h3>
-                    <i class="fas fa-lightbulb text-warning" id="revealFunFact" 
-                        style="cursor:pointer; filter: grayscale(80%) blur(1px);"
-                        title="Click to reveal fun fact"></i> 
-                    Fun Fact
-                    </h3>
-                    <p id="funFact" class="fun-fact-text">
-                    Click the lightbulb to reveal the fun fact!
-                    </p>
+                  </div>
                 </div>
-
-                <!-- Right quote icon -->
-                <i class="fas fa-quote-right quote-icon quote-right"></i>
-                </div>
-                </div>
+                <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
+                <p class="mb-0"><%= booking.summary %></p>
+              </div>
             </div>
-        </div>
-
-        
-        <!-- Bookings Section -->
-        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">Bookings</h2>
-                <a href="/createBooking/<%= campsite._id %>" class="btn btn-outline-primary">New Booking</a>
-            </div>
-
-            <!-- Booking: List of Bookings for specific campsite -->
-            <div class="card-container">
-                <% if (booking && booking.length > 0) { %> 
-                    <% booking.forEach(function(booking) { %>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div
-                                    class="d-flex justify-content-between align-items-center mb-2"
-                                >
-                                    <div class="d-flex align-items-center">
-                                <div>
-                                    <img 
-                                    src="<%= booking.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
-                                    alt="avatar" 
-                                    style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
-                            </div>
-                                        <div class="ms-2">
-                                    <h6 class="mb-0"><%= booking.firstName %></h6>
-                                    <small class="text-muted"><%= booking.tentSpace %></small>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <small class="text-muted"><%= booking.startDate %> <strong>TO</strong> <%= booking.endDate %></small>
-                        <p class="mb-0">
-                            <%= booking.summary %>
-                        </p>
-                    </div>
-                </div>
-                    <% }) %> <% } else { %>
-                        <div style="color: #888">
-                            <div class="d-flex justify-content-center align-items-center p-4"style="color: #888">
-                                No reviews available for this campsite yet.
-                                <img class="notAvail p-2" src="/notAvail.png"/>
-                            </div>                         
-                        </div>
-                    <% } %>
-            </div>
-                <div class="p-button d-flex justify-content-end mt-3">
-                            <div class="c-button c-button--grow">
-                                <a class="button-grow " href="/viewBookings/<%= campsite._id %>" style="text-decoration: none;">
-                                <span class="circle">
-                                    <span class="icon arrow"></span>
-                                </span>
-                                <span class="button-text">See All</span>
-                                </a>
-                            </div>
-                        </div>
-        </div>
-
-        <!-- Reviews Section -->
-        <div class="card shadow-sm p-4 mt-4" style="border-radius: 18px">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">Reviews</h2>
-                 <a href="/createReview/<%= campsite._id %>" class="btn btn-outline-primary">New Review</a>
-            </div>
-
-            <!-- Database Review: List of Reviews for specific campsite -->
-            <div class="card-container">
-                <%
-                review.sort((a, b) => new Date(b.dateVisited) - new Date(a.dateVisited));
-                %>
-                <% if (review && review.length > 0) { %> 
-                    <%review.forEach(function(review) { %>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div
-                                    class="d-flex justify-content-between align-items-center mb-2"
-                                >
-                                    <div class="d-flex align-items-center">
-                                           <div>
-                                            <img 
-                                            src="<%= review.userId?.profileImage || '/images/avatars/avatar1.png' %>" 
-                                            alt="avatar" 
-                                            style="width: 40px; height: 40px; border-radius: 50%; background-color: #D0DDD7;">
-                            </div>
-                                        <div class="ms-2">
-                                    <h6 class="mb-0"><%= review.firstName %></h6>
-                                    <small class="text-muted">
-                                        <% if (review.overallRating) { 
-                                            const fullStars = '🌟'.repeat(review.overallRating);
-                                        %>
-                                            <%= fullStars %>
-                                        <% } else { %>
-                                            No rating
-                                        <% } %>
-                                        </small>
-                                </div>
-                            </div>
-                            <small class="text-muted"><%= review.dateVisited || 'Unknown' %></small>
-                        </div>
-                        <p class="mb-0">
-                            <%= review.additionalComments || 'No comments' %>
-                        </p>
-                    </div>
-                        </div>
-                <% }) %> <% } else { %>
-                <div style="color: #888">
-                    <div class="d-flex justify-content-center align-items-center p-4"style="color: #888">
-                                No reviews available for this campsite yet.
-                                <img class="notAvail p-2" src="/notAvail.png"/>
-                            </div>                   
-                    </div>
-                <% } %>
-            </div>
+          <% }) %> 
+        <% } else { %>
+          <div class="d-flex justify-content-center align-items-center p-4">
+            No reviews available for this campsite yet.
+            <img class="notAvail p-2" src="/images/notAvail.png" />
+          </div>
+        <% } %>
+      </div>
       <div class="p-button d-flex justify-content-end mt-3">
-                            <div class="c-button c-button--grow">
-                                <a class="button-grow " href="/viewReviews/<%= campsite._id %>" style="text-decoration: none;">
-                                <span class="circle">
-                                    <span class="icon arrow"></span>
-                                </span>
-                                <span class="button-text">See All</span>
-                                </a>
-                            </div>
-                        </div>
-                                    </div>
+        <div class="c-button c-button--grow">
+          <a class="button-grow" href="/viewBookings/<%= campsite._id %>">
+            <span class="circle"><span class="icon arrow"></span></span>
+            <span class="button-text">See All</span>
+          </a>
+        </div>
+      </div>
+    </div>
 
-        <!-- Alerts Section -->
-        <div class="card shadow-sm p-4 mt-4 mb-5" style="border-radius: 18px">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">Alerts</h2>
-                <a
-                    href="/createAlert/<%= campsite._id %>"
-                    class="btn btn-outline-primary"
-                    >New Alert</a
-                >
-            </div>
-            <div class="card-container">
-                <%
-                alert.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
-                %>
-                <% if (alert && alert.length > 0) { %> 
-                    <%alert.forEach(function(alert) { %>
-                <div
-                    style="
-                        margin-bottom: 0.5rem;
-                        padding: 0.5rem;
-                        background-color: #fff3cd;
-                        border-radius: 4px;
-                    "
-                >
-                    <strong><%= alert.alertType %></strong>
-                    <small class="text-muted"><%= alert.alertDate || 'Unknown' %></small>
-                    <%= alert.message %>
+    <!-- Reviews Section -->
+    <div class="card shadow-sm p-4 mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Reviews</h2>
+        <a href="/createReview/<%= campsite._id %>" class="btn btn-outline-primary">New Review</a>
+      </div>
+      <div class="card-container">
+        <% review.sort((a, b) => new Date(b.dateVisited) - new Date(a.dateVisited)); %>
+        <% if (review && review.length > 0) { %> 
+          <% review.forEach(function(review) { %>
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <img id="review-avatar" src="<%= review.userId?.profileImage || '/images/avatars/avatar1.png' %>" alt="avatar">
+                    </div>
+                    <div class="ms-2">
+                      <h6 class="mb-0"><%= review.firstName %></h6>
+                      <small class="text-muted">
+                        <% if (review.overallRating) { 
+                          const fullStars = '🌟'.repeat(review.overallRating);
+                        %>
+                          <%= fullStars %>
+                        <% } else { %>
+                          No rating
+                        <% } %>
+                      </small>
+                    </div>
+                  </div>
+                  <small class="text-muted"><%= review.dateVisited || 'Unknown' %></small>
                 </div>
-                <% }) %> <% } else { %>
-                <div style="color: #888">
-                    <div class="d-flex justify-content-center align-items-center p-4"style="color: #888">
-                                No alerts available for this campsite yet.
-                                <img class="notAvail p-2" src="/notAvail.png"/>
-                            </div>                   
-                            </div>
-                <% } %>
+                <p class="mb-0"><%= review.additionalComments || 'No comments' %></p>
+              </div>
             </div>
-                <div class="p-button d-flex justify-content-end mt-3">
-                            <div class="c-button c-button--grow">
-                                <a class="button-grow " href="/viewAlerts/<%= campsite._id %>" style="text-decoration: none;">
-                                <span class="circle">
-                                    <span class="icon arrow"></span>
-                                </span>
-                                <span class="button-text">See All</span>
-                                </a>
-                            </div>
-                        </div>
-            </div>
-            </div>
-<%- include('templates/bg') %>
+          <% }) %> 
+        <% } else { %>
+          <div class="d-flex justify-content-center align-items-center p-4">
+            No reviews available for this campsite yet.
+            <img class="notAvail p-2" src="/images/notAvail.png" />
+          </div>
+        <% } %>
+      </div>
+      <div class="p-button d-flex justify-content-end mt-3">
+        <div class="c-button c-button--grow">
+          <a class="button-grow" href="/viewReviews/<%= campsite._id %>">
+            <span class="circle"><span class="icon arrow"></span></span>
+            <span class="button-text">See All</span>
+          </a>
+        </div>
+      </div>
+    </div>
 
-        </main>
+    <!-- Alerts Section -->
+    <div class="card shadow-sm p-4 mt-4 mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Alerts</h2>
+        <a href="/createAlert/<%= campsite._id %>" class="btn btn-outline-primary">New Alert</a>
+      </div>
+      <div class="card-container">
+        <% alert.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate)); %>
+        <% if (alert && alert.length > 0) { %> 
+          <% alert.forEach(function(alert) { %>
+            <div class="alert-card">
+              <strong><%= alert.alertType %></strong>
+              <small class="text-muted"><%= alert.alertDate || 'Unknown' %></small>
+              <%= alert.message %>
+            </div>
+          <% }) %> 
+        <% } else { %>
+          <div class="d-flex justify-content-center align-items-center p-4">
+            No alerts available for this campsite yet.
+            <img class="notAvail p-2" src="/images/notAvail.png" />
+          </div>
+        <% } %>
+      </div>
+      <div class="p-button d-flex justify-content-end mt-3">
+        <div class="c-button c-button--grow">
+          <a class="button-grow" href="/viewAlerts/<%= campsite._id %>">
+            <span class="circle"><span class="icon arrow"></span></span>
+            <span class="button-text">See All</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
 <script src="/js/campsite-info.js"></script>
-
+<%- include('templates/bg') %>
 <%- include('templates/footer') %>

@@ -8,10 +8,10 @@
 <div class="d-flex flex-row flex-wrap justify-content-center gap-4 mt-5">
   <img class="favouriteAvatar" src="/images/favourites.png">
 
-  
+  <!-- Cards -->
   <% campsites.forEach(favCampsite => { %>
-      <div class="card card-hover rounded-4 img-fluid" style="width: 300px; height: 420px; cursor: pointer;">
-        <img class="card-img-top rounded-4" src="<%= favCampsite.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;">
+      <div class="card card-hover rounded-4 img-fluid">
+        <img class="card-img-top rounded-4" src="<%= favCampsite.imageUrl || '/PorteauCove.svg' %>" alt="Card image">
         <div class="card-img-overlay p-3 d-flex flex-column justify-content-between">
           <div>
             <h5 class="card-title text-white mb-3"><%= favCampsite.name %></h4>
@@ -35,13 +35,13 @@
             </ul>
           </div>
 
+          <!-- Buttons -->
           <div class="d-flex justify-content-center pt-3">
             <a href="/campsite-Info/<%= favCampsite._id %>" class="btn w-100 text-decoration-none text-dark text-center">
               View Details
             </a>            
           </div>
           <i class="fas fa-heart heart-icon heart"
-          style="font-size: 2rem; color: #8212b6; cursor: pointer;"
           data-campsite-id="<%= favCampsite._id %>"></i>
         </div>
       </div>
@@ -50,6 +50,7 @@
 </div>
   <%- include("templates/bg") %>
   <script src="/js/createReview.js"></script>
-  
+  <script src="/js/favourites.js"></script>
+
 </main>
 <%- include('templates/footer') %>

@@ -7,15 +7,15 @@
     </div>
 
     <img class="favouriteAvatar" src="/images/favourites.png">
-
+    <!-- Card container -->
     <div class="container">
       <div class="d-flex flex-row flex-wrap justify-content-center gap-4 mt-5">
         <% if (bookings.length === 0) { %>
           <p class="d-flex align-items-center">You have no bookings yet.</p>
-          <img class="notAvail p-2" src="/notAvail.png"/>
+          <img class="notAvail p-2" src="/images/notAvail.png"/>
         <% } else { %>
           <% bookings.forEach(bookedCampsite => { %>
-            <div class="card card-hover rounded-4 img-fluid" style="width: 300px; height: 420px; cursor: pointer;">
+            <div class="card card-hover rounded-4 img-fluid">
               <img class="card-img-top rounded-4" src="<%= bookedCampsite.campsiteId?.imageUrl || '/PorteauCove.svg' %>" alt="Card image" style="width:100%; height: 200px; object-fit: cover;"> 
               <div class="card-img-overlay p-3 d-flex flex-column justify-content-between">
                 <div>
@@ -38,13 +38,16 @@
                     </li>
                   </ul>
                 </div>
+
+                <!-- Buttons -->
                 <div class="d-flex justify-content-center pt-3">
                   <a href="/campsite-Info/<%= bookedCampsite.campsiteId?._id %>" class="btn w-100 text-decoration-none text-dark text-center">
                     View Details
                   </a>
                 </div>
                 <div class="d-flex justify-content-center pt-3">
-                  <button type="button" class="btn btn-primary w-100 text-decoration-none text-dark text-center" data-bs-toggle="modal" data-bs-target="#cancelModal-<%= bookedCampsite._id %>">
+                  <button type="button" class="btn btn-primary w-100 text-decoration-none text-dark text-center" 
+                  data-bs-toggle="modal" data-bs-target="#cancelModal-<%= bookedCampsite._id %>">
                     Cancel Booking
                   </button>
                 </div>
@@ -54,13 +57,14 @@
         <% } %>
       </div>
     </div>
-
+    
+    <!-- Modal for Cancellation -->
     <% bookings.forEach(bookedCampsite => { %>
       <div class="modal fade" id="cancelModal-<%= bookedCampsite._id %>" tabindex="-1" aria-labelledby="cancelModalLabel-<%= bookedCampsite._id %>" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="cancelModalLabel-<%= bookedCampsite._id %>">Cancel Booking</h5>
+              <h6 class="modal-title" id="cancelModalLabel-<%= bookedCampsite._id %>">Cancel Booking</h6>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
