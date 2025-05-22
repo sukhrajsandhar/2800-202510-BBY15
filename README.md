@@ -102,7 +102,6 @@ Example:
 ├── package.json
 ├── package-lock.json
 ├── databaseConnection.js
-├── app.js
 ├── scripts/
 │   ├── .env
 │   ├── cleanupBookings.js
@@ -166,7 +165,6 @@ Example:
 │   ├── admin.ejs
 │   ├── booked.ejs
 │   ├── campsite-Info.ejs
-│   ├── campsite-list.ejs
 │   ├── createAlert.ejs
 │   ├── createBooking.ejs
 │   ├── createReview.ejs
