@@ -357,9 +357,7 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
     }
 });
 
-/**
- * Sydney Create Booking!!!
- */
+// createBooking route 
 app.get("/createBooking/:campsiteId", async (req, res) => {
     try {
         const campsites = await Campsite.find().lean();   
@@ -581,7 +579,7 @@ app.get("/viewReviews/:id", async (req, res) => {
 
 
 
-//Sydney
+// Route to view bookings for a specific campsite
 app.get("/viewBookings/:id", async (req, res) => {
     try {
       const campsite = await Campsite.findById(req.params.id).lean();
@@ -608,7 +606,6 @@ app.get("/viewBookings/:id", async (req, res) => {
   });
   
 // Route to fetch booking owner info
-//Sydney
 app.get("/booking/:id/contact-info", async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id)
@@ -898,10 +895,6 @@ app.get("/api/trails", (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-/**
- * Sydney: include an app.get for bookings, alerts, reviews?
- */
 
 app.get("/api/bookings", async (req, res) => {
     try {
