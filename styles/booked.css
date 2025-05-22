@@ -1,4 +1,10 @@
-
+/* Base Styles */
+body, html {
+    background-color: #BDD3AF;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
 
 h3 {
   border: 2px solid #283F3B;
@@ -30,10 +36,7 @@ h3 {
     background-color: #BDD3AF;
     overflow: auto;
   }
-/* .main {
-  padding: 4% 2% 10%;
-  background-color: #BDD3AF;
-} */
+
 
 @media (max-width: 600px) {
   .main {
