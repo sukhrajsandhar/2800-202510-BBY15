@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 /node_modules
 package-lock.json
 .env
-=======
 # Configuration
 config.js
 
@@ -12,4 +10,3 @@ node_modules/
 # IDE files
 .vscode/
 .idea/
->>>>>>> sukhraj_main_map_functions
