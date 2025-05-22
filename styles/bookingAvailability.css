@@ -1,88 +1,119 @@
 body {
-    background-color: rgb(85, 111, 68);
+    background-color: #b3c8ad;
 }
 
-main {
-    display: flex;
-    flex-direction: column;
-    position:absolute;
-    top:60px;
-    bottom: 80px;
-    left:auto;
-    right:auto;
-    width: 100%;
-    align-items: center;
-    padding: 20px;
-    overflow: auto;
-}
-
-
-
-h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.readonly {
-    margin-top: -5px;
-    margin-bottom: 10px;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    background-color: #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.input-icon {
-    position: relative;
-}
-
-.input-icon input {
-    width: 100%;
-    padding-right: 30px;
-}
-
-.input-icon span {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-textarea {
-    resize: none;
-}
-
-button {
+.card {
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .card:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #2e4739;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #7ea64b;
+    outline: none;
+    box-shadow: 0 0 8px rgba(126, 166, 75, 0.4);
+  }
+  
+  .card-header {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  
+  .card-body {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #556F44 transparent;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .btn {
     display: block;
     width: 100%;
-    background-color: #999;
+    background-color: #B4D9A7;
+    border: 2px solid #B4D9A7;
     color: white;
-    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
     padding: 12px;
     border-radius: 20px;
     margin-top: 20px;
     font-size: 16px;
     cursor: pointer;
-}
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+.wave-background-bottom svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 
-body, html {
-  background-color: rgb(189, 211, 175);
-}
+  main {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .card:last-of-type {
+    margin-bottom: 140px;
+  }
+  
+  .wave-background-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 820px;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  .wave-background-bottom svg path {
+    fill: rgb(44, 71, 44);
+  }
+
+  .btn:hover {
+    background-color: #397b56 !important;
+    transition: background-color 0.3s ease;
+  }
+
+  .bookingAvatar {
+    position: absolute;
+    top: -55px;
+    left: 41%;
+    width: 80px;
+    height: 80px;
+    z-index: 1;
+  }
+
+  html, body {
+    overflow: auto;
+  }

@@ -152,6 +152,8 @@
     .nav-links {
         width: 100% !important;
         justify-content: space-between !important;
+        font-size: 18px !important;
+
     }
     /* Move Mapbox controls up so they're not blocked by nav bar */
     .mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left {

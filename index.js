@@ -331,7 +331,8 @@ app.get("/createReview/:campsiteId", async (req, res) => {
         res.render("createReview", {
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
-            userId: user._id
+            userId: user._id,
+            firstName: user.firstName,
         });
     } catch (err) {
         res.status(500).send("Error loading review form");
@@ -348,96 +349,130 @@ app.get("/createAlert/:campsiteId", async (req, res) => {
         res.render("createAlert", {
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
-            userId: user._id
+            userId: user._id,
+            firstName: user.firstName
         });
     } catch (err) {
         res.status(500).send("Error loading alert form");
     }
 });
 
-/**
- * Sydney Create Booking!!!
- */
+// createBooking route 
 app.get("/createBooking/:campsiteId", async (req, res) => {
     try {
+        const campsites = await Campsite.find().lean();   
         const campsite = await Campsite.findById(req.params.campsiteId).lean();
         if (!campsite) {
             return res.status(404).send('Campsite not found');
         }
         res.render("createBooking", {
+            campsites,
             campsiteId: req.params.campsiteId,
             campsiteName: campsite.name,
             firstName: req.session.firstName || null,
+            userId: req.session.userId || null,
         });
     } catch (err) {
         res.status(500).send("Error loading booking form");
     }
 });
 
-app.get("/booked", (req, res) => {
-    const campsite = {
-        id: 1,
-        name: "Sunset Woods",
-        imageUrl: "/camp.png",
-        date: "2025-06-15",
-        tents: 2,
-        people: 4,
-    };
-
-    res.render("booked", { campsite });
-});
-
-app.get("/profile", async (req, res) => {
-  if (!req.session.authenticated) {
-    return res.redirect("/login");
-  }
-
-  const user = await userCollection.findOne({ email: req.session.email });
-  if (!user) {
-    return res.status(404).send("User not found");
-  }
-
-  res.render("profile", { user });
-});
-
-app.post("/profile/picture", async (req, res) => {
-  if (!req.session.authenticated || !req.session.email) {
-    return res.redirect("/login");
-  }
-  const avatar = req.body.avatar;
-  if (!avatar) {
-    return res.status(400).send("No avatar selected.");
-  }
-  await userCollection.updateOne(
-    { email: req.session.email },
-    { $set: { profileImage: `/images/avatars/${avatar}` } }
-  );
-  res.redirect("/profile");
-});
-
-app.post("/update-profile", async (req, res) => {
-  if (!req.session.authenticated || !req.session.email) {
-    return res.redirect("/login");
-  }
-
-  const { firstName, lastName, email, bio, userLevel } = req.body;
-
-  await userCollection.updateOne(
-    { email: req.session.email },
-    {
-      $set: {
-        firstName,
-        lastName,
-        email,
-        bio: bio || "",
-        ...(userLevel ? { userLevel } : {}),
-      },
+app.get("/booked", async (req, res) => {
+    try {
+      if (!req.session.authenticated || !req.session.email) {
+        return res.redirect("/login");
+      }
+  
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user) {
+        return res.render("booked", { bookings: [] });
+      }
+  
+      // Get bookings by userId and populate campsite details
+      const bookings = await Booking.find({ userId: user._id })
+        .populate('campsiteId')
+        .lean();
+  
+      res.render("booked", { bookings });
+    } catch (err) {
+      console.error("Error loading booked campsites:", err);
+      res.status(500).send("Something went wrong.");
     }
-  );
+  });
+  
+  app.post('/bookings/:id/delete', async (req, res) => {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.redirect('/booked'); 
+  });
+  
 
-  req.session.email = email;
-  res.redirect("/profile");
-});
+// get the profile page
+app.get("/profile", async (req, res) => {
+    if (!req.session.authenticated) return res.redirect("/login");
+  
+    try {
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user) return res.status(404).send("User not found");
+      res.render("profile", { user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+  
+  // update profile picture (avatar)
+  app.post("/profile/picture", async (req, res) => {
+    if (!req.session.authenticated) return res.redirect("/login");
+  
+    try {
+      const { avatar } = req.body;
+      if (!avatar) return res.status(400).send("No avatar selected.");
+  
+      await userCollection.updateOne(
+        { email: req.session.email },
+        { $set: { profileImage: `/images/avatars/${avatar}` } }
+      );
+  
+      res.redirect("/profile");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server error");
+    }
+  });
+  
+  // update profile info
+  app.post("/update-profile", (req, res) => {
+    if (!req.session.authenticated) {
+      return res.redirect("/login");
+    }
+  
+    const { firstName, lastName, email, bio, userLevel } = req.body;
+    const updateFields = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      bio: bio || "",
+    };
+  
+    if (userLevel) {
+      updateFields.userLevel = userLevel;
+    }
+  
+    userCollection.updateOne(
+      { email: req.session.email },
+      { $set: updateFields },
+      (err) => {
+        if (err) {
+          console.log("Error updating profile:", err);
+          return res.status(500).send("Server error");
+        }
+  
+        req.session.email = email;
+        res.redirect("/profile");
+      }
+    );
+  });
+  
 
 
 // Admin panel route
@@ -503,7 +538,9 @@ app.get("/viewAlerts/:id", async (req, res) => {
             return res.status(404).send("Campsite not found");
         }
 
-        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        let alerts = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) })
+        .populate('userId')  
+        .lean();
 
         alerts.sort((a, b) => new Date(b.alertDate) - new Date(a.alertDate));
 
@@ -524,15 +561,15 @@ app.get("/viewReviews/:id", async (req, res) => {
             return res.status(404).send("Campsite not found");
         }
 
-        let reviews = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
+        // Find reviews for this campsite and populate user info on each review
+        let reviews = await Review.find({ campsiteId: req.params.id })
+            .populate('userId')  // populate user info in each review
+            .lean();
 
         // Sort reviews by dateCreated descending (most recent first)
         reviews.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
 
-        res.render("viewReviews", {
-            campsite,
-            reviews
-        });
+        res.render("viewReviews", { campsite, reviews });
     } catch (err) {
         console.error("Error loading reviews:", err.message);
         res.status(500).send("Internal Server Error");
@@ -541,72 +578,131 @@ app.get("/viewReviews/:id", async (req, res) => {
 
 
 
-//Sydney
-app.get("/viewBookings/:id", async (req, res) => {
-try {
-        const campsite = await Campsite.findById(req.params.id).lean();
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean();
-        if (!campsite) {
-            return res.status(404).send('Campsite not found');
-        }
-        // Sort bookings by startDate descending (most recent first)
-        booking.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
-        res.render("viewBookings", { campsite, booking });
+// Route to view bookings for a specific campsite
+app.get("/viewBookings/:id", async (req, res) => {
+    try {
+      const campsite = await Campsite.findById(req.params.id).lean();
+  
+      const bookings = await Booking.find({ campsiteId: req.params.id })
+        .populate('userId')
+        .lean();
+  
+      if (!campsite) {
+        return res.status(404).send('Campsite not found');
+      }
+  
+      bookings.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  
+      res.render("viewBookings", {
+        campsite,
+        booking: bookings,
+        currentUserFirstName: req.session.firstName || 'Camper'
+      });
     } catch (err) {
-        res.status(500).send("Error loading bookings");
+      console.error("Error in /viewBookings/:id", err); // debug
+      res.status(500).send("Error loading bookings");
+    }
+  });
+  
+// Route to fetch booking owner info
+app.get("/booking/:id/contact-info", async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id)
+            .populate('userId')
+            .populate('campsiteId'); // so you can get campsite name
+
+        if (!booking || !booking.userId || !booking.campsiteId) {
+            return res.status(404).json({ error: "Booking, user, or campsite not found" });
+        }
+
+        // Prevent contacting yourself
+        if (req.session.userId === booking.userId._id.toString()) {
+            return res.status(403).json({ error: "You cannot contact yourself." });
+        }
+
+        res.json({
+            name: booking.userId.name || booking.userId.firstName,
+            email: booking.userId.email,
+            userFirstName: booking.userId.firstName,
+            campsiteName: booking.campsiteId.name,
+            startDate: booking.startDate.toDateString(),
+            endDate: booking.endDate.toDateString()
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
+
+// Adding or removing a campsite from favourites
 app.post('/favourites/:campsiteId', async (req, res) => {
-  const email = req.session.email;
-  if (!email) return res.status(401).send("Unauthorized");
+    const email = req.session.email;
+  
+    // Check if user is logged in
+    if (!email) {
+      return res.status(401).send("You must be logged in to do that.");
+    }
+  
+    try {
+      // Finds the user email
+      const user = await userCollection.findOne({ email });
+      if (!user) return res.status(404).send("User not found");
+  
+      const campsiteId = req.params.campsiteId;
+      const action = req.body.action; // add/remove campsites
+  
+      let update;
+      if (action === "add") {
+        update = { $addToSet: { favourites: campsiteId } }; // add only if not already there
+      } else if (action === "remove") {
+        update = { $pull: { favourites: campsiteId } }; // remove if it exists
+      } else {
+        return res.status(404).send("Invalid action");
+      }
+  
+      // Update the user doc
+      await userCollection.updateOne({ _id: user._id }, update);
+      res.sendStatus(200);
+    } catch (err) {
+      console.error("Error updating favourites:", err);
+      res.status(500).send("Something went wrong.");
+    }
+  });
+  
 
-  try {
-    const user = await userCollection.findOne({ email });
-    if (!user) return res.status(404).send("User not found");
 
-    const campsiteId = req.params.campsiteId;
-    const action = req.body.action;
-
-    const update = action === "add"
-      ? { $addToSet: { favourites: campsiteId } }  // add without duplicates
-      : { $pull: { favourites: campsiteId } };     // remove
-
-    await userCollection.updateOne({ _id: user._id }, update);
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(404).send("Error updating favourites");
-  }
-});
-
-
-
+// Show the user's favourite campsites
 app.get("/favourites", async (req, res) => {
     try {
-        if (!req.session.authenticated || !req.session.email) {
-            return res.redirect("/login");
-        }
-
-        const user = await userCollection.findOne({ email: req.session.email });
-
-        if (!user || !user.favourites) {
-            return res.render("favourites", { campsites: [] });
-        }
-
-        // Fetch campsite documents by their IDs
-        const favouriteCampsites = await Campsite.find({
-            _id: { $in: user.favourites }
-        });
-
-        res.render("favourites", { campsites: favouriteCampsites });
+      // Redirect to login 
+      if (!req.session.authenticated || !req.session.email) {
+        return res.redirect("/login");
+      }
+  
+      // finds the email of the user 
+      const user = await userCollection.findOne({ email: req.session.email });
+      if (!user || !user.favourites) {
+        return res.render("favourites", { campsites: [], favourites: [] });
+      }
+  
+      // takes all campsites that match the user's favourite IDs
+      const favouriteCampsites = await Campsite.find({
+        _id: { $in: user.favourites }
+      });
+  
+      // renders with the list of favourite campsites
+      res.render("favourites", {
+        campsites: favouriteCampsites,
+        favourites: user.favourites.map(id => id.toString()) // ensure strings for EJS
+      });
     } catch (err) {
-        console.error("Error loading favourites:", err);
-        res.status(500).send("Internal Server Error");
+      console.error("Error loading favourites:", err);
+      res.status(500).send("Something went wrong.");
     }
-});
+  });
+  
 
 
 /**
@@ -614,49 +710,63 @@ app.get("/favourites", async (req, res) => {
  * --> bookings, reviews, alerts
  */
 // Added weather info to the campsite-info page 
-
 app.get("/campsite-info/:id", async (req, res) => {
+    const campsiteId = req.params.id;
+    
     try {
-        const campsite = await Campsite.findById(req.params.id).lean(); 
-        const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3); 
-        const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-        const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).lean().limit(3);
-        if (!campsite) {
-            return res.status(404).send("Campsite not found");
-        }
-        // Fetch weather data using OpenWeatherMap API
-        // Ensure that the coordinates are available before making the API call
-        let weather = null;
-        // Check if coordinates are available
-        if (!campsite.coordinates || campsite.coordinates.length !== 2) {
-            console.error("Invalid coordinates for campsite:", campsite);
-            return res.status(400).send("Invalid coordinates");
-        }
-        const [longitude, latitude] = campsite.coordinates || [];
-        // Fetch weather data only if latitude and longitude are available
+      // Make sure you get email from logged in user (adjust according to your auth)
+      const email = req.user?.email || req.session?.email;
+      if (!email) {
+        return res.status(401).send("Not authenticated");
+      }
+  
+      // Find the user by email
+      const user = await userCollection.findOne({ email });
+  
+      // Find campsite and related data
+      const campsite = await Campsite.findById(req.params.id).lean();
+      if (!campsite) return res.status(404).send("Campsite not found");
+  
+      const review = await Review.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
+      const booking = await Booking.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
+      const alert = await Alert.find({ campsiteId: new mongoose.Types.ObjectId(req.params.id) }).populate('userId').lean().limit(3);
+  
+      // Check if user has favorited this campsite
+      const isFavorited = user?.favourites?.map(id => id.toString()).includes(campsiteId);
+      console.log("isFavorited before render:", isFavorited);
+        
+      // Weather fetch logic remains unchanged
+      let weather = null;
+      if (campsite.coordinates && campsite.coordinates.length === 2) {
+        const [longitude, latitude] = campsite.coordinates;
         if (latitude && longitude) {
-            try {
-                const apiKey = process.env.OPENWEATHER_API_KEY;
-                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
-                const weatherResponse = await axios.get(weatherUrl);
-                const weatherData = weatherResponse.data;
-                weather = {
-                    icon: weatherData.weather[0].icon,
-                    temp: weatherData.main.temp,
-                    desc: weatherData.weather[0].description,
-                };
-            } catch (error) {
-                console.error("Error fetching weather data:", error.message);
-            }
+          try {
+            const apiKey = process.env.OPENWEATHER_API_KEY;
+            const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+            const weatherResponse = await axios.get(weatherUrl);
+            const weatherData = weatherResponse.data;
+            weather = {
+              icon: weatherData.weather[0].icon,
+              temp: weatherData.main.temp,
+              desc: weatherData.weather[0].description,
+            };
+          } catch (error) {
+            console.error("Error fetching weather data:", error.message);
+          }
         }
-        // Always pass weather, even if null
-        // Render the campsite-info page with the campsite and weather data
-        res.render("campsite-Info", { campsite, weather, review, booking, alert });
+      } else {
+        console.error("Invalid coordinates for campsite:", campsite);
+        return res.status(400).send("Invalid coordinates");
+      }
+  
+      // Render page with all the data
+      res.render("campsite-Info", { campsite, weather, review, booking, alert, isFavorited });
     } catch (err) {
-        console.error("Error loading campsite info:", err.message);
-        res.status(500).send("Internal Server Error");
+      console.error("Error loading campsite info:", err.message);
+      res.status(500).send("Internal Server Error");
     }
-});
+  });
+  
 
 app.get('/api/funfact/:campsiteName', async (req, res) => {
     try {
@@ -786,10 +896,6 @@ app.get("/api/trails", (req, res) => {
     }
 });
 
-/**
- * Sydney: include an app.get for bookings, alerts, reviews?
- */
-
 app.get("/api/bookings", async (req, res) => {
     try {
         const bookings = await Booking.find().lean();
@@ -874,6 +980,7 @@ app.post("/api/reviews", async (req, res) => {
         // Create a new review document
         const review = new Review({
             userId: reviewData.userId || null,
+            firstName: reviewData.firstName || 'Anonymous',
             campsiteId: reviewData.campsiteId,
             overallRating: reviewData.overallRating,
             dateVisited: reviewData.dateVisited,
@@ -919,6 +1026,7 @@ app.post("/api/alerts", async (req, res) => {
         // Create a new alert document
         const alert = new Alert({
             userId: alertData.userId || null,
+            firstName: alertData.firstName || 'Anonymous',
             campsiteId: alertData.campsiteId,
             alertType: alertData.alertType,
             alertDate: alertData.alertDate,
@@ -958,12 +1066,12 @@ app.post("/api/bookings", async (req, res) => {
         // Create a new booking document
         const booking = new Booking({
             campsiteId: bookingData.campsiteId,
-            firstName: bookingData.firstName || 'Anonymous',
+            userId: req.session.userId,
+            firstName: req.session.firstName || 'Anonymous',            
             startDate: bookingData.startDate,
             endDate: bookingData.endDate,
             dateCreated: new Date(),
             tentSpots: bookingData.tentSpots || 0,
-            contactInfo: bookingData.contactInfo || '',
             summary: bookingData.summary || ''
         });
 
@@ -978,6 +1086,9 @@ app.post("/api/bookings", async (req, res) => {
         res.status(500).json({ error: 'Failed to save booking: ' + error.message });
     }
 });
+
+const startCleanupJob = require('./scripts/cleanupBookings');
+startCleanupJob();
 
 // Add the correct catch-all middleware
 app.use((req, res) => {

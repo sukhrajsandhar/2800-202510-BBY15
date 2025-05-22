@@ -33,8 +33,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'Noob Camper'
   }, 
+  bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campsite" }]
-
+  
 });
 
 module.exports = mongoose.model('User', userSchema);

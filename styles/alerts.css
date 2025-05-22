@@ -28,3 +28,17 @@ body {
     background: linear-gradient(135deg, #e6f4ea, #c8e6c9);
     color: #2e4739;
 }
+
+.notAvail {
+    width: 100px !important;
+    border-radius: 20px !important;
+  }
+
+  body {
+    background-color: #b3c8ad;
+  }
+
+  .btn:hover {
+    background-color: #397b56 !important;
+    transition: background-color 0.3s ease;
+  }

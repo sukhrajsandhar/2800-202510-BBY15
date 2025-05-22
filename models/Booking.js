@@ -7,6 +7,11 @@ const bookingSchema = new mongoose.Schema({
         ref: 'Campsite',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -25,10 +30,6 @@ const bookingSchema = new mongoose.Schema({
     },
     tentSpots: {
         type: Number,
-        required: true
-    },
-    contactInfo: {
-        type: String,
         required: true
     },
     summary: {

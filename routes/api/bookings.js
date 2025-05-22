@@ -33,12 +33,12 @@ router.post('/', async (req, res) => {
     // Only use fields defined in the schema
     const booking = new Booking({
         campsiteId: req.body.campsiteId,
+        userId: req.body.userId || req.session.userId || null,
         firstName: req.session.firstName || null,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         dateCreated: req.body.dateCreated || new Date(),
         tentSpots: req.body.tentSpots,
-        contactInfo: req.body.contactInfo,
         summary: req.body.summary
     });
 

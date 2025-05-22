@@ -1,0 +1,159 @@
+/* Base Styles */
+body, html {
+    background-color: #BDD3AF;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+
+  
+  .three h1 {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #283F3B;
+    position: relative;
+  }
+  
+  /* Main Layout */
+  .main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 4% 2% 10%;
+    background-color: #BDD3AF;
+    overflow: auto;
+  }
+  
+  @media (max-width: 600px) {
+    .main {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+  
+  .card,
+  .card-hover {
+    border-radius: 10px;
+    overflow: scroll;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 300px; 
+    height: 400px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card-hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+  
+  .card-hover:hover .card-img-overlay {
+    background-color: rgba(40, 63, 59, 0.7);
+  }
+  
+  #card1, #card2 {
+    border: 4px solid #95BF74;
+  }
+  
+  .btn,
+  #cancel1, #cancel2, #cancel3, #cancel4,
+  #homeBtn, #details1, #details2,
+  #delete1, #delete2 {
+    font-weight: 600;
+    text-transform: uppercase;
+    color: white;
+    border: 2px solid;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .btn {
+    background-color: #B4D9A7;
+    border-color: #B4D9A7;
+  }
+  
+  .btn:hover {
+    background-color: #95BF74;
+    border-color: #95BF74;
+  }
+  
+  #cancel1, #cancel2, #cancel3, #cancel4,
+  #homeBtn, #details1, #details2 {
+    background-color: #659B5E;
+    border-color: #659B5E;
+  }
+  
+  #cancel1:hover, #cancel2:hover,
+  #cancel3:hover, #cancel4:hover,
+  #homeBtn:hover, #details1:hover, #details2:hover {
+    background-color: #95BF74;
+    border-color: #95BF74;
+  }
+  
+  #cancel1, #cancel2 {
+    margin-top: 30%;
+  }
+  
+  #delete1, #delete2 {
+    background-color: #283F3B;
+    border-color: #283F3B;
+  }
+  
+  .material-icons {
+    vertical-align: middle;
+    color: #659B5E;
+    font-size: 1.3rem;
+  }
+  
+  .list-group-item {
+    font-size: 0.95rem;
+    color: black;
+    padding: 0.6rem 1rem;
+  }
+  
+  .btn-primary {
+    font-weight: 600;
+    background-color: #283F3B;
+    border: 1px solid #659B5E;
+  }
+  
+  .btn-primary:hover {
+    background-color: #95BF74;
+    border-color: #95BF74;
+  }
+  
+  .data-container {
+    background: #ffebee;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(2);
+  }
+  
+  .favouriteAvatar {
+    position: fixed;
+    bottom: 20px;   
+    right: 20px;   
+    width: 50px;
+    height: 50px;
+    z-index: 1000;  
+  }
+
+  h5 {
+    text-shadow: 2px 2px black;
+  }
+
+  .heart-icon {
+    font-size: 2rem; 
+    color: #8212b6; 
+    cursor: pointer;
+  }

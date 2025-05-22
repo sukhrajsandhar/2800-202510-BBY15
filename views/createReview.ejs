@@ -1,10 +1,15 @@
 <%- include("templates/header", { cssFiles: ['/styles.css', '/footer.css', '/reviews.css'] }) %>
 
+<!-- Review Creation Form -->
         <div class="container" style="margin-top: 80px; margin-bottom: 100px;">
             <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7;">
                 <div class="card-header text-center" style="background-color: #95BF74;">
                     <h5 class="three mb-0"> 🏕️ Review for <%= campsiteName %>
                     </h5>
+                    <button type="button" class="btn-close" 
+                    onclick="window.location.href='/campsite-info/<%= campsiteId %>'" 
+                    style="position: absolute; right: 15px; top: 15px;">
+                  </button>
                 </div>
                 <div class="card-body" style="max-height: 675px; overflow-y: auto;">
                     <form id="reviewForm">
@@ -96,6 +101,8 @@
                             </select>
                         </div>
 
+                        <img class="reviewAvatar p-2" src="/images/review.png"/>
+
                         <!-- Additional Comments -->
                         <div class="mb-3">
                             <label class="form-label">Additional Comments</label>
@@ -107,6 +114,8 @@
                         <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
                         <!-- Hidden userId (ensure this is in your form) -->
                         <input type="hidden" id="userId" value="<%= userId %>">
+                        <!-- Hidden firstName (ensure this is in your form) -->
+                        <input type="hidden" id="firstName" value="<%= firstName %>">
 
                         <!-- Submit and Cancel buttons -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-between">
@@ -124,46 +133,6 @@
   </svg>
 </div>
     </div>
-        <script>
-            document.getElementById('reviewForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const formData = {
-                    userId: document.getElementById('userId').value,
-                    campsiteId: document.getElementById('campsiteId').value,
-                    overallRating: document.getElementById('overallRating').value,
-                    dateVisited: document.getElementById('dateVisited').value,
-                    electricityWaterHookups: document.getElementById('electricityWaterHookups').value,
-                    dogFriendly: document.getElementById('dogFriendly').value,
-                    picnicTables: document.getElementById('picnicTables').value,
-                    firePitsGrills: document.getElementById('firePitsGrills').value,
-                    cellService: document.getElementById('cellService').value,
-                    trashRecycleBins: document.getElementById('trashRecycleBins').value,
-                    washrooms: document.getElementById('washrooms').value,
-                    additionalComments: document.getElementById('additionalComments').value
-                };
-
-                try {
-                    const response = await fetch('/api/reviews', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        alert('Review submitted successfully!');
-                        window.location.href = `/campsite-info/${data.campsiteId}`;
-                    } else {
-                        alert('Error submitting review. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again later.');
-                }
-            });
-        </script>
+    <script src="/js/createReview.js"></script>
 
         <%- include("templates/footer") %>

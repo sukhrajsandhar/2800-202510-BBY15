@@ -12,6 +12,11 @@ const reviewSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    firstName: {
+        type: String,
+        ref: 'User',
+        required: true
+    },
     overallRating: {
         type: Number,
         min: 0,
@@ -57,7 +62,9 @@ const reviewSchema = new mongoose.Schema({
     dateCreated: {
         type: Date,
         default: Date.now
-    }
+    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
 });
 
 const Review = mongoose.model('Review', reviewSchema);

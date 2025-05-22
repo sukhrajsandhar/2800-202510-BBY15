@@ -357,3 +357,31 @@
 }
 
 /* Rest of your existing styles... */ 
+
+.nav-container {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 4px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 55%;
+}
+
+span {
+    font-size: 15px !important;
+}
+
+.nav-link:hover i {
+    transform: translateY(-1px);
+    color: #95BF74; 
+}
+
+.nav-link.active i {
+    color: #95BF74; 
+}

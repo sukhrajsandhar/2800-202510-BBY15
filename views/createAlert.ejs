@@ -1,11 +1,15 @@
-<%- include("templates/header", { cssFiles: ['/styles.css', '/footer.css', '/reviews.css'] }) %>
+<%- include("templates/header", { cssFiles: ['/styles.css', '/reviews.css'] }) %>
 
+<!-- Alert Creation Form -->
     <div class="container" style="margin-top: 80px; margin-bottom: 100px;">
         <div class="card mx-auto" style="max-width: 500px; background-color: #D0DDD7; height: 675px; display: flex; flex-direction: column;">
             <div class="card-header text-center" style="background-color: #95BF74;">
                 <h5 class="mb-0">🛑 Alert for <%= campsiteName %>
                 </h5>
-
+                <button type="button" class="btn-close" 
+                onclick="window.location.href='/campsite-info/<%= campsiteId %>'" 
+                style="position: absolute; right: 15px; top: 15px;">
+              </button>
             </div>
 
             <form id="alertForm" style="flex: 1; display: flex; flex-direction: column;">
@@ -42,12 +46,16 @@
                         <label class="form-label">Description</label>
                         <textarea class="form-control" id="alertDescription" rows="8"
                             placeholder="Describe the alert details here..."></textarea>
+                            <img class="alertAvatar p-2" src="/images/alert.png"/>
+
                     </div>
 
                     <!-- Hidden campsiteId -->
                     <input type="hidden" id="campsiteId" value="<%= campsiteId %>">
                     <!-- Hidden userId -->
                     <input type="hidden" id="userId" value="<%= userId %>">
+                    <!-- Hidden firstName -->
+                    <input type="hidden" id="firstName" value="<%= firstName %>">
                 </div>
 
                 <!-- Cancel and Submit Buttons -->
@@ -64,54 +72,9 @@
     <path d="M0.00,49.98 C254.51,72.06 306.43,22.41 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"></path>
   </svg>
 </div>
-    </div>
+</div>
 
-    <script>
-        function handleCategoryChange() {
-            const categorySelect = document.getElementById('alertCategory');
-            const customDiv = document.getElementById('customCategoryDiv');
-            if (categorySelect.value === 'Other') {
-                customDiv.classList.remove('d-none');
-            } else {
-                customDiv.classList.add('d-none');
-            }
-        }
+<script src="/js/createAlert.js"></script>
 
-        document.getElementById('alertForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const selectedCategory = document.getElementById('alertCategory').value;
-            const customCategory = document.getElementById('customCategory').value;
-
-            const formData = {
-                userId: document.getElementById('userId').value,
-                campsiteId: document.getElementById('campsiteId').value,
-                alertType: document.getElementById('alertCategory').value,
-                alertDate: document.getElementById('alertDate').value,
-                message: document.getElementById('alertDescription').value
-            };
-
-            try {
-                const response = await fetch('/api/alerts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    alert('Alert created successfully!');
-                    window.location.href = `/campsite-info/${data.campsiteId}`;
-                } else {
-                    alert('Error creating alert. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
-            }
-        });
-    </script>
 
     <%- include("templates/footer") %>

@@ -15,8 +15,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link rel="stylesheet" href="footer.css"/>
-    <link rel="stylesheet" href="header.css" />
+    <link rel="stylesheet" href="/footer.css"/>
+    <link rel="stylesheet" href="/header.css" />
+
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
     <!-- Mapbox GL JS -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
     <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css" rel="stylesheet">
@@ -34,10 +37,10 @@
 <body>
     
     <header class="wildpath-header">
-        <div class="container position-absolute align-items-center" style="height: 100%">
-          <a href="/" class="d-flex align-items-center text-decoration-none" style="color: inherit;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
-              <img class="logo"src="/wildpath.png" alt="Logo" style="width: 40px; height: 40px; object-fit: cover;">
+        <div class="container1 position-absolute align-items-center">
+          <a href="/" class="d-flex align-items-center text-decoration-none">
+            <div class="image-container">
+              <img class="logo"src="/images/wildpath.png" alt="Logo">
             </div>
             <h4 class="ms-3 mb-0 text-black">Wildpath</h4>
           </a>
@@ -45,12 +48,11 @@
       </header>
 
     <a href="/profile" class="text-decoration-none">
-        <div class="profile-header position-absolute top-0 end-0 d-flex align-items-center" style="z-index: 9999;">
-          <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
-            <img 
+        <div class="profile-header position-absolute top-0 end-0 d-flex align-items-center">
+          <div class="image-container">
+            <img class="profile-icon"
               src="<%= user && user.profileImage ? user.profileImage : '/images/avatars/avatar1.png' %>" 
-              alt="Profile Icon" 
-              style="width: 40px; height: 40px; object-fit: cover;">
+              alt="Profile Icon" >
           </div>
           <h4 class="ms-2 mb-0 text-white">Profile</h4>
         </div>
