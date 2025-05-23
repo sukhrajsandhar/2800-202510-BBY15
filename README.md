@@ -193,7 +193,7 @@ Example:
 
 - Used Bootstrap Library for various icons, buttons, cards and layouts.
 - MongoDB for database and storage
-- Used CodePen to create button animations and the wave background 
+- Used CodePen to create button animations and the wave background, and speech bubble.
 - Avatars were from a stock images site called FreePik
 
 ---
