@@ -70,9 +70,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // funfact 
 document.addEventListener("DOMContentLoaded", function() {
-    // Fetch the fun fact but keep it hidden initially
+    // ...other code...
+
+    // Get the campsite name from the data attribute
+    const funFactSection = document.getElementById("funFactSection");
+    const campsiteName = funFactSection ? funFactSection.dataset.campsiteName : "";
+
     let funFactText = "";
-    fetch(`/api/funfact/<%= encodeURIComponent(campsite.name) %>`)
+    fetch(`/api/funfact/${encodeURIComponent(campsiteName)}`)
         .then(res => res.json())
         .then(data => {
             funFactText = data.funFact;

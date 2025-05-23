@@ -97,26 +97,33 @@
                 <% } %>
               </ul>
             </div>
-
-            <span><%= campsite.amenities && campsite.amenities.join(', ') %></span>
-          </div>
-
-          <!-- Fun Fact Section -->
-          <div class="box data-container">
-            <i class="fas fa-quote-left quote-icon quote-left"></i>
-            <div class="quote-content">
-              <h3>
-                <i class="fas fa-lightbulb text-warning" id="revealFunFact" title="Click to reveal fun fact"></i> 
-                Fun Fact
-              </h3>
-              <p id="funFact" class="fun-fact-text">
-                Click the lightbulb to reveal the fun fact!
-              </p>
-            </div>
-            <i class="fas fa-quote-right quote-icon quote-right"></i>
-          </div>
-        </div>
-      </div>
+            
+            <span>
+              <%= campsite.amenities && campsite.amenities.join(', ') %></span>
+                      </div>
+            
+            <!-- Fun Fact Section -->
+                       <div class="box data-container" id="funFactSection" data-campsite-name="<%= campsite.name %>">
+                            <!-- Left quote icon -->
+                            <i class="fas fa-quote-left quote-icon quote-left"></i>
+            
+                            <div class="quote-content">
+                                <h3>
+                                <i class="fas fa-lightbulb text-warning" id="revealFunFact" 
+                                    style="cursor:pointer; filter: grayscale(80%) blur(1px);"
+                                    title="Click to reveal fun fact"></i> 
+                                Fun Fact
+                                </h3>
+                                <p id="funFact" class="fun-fact-text">
+                                Click the lightbulb to reveal the fun fact!
+                                </p>
+                            </div>
+            
+                            <!-- Right quote icon -->
+                            <i class="fas fa-quote-right quote-icon quote-right"></i>
+                            </div>
+                    </div>
+                  </div>
     </div>
 
     <!-- Bookings Section -->
