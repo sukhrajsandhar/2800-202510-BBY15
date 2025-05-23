@@ -43,8 +43,12 @@
             </div>
           </div>
 
-          <img class="favouriteAvatar" src="/images/favourites.png">
+          <div class="avatar-wrapper">
+            <img class="favouriteAvatar" src="/images/favourites.png" alt="Favourite">
+            <div class="speech-bubble">Hello, <%= user.firstName %> </div>
+          </div>
           
+                    
           <div class="text-center mt-3">
             <span class="bg-secondary p-1 px-4 rounded text-white"><%= user.userLevel || 'Noob Camper' %></span>
             <h5 class="mt-2 mb-0">
